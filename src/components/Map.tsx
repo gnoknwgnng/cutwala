@@ -12,27 +12,34 @@ interface MapProps {
 }
 
 export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuery }) => {
-  const { shops, userLocation } = useStore();
+  const { shops, userLocation, requestRealLocation } = useStore();
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<{ [key: string]: L.Marker }>({});
+  const userMarkerRef = useRef<L.Marker | null>(null);
 
   const openShops = shops.filter(shop => shop.status === 'OPEN');
 
-  // Default center coordinates (San Francisco or shop 1)
-  const defaultLat = selectedShop ? selectedShop.latitude : 37.7816;
-  const defaultLng = selectedShop ? selectedShop.longitude : -122.4156;
+  // Trigger real browser location request on mount if not available
+  useEffect(() => {
+    if (!userLocation) {
+      requestRealLocation();
+    }
+  }, []);
+
+  // Default center coordinates (User GPS location if available, otherwise shop 1)
+  const defaultLat = userLocation ? userLocation.latitude : (selectedShop ? selectedShop.latitude : 37.7816);
+  const defaultLng = userLocation ? userLocation.longitude : (selectedShop ? selectedShop.longitude : -122.4156);
 
   // Initialize Leaflet Real Interactive Map
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
-    // Prevent duplicate initialization
     if (!mapInstanceRef.current) {
       const map = L.map(mapContainerRef.current, {
         center: [defaultLat, defaultLng],
         zoom: 14,
-        zoomControl: false, // We render sleek custom controls
+        zoomControl: false,
         attributionControl: false
       });
 
@@ -47,7 +54,7 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
 
     const map = mapInstanceRef.current;
 
-    // Clear previous markers
+    // Clear previous shop markers
     Object.values(markersRef.current).forEach(marker => marker.remove());
     markersRef.current = {};
 
@@ -88,7 +95,34 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
 
   }, [shops, openShops]);
 
-  // Handle smooth flyTo camera panning when selectedShop changes
+  // Handle Real User Location Pulsing Marker
+  useEffect(() => {
+    if (!mapInstanceRef.current || !userLocation) return;
+    const map = mapInstanceRef.current;
+
+    if (userMarkerRef.current) {
+      userMarkerRef.current.remove();
+    }
+
+    const userIcon = L.divIcon({
+      className: 'user-gps-marker',
+      html: `
+        <div class="relative flex h-8 w-8 items-center justify-center -translate-x-1/2 -translate-y-1/2">
+          <div class="absolute h-full w-full animate-ping rounded-full bg-blue-500/40 opacity-75"></div>
+          <div class="relative h-4 w-4 rounded-full bg-blue-600 border-2 border-white shadow-lg"></div>
+        </div>
+      `,
+      iconSize: [32, 32],
+      iconAnchor: [16, 16]
+    });
+
+    userMarkerRef.current = L.marker([userLocation.latitude, userLocation.longitude], { icon: userIcon }).addTo(map);
+
+    // Pan smoothly to real user location on initial detection
+    map.flyTo([userLocation.latitude, userLocation.longitude], 14, { duration: 1.5 });
+  }, [userLocation]);
+
+  // Handle camera panning when selectedShop changes
   useEffect(() => {
     if (mapInstanceRef.current && selectedShop) {
       mapInstanceRef.current.flyTo(
@@ -125,14 +159,9 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
   };
 
   const handleRecenter = () => {
-    if (mapInstanceRef.current) {
-      if (userLocation) {
-        mapInstanceRef.current.flyTo([userLocation.latitude, userLocation.longitude], 15);
-      } else if (selectedShop) {
-        mapInstanceRef.current.flyTo([selectedShop.latitude, selectedShop.longitude], 15);
-      } else {
-        mapInstanceRef.current.flyTo([defaultLat, defaultLng], 14);
-      }
+    requestRealLocation();
+    if (mapInstanceRef.current && userLocation) {
+      mapInstanceRef.current.flyTo([userLocation.latitude, userLocation.longitude], 15);
     }
   };
 
@@ -147,13 +176,13 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
 
       {/* Floating Map Controls */}
       <div className="absolute top-20 right-4 z-20 flex flex-col gap-2 md:top-6">
-        {/* Recenter / GPS Button */}
+        {/* Recenter GPS Button */}
         <button 
           onClick={handleRecenter}
-          className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white dark:bg-zinc-900 text-gray-700 dark:text-gray-200 shadow-xl border border-gray-200 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-800 active:scale-95 transition-all cursor-pointer"
-          title="Recenter"
+          className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white dark:bg-zinc-900 text-gray-700 dark:text-gray-200 shadow-xl border border-gray-200 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-800 active:scale-95 transition-all cursor-pointer group"
+          title="Recenter Real GPS Location"
         >
-          <Navigation className="h-5 w-5 text-orange-500" />
+          <Navigation className="h-5 w-5 text-orange-500 group-hover:scale-110 transition-transform" />
         </button>
 
         {/* Zoom Controls */}

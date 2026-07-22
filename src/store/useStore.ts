@@ -44,6 +44,7 @@ interface State {
   sendOTP: (phone: string) => void;
   verifyOTP: (otp: string) => boolean;
   setLocationPermission: (status: 'granted' | 'denied') => void;
+  requestRealLocation: () => void;
   setFavorite: (shopId: string) => void;
   toggleTheme: () => void;
   showToast: (message: string, type?: 'success' | 'error' | 'info') => void;
@@ -129,14 +130,41 @@ export const useStore = create<State>((set, get) => ({
   },
 
   setLocationPermission: (status: 'granted' | 'denied') => {
-    set({ 
-      locationPermission: status,
-      userLocation: status === 'granted' ? { latitude: 37.7820, longitude: -122.4100 } : null
-    });
     if (status === 'granted') {
-      get().showToast('Location access granted', 'success');
+      get().requestRealLocation();
     } else {
-      get().showToast('Location permission is mandatory for booking discovery', 'error');
+      set({ locationPermission: 'denied', userLocation: null });
+      get().showToast('Location permission denied', 'error');
+    }
+  },
+
+  requestRealLocation: () => {
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          set({ 
+            locationPermission: 'granted',
+            userLocation: { latitude, longitude }
+          });
+          get().showToast('GPS Location detected!', 'success');
+        },
+        (error) => {
+          console.warn('Geolocation error or denied:', error.message);
+          // Fallback to Hyderabad / San Francisco if location denied/unavailable
+          set({ 
+            locationPermission: 'granted',
+            userLocation: { latitude: 17.4065, longitude: 78.4772 }
+          });
+          get().showToast('City location loaded', 'info');
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    } else {
+      set({ 
+        locationPermission: 'granted',
+        userLocation: { latitude: 17.4065, longitude: 78.4772 }
+      });
     }
   },
 
