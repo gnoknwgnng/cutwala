@@ -9,18 +9,29 @@ export const ChairAvailability: React.FC = () => {
   const navigate = useNavigate();
   const { 
     currentBookingFlow, 
+    barbers,
     chairs, 
+    setBookingBarber,
     setBookingChair, 
     tickChairs,
     showToast 
   } = useStore();
 
-  const [selectedChair, setSelectedChair] = useState<string>('');
-
+  const [selectedChair, setSelectedChair] = useState<string>(currentBookingFlow.chairId || '');
   const shopId = currentBookingFlow.shopId || 'shop1';
 
-  // Filter chairs for this shop
+  // Barbers and chairs for this shop
+  const shopBarbers = barbers.filter(b => b.shop_id === shopId);
   const shopChairs = chairs.filter(c => c.shop_id === shopId);
+
+  const selectedBarberId = currentBookingFlow.barberId || (shopBarbers[0] ? shopBarbers[0].barber_id : '');
+
+  // Auto-select first barber if none selected
+  useEffect(() => {
+    if (!currentBookingFlow.barberId && shopBarbers.length > 0) {
+      setBookingBarber(shopBarbers[0].barber_id);
+    }
+  }, [shopId, shopBarbers, currentBookingFlow.barberId, setBookingBarber]);
 
   // Set up live ticking status simulation (toggles chair availability every 3.5s)
   useEffect(() => {
@@ -36,13 +47,16 @@ export const ChairAvailability: React.FC = () => {
     if (selectedChair) {
       const activeChair = shopChairs.find(c => c.chair_id === selectedChair);
       if (activeChair && activeChair.status === 'occupied') {
-        // Selected chair got occupied by live update
         setSelectedChair('');
         setBookingChair('');
         showToast('Your selected chair was just occupied. Please select another!', 'info');
       }
     }
   }, [chairs, selectedChair, shopChairs, setBookingChair, showToast]);
+
+  const handleSelectBarber = (id: string) => {
+    setBookingBarber(id);
+  };
 
   const handleSelectChair = (chairId: string, status: 'available' | 'occupied') => {
     if (status === 'occupied') {
@@ -60,26 +74,29 @@ export const ChairAvailability: React.FC = () => {
   };
 
   const handleProceed = () => {
-    if (selectedChair) {
+    if (selectedBarberId && selectedChair) {
       navigate('/app/date');
     }
   };
 
+  const selectedBarber = barbers.find(b => b.barber_id === selectedBarberId);
+  const canProceed = Boolean(selectedBarberId && selectedChair);
+
   return (
-    <div className="flex-1 flex flex-col bg-gray-50 dark:bg-zinc-950 pb-24 relative select-none">
+    <div className="flex-1 flex flex-col bg-white dark:bg-[#0b0b0c] pb-24 relative select-none overflow-y-auto no-scrollbar">
       
-      {/* Header bar */}
-      <header className="flex h-16 items-center justify-between px-4 bg-white dark:bg-zinc-900 border-b border-gray-150/20 dark:border-zinc-800 sticky top-0 z-10">
+      {/* 1. TOP HEADER BAR */}
+      <header className="flex h-14 items-center justify-between px-4 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border-b border-gray-100 dark:border-zinc-800 sticky top-0 z-30">
         <div className="flex items-center gap-2">
           <button 
             onClick={() => navigate(-1)}
-            className="p-2 rounded-xl text-gray-500 hover:bg-gray-100 dark:text-zinc-400 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+            className="p-1.5 rounded-full text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft className="h-6 w-6" />
           </button>
-          <span className="font-display font-extrabold text-lg text-gray-900 dark:text-white">
-            Live Chair Status
-          </span>
+          <h1 className="font-display font-extrabold text-base text-gray-900 dark:text-white">
+            Select Barber & Chair
+          </h1>
         </div>
 
         <div className="flex items-center gap-1.5">
@@ -87,112 +104,176 @@ export const ChairAvailability: React.FC = () => {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
           </span>
-          <span className="text-[10px] uppercase font-bold tracking-wider text-gray-500 dark:text-zinc-400">
-            Live Stream active
+          <span className="text-[9px] uppercase font-bold tracking-wider text-gray-400 dark:text-zinc-500">
+            Live Stream
           </span>
         </div>
       </header>
 
-      {/* Main visual layouts */}
-      <div className="max-w-md mx-auto w-full px-4 mt-8 flex-1 flex flex-col justify-between">
+      {/* 2. MAIN SELECTION CONTENT */}
+      <div className="max-w-2xl mx-auto w-full px-4 pt-4 flex flex-col gap-6">
         
-        <div className="flex flex-col items-center">
-          {/* Mirrors screen direction */}
-          <div className="w-4/5 h-2.5 rounded-full bg-zinc-350 dark:bg-zinc-700/80 shadow-inner mb-2" />
-          <p className="text-[10px] text-gray-400 dark:text-zinc-550 uppercase tracking-widest font-extrabold mb-10">
-            Stylist Mirror & Workspace
-          </p>
+        {/* BARBERS & STYLISTS SECTION */}
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <h3 className="font-display font-extrabold text-base text-gray-900 dark:text-white">
+              Barbers & Stylists
+            </h3>
+            <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
+              Tap photo to select
+            </span>
+          </div>
 
-          {/* Seat Grid layout */}
-          <div className="grid grid-cols-2 gap-x-12 gap-y-8 w-full px-6">
-            {shopChairs.map((chair, index) => {
-              const isSelected = selectedChair === chair.chair_id;
-              const isOccupied = chair.status === 'occupied';
-
+          {/* Horizontal Swiping Photo Cards */}
+          <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2 pt-1">
+            {shopBarbers.map((barber) => {
+              const isSelected = selectedBarberId === barber.barber_id;
               return (
-                <motion.div
-                  key={chair.chair_id}
-                  layoutId={`chair-${chair.chair_id}`}
-                  onClick={() => handleSelectChair(chair.chair_id, chair.status)}
-                  className="flex flex-col items-center gap-2 cursor-pointer"
+                <div
+                  key={barber.barber_id}
+                  onClick={() => handleSelectBarber(barber.barber_id)}
+                  className="flex flex-col items-center w-24 shrink-0 cursor-pointer group"
                 >
-                  {/* Visual Chair element */}
-                  <motion.div
-                    animate={{
-                      scale: isSelected ? 1.05 : 1,
-                      boxShadow: isSelected ? '0 10px 25px -5px rgba(212, 175, 55, 0.4)' : 'none'
-                    }}
-                    transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                    className={`relative w-20 h-20 rounded-2xl border flex items-center justify-center transition-all ${
-                      isSelected
-                        ? 'bg-amber-500/10 border-amber-500 text-amber-500 dark:bg-amber-500/5'
-                        : isOccupied
-                        ? 'bg-rose-500/10 border-rose-500/30 text-rose-500/80 dark:bg-rose-500/5'
-                        : 'bg-white dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 text-emerald-500 hover:border-emerald-400'
-                    }`}
-                  >
-                    <Armchair className="h-9 w-9 transition-transform" />
+                  <div className={`relative h-24 w-24 rounded-2xl overflow-hidden mb-2 border-2 transition-all ${
+                    isSelected 
+                      ? 'border-amber-500 shadow-lg scale-105 ring-2 ring-amber-500/20' 
+                      : 'border-transparent group-hover:border-gray-300 dark:group-hover:border-zinc-700'
+                  }`}>
+                    <img
+                      src={barber.photo}
+                      alt={barber.name}
+                      className="h-full w-full object-cover"
+                    />
 
-                    {/* Small tag status */}
-                    <div className="absolute -top-1.5 -right-1.5">
-                      <span className={`flex h-5 w-5 items-center justify-center rounded-full text-[9px] font-bold border ${
-                        isSelected 
-                          ? 'bg-amber-500 border-amber-400 text-black' 
-                          : isOccupied 
-                          ? 'bg-rose-600 border-rose-500 text-white' 
-                          : 'bg-emerald-600 border-emerald-500 text-white'
-                      }`}>
-                        {isSelected ? <Check className="h-3 w-3 stroke-[3]" /> : (index + 1)}
-                      </span>
-                    </div>
-
-                    {/* Status pulsing effects */}
-                    {!isOccupied && !isSelected && (
-                      <span className="absolute bottom-1 right-1 flex h-1.5 w-1.5">
-                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
-                      </span>
+                    {isSelected && (
+                      <div className="absolute top-1.5 right-1.5 h-5 w-5 rounded-full bg-amber-500 text-black flex items-center justify-center shadow-md">
+                        <Check className="h-3.5 w-3.5 stroke-[3.5]" />
+                      </div>
                     )}
-                  </motion.div>
+                  </div>
 
-                  <span className="text-xs font-bold text-gray-500 dark:text-zinc-400">
-                    Chair {index + 1}
-                  </span>
-                </motion.div>
+                  <h4 className="font-bold text-xs text-gray-900 dark:text-white text-center truncate w-full">
+                    {barber.name}
+                  </h4>
+                  <p className="text-[10px] text-gray-500 dark:text-zinc-450 text-center truncate w-full font-medium mt-0.5">
+                    {barber.specialization.split('&')[0]}
+                  </p>
+                </div>
               );
             })}
           </div>
         </div>
 
-        {/* Legend Panel & Proceeds */}
-        <div className="mt-12 flex flex-col gap-6 w-full">
-          {/* Legend */}
-          <div className="flex items-center justify-center gap-6 px-4 py-3 bg-white dark:bg-zinc-900 border border-gray-150/40 dark:border-zinc-800/80 rounded-2xl shadow-sm text-xs font-semibold">
-            <div className="flex items-center gap-2">
-              <div className="h-3.5 w-3.5 rounded bg-emerald-500/10 border border-emerald-500/30" />
-              <span className="text-gray-600 dark:text-zinc-400">Available</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="h-3.5 w-3.5 rounded bg-rose-500/10 border border-rose-500/30" />
-              <span className="text-gray-600 dark:text-zinc-400">Occupied</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="h-3.5 w-3.5 rounded bg-amber-500/20 border border-amber-500" />
-              <span className="text-gray-600 dark:text-zinc-400">Selected</span>
-            </div>
+        {/* LIVE CHAIR AVAILABILITY SECTION */}
+        <div className="flex flex-col gap-4 pt-4 border-t border-gray-150/60 dark:border-zinc-850">
+          <div className="flex items-center justify-between">
+            <h3 className="font-display font-extrabold text-base text-gray-900 dark:text-white flex items-center gap-2">
+              <span>💺</span> Live Chair Status
+            </h3>
+            
+            <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
+              Tap green chair to select
+            </span>
           </div>
 
-          {/* Action button */}
-          <Button
-            variant="primary"
-            disabled={!selectedChair}
-            onClick={handleProceed}
-            fullWidth
-            className="cursor-pointer"
-          >
-            Select Date & Time <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
+          <div className="flex flex-col items-center p-6 bg-gray-50 dark:bg-zinc-900 border border-gray-200/60 dark:border-zinc-800/80 rounded-3xl shadow-sm">
+            {/* Mirrors line */}
+            <div className="w-4/5 h-2 rounded-full bg-zinc-300 dark:bg-zinc-800 shadow-inner mb-2" />
+            <p className="text-[9px] text-gray-400 dark:text-zinc-550 uppercase tracking-widest font-extrabold mb-8">
+              Stylist Mirrors Workspace
+            </p>
+
+            {/* Seat Grid layout */}
+            <div className="grid grid-cols-2 gap-x-12 gap-y-6 w-full max-w-xs justify-items-center">
+              {shopChairs.map((chair, index) => {
+                const isSelected = selectedChair === chair.chair_id;
+                const isOccupied = chair.status === 'occupied';
+
+                return (
+                  <div
+                    key={chair.chair_id}
+                    onClick={() => handleSelectChair(chair.chair_id, chair.status)}
+                    className="flex flex-col items-center gap-1.5 cursor-pointer"
+                  >
+                    <motion.div
+                      animate={{
+                        scale: isSelected ? 1.05 : 1,
+                        boxShadow: isSelected ? '0 10px 20px -5px rgba(212, 175, 55, 0.3)' : 'none'
+                      }}
+                      className={`relative w-16 h-16 rounded-2xl border flex items-center justify-center transition-all ${
+                        isSelected
+                          ? 'bg-amber-500/10 border-amber-500 text-amber-500 dark:bg-amber-500/5'
+                          : isOccupied
+                          ? 'bg-rose-500/10 border-rose-500/30 text-rose-500/80 dark:bg-rose-500/5'
+                          : 'bg-white dark:bg-zinc-950 border-gray-200 dark:border-zinc-800 text-emerald-500 hover:border-emerald-400'
+                      }`}
+                    >
+                      <Armchair className="h-7 w-7" />
+
+                      <div className="absolute -top-1.5 -right-1.5">
+                        <span className={`flex h-4.5 w-4.5 items-center justify-center rounded-full text-[8px] font-bold border ${
+                          isSelected 
+                            ? 'bg-amber-500 border-amber-400 text-black' 
+                            : isOccupied 
+                            ? 'bg-rose-600 border-rose-500 text-white' 
+                            : 'bg-emerald-600 border-emerald-500 text-white'
+                        }`}>
+                          {isSelected ? <Check className="h-2.5 w-2.5 stroke-[3.5]" /> : (index + 1)}
+                        </span>
+                      </div>
+                    </motion.div>
+
+                    <span className="text-[10px] font-bold text-gray-500 dark:text-zinc-500">
+                      Chair {index + 1}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Legend Box */}
+            <div className="mt-8 flex gap-6 text-[10px] font-semibold text-gray-500 dark:text-zinc-450 border-t border-gray-200 dark:border-zinc-800 pt-4 w-full justify-center">
+              <div className="flex items-center gap-1.5">
+                <div className="h-3 w-3 rounded bg-emerald-500/15 border border-emerald-500/30" />
+                <span>Available</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="h-3 w-3 rounded bg-rose-500/15 border border-rose-500/30" />
+                <span>Occupied</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="h-3 w-3 rounded bg-amber-500/20 border border-amber-500" />
+                <span>Selected</span>
+              </div>
+            </div>
+
+          </div>
         </div>
 
+      </div>
+
+      {/* 3. FIXED BOTTOM ACTION BUTTON */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 p-4 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl border-t border-gray-100 dark:border-zinc-800 shadow-2xl">
+        <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
+          <div className="flex flex-col min-w-0">
+            <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
+              {selectedBarber ? `Stylist: ${selectedBarber.name}` : 'Select a barber'}
+            </span>
+            <span className="text-sm font-extrabold text-amber-500 dark:text-amber-400">
+              {selectedChair ? `Chair ${selectedChair.split('_')[1] || '1'} Selected` : 'Choose an available chair'}
+            </span>
+          </div>
+
+          <Button
+            variant="primary"
+            disabled={!canProceed}
+            onClick={handleProceed}
+            className="w-48 sm:w-64 h-12 text-sm font-extrabold rounded-2xl cursor-pointer bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-600/25 border-none"
+          >
+            <span>Select Date & Time</span>
+            <ArrowRight className="ml-1.5 h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
     </div>
