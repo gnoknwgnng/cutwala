@@ -146,17 +146,10 @@ export const ChairAvailability: React.FC = () => {
     }
   };
 
-  const selectedBarber = barbers.find(b => b.barber_id === selectedBarberId);
   const canProceed = Boolean(selectedBarberId && selectedChair && selectedDateStr && selectedTimeStr);
 
-  const formatSelectedDateDisplay = (dateStr: string) => {
-    if (!dateStr) return '';
-    const dateObj = new Date(dateStr);
-    return dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-  };
-
   return (
-    <div className="flex-1 flex flex-col bg-white dark:bg-[#0b0b0c] pb-28 relative select-none overflow-y-auto no-scrollbar">
+    <div className="flex-1 flex flex-col bg-white dark:bg-[#0b0b0c] pb-24 relative select-none overflow-y-auto no-scrollbar">
       
       {/* 1. HEADER BAR */}
       <header className="flex h-14 items-center justify-between px-4 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border-b border-gray-100 dark:border-zinc-800 sticky top-0 z-30">
@@ -408,26 +401,17 @@ export const ChairAvailability: React.FC = () => {
 
       </div>
 
-      {/* 3. FIXED BOTTOM SUMMARY & PROCEED BUTTON */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 p-4 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl border-t border-gray-100 dark:border-zinc-800 shadow-2xl">
-        <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
-          <div className="flex flex-col min-w-0">
-            <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider truncate">
-              {selectedBarber ? `Stylist: ${selectedBarber.name}` : 'Stylist: Auto'} • {selectedChair ? `Chair ${selectedChair.split('_')[1] || '1'}` : 'No Chair'}
-            </span>
-            <span className="text-xs font-extrabold text-orange-500 dark:text-orange-400 truncate mt-0.5">
-              📅 {formatSelectedDateDisplay(selectedDateStr)} @ {selectedTimeStr}
-            </span>
-          </div>
-
+      {/* 3. FIXED BOTTOM FULL-WIDTH CONFIRM BUTTON */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 p-3 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl border-t border-gray-100 dark:border-zinc-800 shadow-2xl">
+        <div className="max-w-2xl mx-auto w-full">
           <Button
             variant="primary"
             disabled={!canProceed}
             onClick={handleProceed}
-            className="w-48 sm:w-64 h-12 text-sm font-extrabold rounded-2xl cursor-pointer bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/25 border-none"
+            className="w-full h-12 text-sm font-extrabold rounded-2xl cursor-pointer bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/25 border-none flex items-center justify-center gap-2"
           >
             <span>Confirm & Book</span>
-            <ArrowRight className="ml-1.5 h-4 w-4" />
+            <ArrowRight className="h-4 w-4" />
           </Button>
         </div>
       </div>
