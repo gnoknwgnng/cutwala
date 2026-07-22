@@ -180,25 +180,16 @@ export const ShopDetails: React.FC = () => {
 
       </div>
 
-      {/* 3. FIXED BOTTOM BOOK APPOINTMENT BUTTON */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 p-4 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl border-t border-gray-100 dark:border-zinc-800 shadow-2xl">
-        <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
-          <div className="flex flex-col min-w-0">
-            <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
-              Ready to visit?
-            </span>
-            <span className="text-sm font-extrabold text-gray-900 dark:text-white truncate">
-              {shop.name}
-            </span>
-          </div>
-
+      {/* 3. FIXED BOTTOM FULL-WIDTH BOOK APPOINTMENT BUTTON (Matches BookMyShow "Book tickets" button in Image 2) */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 p-3 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl border-t border-gray-100 dark:border-zinc-800 shadow-2xl">
+        <div className="max-w-2xl mx-auto w-full">
           <Button
             variant="primary"
             onClick={handleBookAppointment}
-            className="w-48 sm:w-64 h-12 text-sm font-extrabold rounded-2xl cursor-pointer bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-600/25 border-none"
+            className="w-full h-12 text-sm font-extrabold rounded-2xl cursor-pointer bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-600/25 border-none flex items-center justify-center gap-2"
           >
             <span>Book Appointment</span>
-            <ArrowRight className="ml-1.5 h-4 w-4" />
+            <ArrowRight className="h-4 w-4" />
           </Button>
         </div>
       </div>
