@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Phone, ShieldCheck, MapPin, Compass, AlertCircle } from 'lucide-react';
+import { Phone, MapPin, Compass, AlertCircle } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { Button, GlassCard } from '../components/UI';
 
@@ -78,9 +78,11 @@ export const Login: React.FC = () => {
           >
             {/* Logo */}
             <div className="flex flex-col items-center mb-8">
-              <div className="h-14 w-14 rounded-2xl bg-amber-500 flex items-center justify-center shadow-xl shadow-amber-500/25 mb-4">
-                <ShieldCheck className="h-7.5 w-7.5 text-black" />
-              </div>
+              <img 
+                src="/logo.svg" 
+                alt="CutWala Logo" 
+                className="h-20 w-20 object-contain drop-shadow-xl mb-3"
+              />
               <h2 className="font-display font-extrabold text-3xl tracking-tight text-gray-900 dark:text-white">
                 Welcome to CutWala
               </h2>

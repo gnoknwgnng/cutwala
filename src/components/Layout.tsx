@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { Compass, Calendar, Clock, User, Sun, Moon, LogOut, Scissors } from 'lucide-react';
+import { Compass, Calendar, Clock, User, Sun, Moon, LogOut } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { motion } from 'framer-motion';
 
@@ -39,10 +39,12 @@ export const Layout: React.FC = () => {
           <div className="flex flex-col gap-8">
             {/* Logo Brand */}
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-xl bg-amber-500 flex items-center justify-center shadow-lg shadow-amber-500/25">
-                <Scissors className="h-5.5 w-5.5 text-black" />
-              </div>
-              <span className="font-display font-bold text-2xl tracking-tight bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">
+              <img 
+                src="/logo.svg" 
+                alt="CutWala Logo" 
+                className="h-10 w-10 object-contain drop-shadow-md"
+              />
+              <span className="font-display font-extrabold text-2xl tracking-tight bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
                 CutWala
               </span>
             </div>
@@ -171,9 +173,13 @@ export const Layout: React.FC = () => {
         {/* Mobile Header (Only visible on main tab routes) */}
         {isMainTab && (
           <header className="md:hidden flex h-14 items-center justify-between px-4 bg-white dark:bg-zinc-900 border-b border-gray-100 dark:border-zinc-800 shrink-0 sticky top-0 z-35 backdrop-blur-md bg-opacity-70 dark:bg-opacity-70">
-            <div className="flex items-center gap-2">
-              <Scissors className="h-5 w-5 text-amber-500" />
-              <span className="font-display font-extrabold text-lg bg-gradient-to-r from-amber-500 to-amber-600 bg-clip-text text-transparent">
+            <div className="flex items-center gap-2.5">
+              <img 
+                src="/logo.svg" 
+                alt="CutWala Logo" 
+                className="h-7 w-7 object-contain"
+              />
+              <span className="font-display font-extrabold text-lg bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
                 CutWala
               </span>
             </div>

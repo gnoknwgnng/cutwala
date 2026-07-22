@@ -8,21 +8,22 @@
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-display: 'Outfit', system-ui, sans-serif;
 
-  --color-gold-50: #fbf8f1;
-  --color-gold-100: #f4edd9;
-  --color-gold-200: #e9dbb3;
-  --color-gold-300: #dbc482;
-  --color-gold-400: #cca450;
-  --color-gold-500: #bfa13b; /* Premium Matte Gold */
-  --color-gold-600: #a1812c;
-  --color-gold-700: #816222;
-  --color-gold-800: #62481b;
-  --color-gold-900: #4c3716;
-  --color-gold-950: #291c0a;
+  /* CutWala Vibrant Electric Orange Brand Palette */
+  --color-gold-50: #fff8f5;
+  --color-gold-100: #ffeedd;
+  --color-gold-200: #ffd8b8;
+  --color-gold-300: #ffb585;
+  --color-gold-400: #ff8848;
+  --color-gold-500: #ff6000; /* Primary Brand Vibrant Orange */
+  --color-gold-600: #e54d00;
+  --color-gold-700: #bd3900;
+  --color-gold-800: #972e00;
+  --color-gold-900: #7b2904;
+  --color-gold-950: #421200;
 
-  --color-uber-charcoal: #121212;
-  --color-uber-card: #1c1c1e;
-  --color-uber-border: #2c2c2e;
+  --color-uber-charcoal: #121417;
+  --color-uber-card: #181a1f;
+  --color-uber-border: #262930;
 }
 
 :root {

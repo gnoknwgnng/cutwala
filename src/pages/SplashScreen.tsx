@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Scissors } from 'lucide-react';
 import { useStore } from '../store/useStore';
 
 export const SplashScreen: React.FC = () => {
@@ -10,7 +9,6 @@ export const SplashScreen: React.FC = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      // If user is already logged in, redirect to home. Otherwise, login.
       if (user) {
         navigate('/app/home');
       } else {
@@ -22,18 +20,22 @@ export const SplashScreen: React.FC = () => {
   }, [user, navigate]);
 
   return (
-    <div className="flex h-screen w-screen flex-col items-center justify-center bg-zinc-950 text-white overflow-hidden">
+    <div className="flex h-screen w-screen flex-col items-center justify-center bg-[#0c0d10] text-white overflow-hidden">
       {/* Brand logo container with spring animations */}
       <motion.div
-        initial={{ scale: 0, rotate: -180 }}
-        animate={{ scale: 1, rotate: 0 }}
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
         transition={{ type: 'spring', damping: 15, stiffness: 120, duration: 1 }}
-        className="relative flex h-24 w-24 items-center justify-center rounded-3xl bg-amber-500 shadow-2xl shadow-amber-500/20"
+        className="relative flex h-32 w-32 items-center justify-center rounded-3xl bg-zinc-900/80 p-4 border border-orange-500/30 shadow-2xl shadow-orange-500/20 backdrop-blur-xl"
       >
-        <Scissors className="h-12 w-12 text-black" />
+        <img 
+          src="/logo.svg" 
+          alt="CutWala Logo" 
+          className="h-full w-full object-contain filter drop-shadow-[0_10px_20px_rgba(255,96,0,0.4)]"
+        />
         
         {/* Decorative glowing background rings */}
-        <div className="absolute -inset-4 rounded-[2.5rem] border border-amber-500/20 animate-pulse pointer-events-none" />
+        <div className="absolute -inset-4 rounded-[2.5rem] border border-orange-500/30 animate-pulse pointer-events-none" />
       </motion.div>
 
       {/* Brand Name */}
@@ -41,7 +43,7 @@ export const SplashScreen: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6, duration: 0.8 }}
-        className="mt-6 font-display text-4xl font-extrabold tracking-tight bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 bg-clip-text text-transparent"
+        className="mt-6 font-display text-4xl font-extrabold tracking-tight bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 bg-clip-text text-transparent"
       >
         CutWala
       </motion.h1>
@@ -49,20 +51,20 @@ export const SplashScreen: React.FC = () => {
       {/* Premium subtitle */}
       <motion.p
         initial={{ opacity: 0 }}
-        animate={{ opacity: 0.6 }}
+        animate={{ opacity: 0.7 }}
         transition={{ delay: 1, duration: 0.8 }}
-        className="mt-2 text-sm uppercase tracking-[0.25em] text-gray-400 font-semibold"
+        className="mt-2 text-xs font-bold uppercase tracking-[0.3em] text-orange-400/90"
       >
-        Premium Grooming Discovery
+        Barber & Chair Discovery
       </motion.p>
 
       {/* Modern Loader animation */}
-      <div className="mt-16 w-48 h-1 rounded-full bg-zinc-800 overflow-hidden relative">
+      <div className="mt-14 w-48 h-1 rounded-full bg-zinc-850 overflow-hidden relative">
         <motion.div
           initial={{ left: '-100%', width: '40%' }}
           animate={{ left: '100%', width: '60%' }}
           transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
-          className="absolute h-full rounded-full bg-gradient-to-r from-amber-400 to-amber-600"
+          className="absolute h-full rounded-full bg-gradient-to-r from-orange-500 to-orange-600 shadow-lg shadow-orange-500/50"
         />
       </div>
     </div>

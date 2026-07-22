@@ -402,7 +402,7 @@ export const ChairAvailability: React.FC = () => {
             variant="primary"
             disabled={!canProceed}
             onClick={handleProceed}
-            className="w-48 sm:w-64 h-12 text-sm font-extrabold rounded-2xl cursor-pointer bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-600/25 border-none"
+            className="w-48 sm:w-64 h-12 text-sm font-extrabold rounded-2xl cursor-pointer bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/25 border-none"
           >
             <span>Proceed to Summary</span>
             <ArrowRight className="ml-1.5 h-4 w-4" />

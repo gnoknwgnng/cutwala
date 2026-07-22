@@ -186,7 +186,7 @@ export const ShopDetails: React.FC = () => {
           <Button
             variant="primary"
             onClick={handleBookAppointment}
-            className="w-full h-12 text-sm font-extrabold rounded-2xl cursor-pointer bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-600/25 border-none flex items-center justify-center gap-2"
+            className="w-full h-12 text-sm font-extrabold rounded-2xl cursor-pointer bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/25 border-none flex items-center justify-center gap-2"
           >
             <span>Book Appointment</span>
             <ArrowRight className="h-4 w-4" />
