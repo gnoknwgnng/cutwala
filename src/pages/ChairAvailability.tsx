@@ -186,7 +186,7 @@ export const ChairAvailability: React.FC = () => {
           </h3>
 
           {/* Horizontal Date Strip */}
-          <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-1">
+          <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
             {datesList.map((item) => {
               const isSelected = selectedDateStr === item.fullDateStr;
               return (
@@ -194,19 +194,19 @@ export const ChairAvailability: React.FC = () => {
                   key={item.fullDateStr}
                   whileTap={{ scale: 0.97 }}
                   onClick={() => handleSelectDate(item.fullDateStr)}
-                  className={`flex flex-col items-center justify-center min-w-[70px] px-3 py-3 rounded-2xl border transition-all cursor-pointer shrink-0 ${
+                  className={`flex flex-col items-center justify-center min-w-[52px] px-2 py-1.5 rounded-xl border transition-all cursor-pointer shrink-0 ${
                     isSelected
-                      ? 'bg-orange-500 border-orange-400 text-white shadow-lg shadow-orange-500/20'
+                      ? 'bg-orange-500 border-orange-400 text-white shadow-md shadow-orange-500/20'
                       : 'bg-gray-50 dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 text-gray-800 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800'
                   }`}
                 >
-                  <span className={`text-[9px] font-bold uppercase tracking-wider ${isSelected ? 'text-white/80' : 'text-gray-400 dark:text-zinc-500'}`}>
+                  <span className={`text-[8px] font-bold uppercase tracking-wider ${isSelected ? 'text-white/80' : 'text-gray-400 dark:text-zinc-500'}`}>
                     {item.monthName}
                   </span>
-                  <span className="text-xl font-extrabold font-display leading-tight my-1">
+                  <span className="text-sm font-extrabold font-display leading-tight my-0.5">
                     {item.dayNum}
                   </span>
-                  <span className={`text-[9px] font-extrabold uppercase tracking-widest ${isSelected ? 'text-white' : 'text-gray-500 dark:text-zinc-400'}`}>
+                  <span className={`text-[8px] font-extrabold uppercase tracking-widest ${isSelected ? 'text-white' : 'text-gray-500 dark:text-zinc-400'}`}>
                     {item.dayName}
                   </span>
                 </motion.div>
