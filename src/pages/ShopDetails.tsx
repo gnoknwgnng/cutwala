@@ -9,11 +9,7 @@ import {
   Armchair, 
   Check, 
   Share2, 
-  Play, 
-  ThumbsUp, 
   TrendingUp, 
-  Tag, 
-  Sparkles,
   ArrowRight
 } from 'lucide-react';
 import { useStore } from '../store/useStore';
@@ -38,7 +34,7 @@ export const ShopDetails: React.FC = () => {
   } = useStore();
 
   const [selectedChair, setSelectedChair] = useState<string>(currentBookingFlow.chairId || '');
-  const [isInterested, setIsInterested] = useState<boolean>(false);
+  const [activeImageIndex, setActiveImageIndex] = useState<number>(0);
 
   // Find shop
   const shop = shops.find(s => s.shop_id === shopId) || shops[0];
@@ -47,6 +43,9 @@ export const ShopDetails: React.FC = () => {
   // Barbers & chairs working at this shop
   const shopBarbers = barbers.filter(b => b.shop_id === shop.shop_id);
   const shopChairs = chairs.filter(c => c.shop_id === shop.shop_id);
+
+  // Gallery photos list (hero image + gallery photos)
+  const allImages = [shop.image, ...shop.gallery];
 
   // Initialize shop and default first barber in store
   useEffect(() => {
@@ -116,7 +115,7 @@ export const ShopDetails: React.FC = () => {
   return (
     <div className="flex-1 flex flex-col bg-white dark:bg-[#0b0b0c] pb-24 relative overflow-y-auto no-scrollbar">
       
-      {/* 1. BOOKMYSHOW STYLE TOP HEADER BAR */}
+      {/* 1. TOP HEADER BAR */}
       <header className="sticky top-0 z-30 flex h-14 items-center justify-between px-4 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border-b border-gray-100 dark:border-zinc-800">
         <div className="flex items-center gap-3 min-w-0">
           <button 
@@ -151,67 +150,55 @@ export const ShopDetails: React.FC = () => {
         </div>
       </header>
 
-      {/* 2. MAIN CONTENT (BookMyShow Movie Details Structure) */}
+      {/* 2. MAIN CONTENT AREA */}
       <div className="max-w-2xl mx-auto w-full px-4 pt-4 flex flex-col gap-5">
         
-        {/* HERO MEDIA POSTER CARD (Image 2 style) */}
-        <div className="relative w-full h-56 md:h-72 rounded-2xl overflow-hidden shadow-lg border border-gray-250/20 bg-zinc-900">
+        {/* HERO MAIN IMAGE DISPLAY */}
+        <div className="relative w-full h-60 md:h-80 rounded-2xl overflow-hidden shadow-lg border border-gray-250/20 bg-zinc-900">
           <img 
-            src={shop.image} 
+            src={allImages[activeImageIndex] || shop.image} 
             alt={shop.name} 
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transition-all duration-300"
           />
           {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
 
-          {/* Center Play / Trailer Button */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <button className="flex items-center gap-2 px-4 py-2 rounded-full bg-black/60 backdrop-blur-md text-white border border-white/20 hover:scale-105 transition-transform cursor-pointer shadow-xl">
-              <div className="h-6 w-6 rounded-full bg-white text-black flex items-center justify-center pl-0.5">
-                <Play className="h-3.5 w-3.5 fill-black" />
-              </div>
-              <span className="text-xs font-bold tracking-wide">Virtual Tour</span>
-            </button>
-          </div>
-
-          {/* Bottom Banner Strip across Poster (matches Releasing banner in Image 2) */}
-          <div className="absolute bottom-0 left-0 right-0 bg-black/80 backdrop-blur-md py-2 px-4 text-center border-t border-white/10">
+          {/* Bottom Banner Strip across Poster */}
+          <div className="absolute bottom-0 left-0 right-0 bg-black/75 backdrop-blur-md py-2.5 px-4 text-center border-t border-white/10">
             <span className="text-xs font-bold text-white tracking-wide">
               🟢 Open Now • Working Hours: {shop.opening_time} - {shop.closing_time}
             </span>
           </div>
         </div>
 
-        {/* INTERESTED / WISHLIST BAR (Matches "40.8K+ are interested" in Image 2) */}
-        <div className="flex items-center justify-between p-3.5 rounded-2xl bg-rose-50/60 dark:bg-rose-950/20 border border-rose-200/60 dark:border-rose-900/40">
-          <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center font-bold text-base shrink-0">
-              <ThumbsUp className="h-4.5 w-4.5 fill-rose-500 text-rose-500" />
-            </div>
-            <div>
-              <p className="text-xs font-extrabold text-gray-900 dark:text-white">
-                1.4K+ clients interested
-              </p>
-              <p className="text-[10px] text-gray-500 dark:text-zinc-400 font-medium">
-                Mark interested to add to your Wishlist
-              </p>
-            </div>
+        {/* HORIZONTAL PHOTO GALLERY THUMBNAILS (Replacing Virtual Tour & displaying all shop photos) */}
+        <div className="flex flex-col gap-2">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-zinc-500">
+            Shop Photos ({allImages.length})
+          </span>
+          <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-1">
+            {allImages.map((imgUrl, idx) => (
+              <div 
+                key={idx} 
+                onClick={() => setActiveImageIndex(idx)}
+                className={`h-20 w-28 rounded-xl overflow-hidden shrink-0 border-2 cursor-pointer transition-all ${
+                  activeImageIndex === idx 
+                    ? 'border-amber-500 scale-105 shadow-md ring-2 ring-amber-500/20' 
+                    : 'border-transparent opacity-75 hover:opacity-100'
+                }`}
+              >
+                <img 
+                  src={imgUrl} 
+                  alt={`Shop photo ${idx + 1}`} 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ))}
           </div>
-
-          <button
-            onClick={() => setIsInterested(!isInterested)}
-            className={`px-4 py-1.5 rounded-full border text-xs font-extrabold transition-all cursor-pointer ${
-              isInterested || isFav
-                ? 'bg-rose-500 text-white border-rose-500 shadow-md'
-                : 'border-rose-500/60 text-rose-600 dark:text-rose-400 hover:bg-rose-500/10'
-            }`}
-          >
-            {isInterested || isFav ? "Interested ✓" : "I'm interested"}
-          </button>
         </div>
 
-        {/* SUB-INFO LINE & BADGES (Matches Image 2 format) */}
-        <div className="flex flex-col gap-2.5">
+        {/* SUB-INFO LINE & BADGES */}
+        <div className="flex flex-col gap-2.5 pt-1">
           <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-gray-600 dark:text-zinc-350">
             <span className="flex items-center gap-1 font-bold text-gray-900 dark:text-white">
               <Star className="h-4 w-4 text-amber-500 fill-amber-500" /> {shop.rating} (120+ reviews)
@@ -238,12 +225,12 @@ export const ShopDetails: React.FC = () => {
           </div>
         </div>
 
-        {/* TAGLINE / SYNOPSIS (Matches Movie Synopsis in Image 2) */}
+        {/* TAGLINE / DESCRIPTION */}
         <p className="text-xs text-gray-600 dark:text-zinc-400 font-medium leading-relaxed italic border-l-2 border-amber-500 pl-3 py-0.5">
           "{shop.description}"
         </p>
 
-        {/* TRENDING HYPE BOX (Matches blue Trending box in Image 2) */}
+        {/* TRENDING HYPE BOX */}
         <div className="flex items-center gap-2.5 p-3 rounded-xl bg-blue-500/10 dark:bg-blue-500/10 border border-blue-500/20 text-xs">
           <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-600 text-white font-extrabold text-[10px] uppercase tracking-wider shrink-0 shadow-sm">
             <TrendingUp className="h-3.5 w-3.5" /> Trending
@@ -253,46 +240,7 @@ export const ShopDetails: React.FC = () => {
           </span>
         </div>
 
-        {/* TOP OFFERS FOR YOU (Matches Offers Row in Image 2) */}
-        <div className="flex flex-col gap-3 pt-2">
-          <h3 className="font-display font-extrabold text-base text-gray-900 dark:text-white">
-            Top offers for you
-          </h3>
-
-          <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
-            {/* Offer 1 */}
-            <div className="min-w-[260px] p-3 rounded-2xl bg-amber-500/10 dark:bg-amber-500/10 border border-amber-500/30 flex items-center gap-3 shrink-0">
-              <div className="h-9 w-9 rounded-full bg-amber-500 text-black flex items-center justify-center font-bold text-sm shrink-0">
-                <Tag className="h-4.5 w-4.5" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs font-bold text-gray-900 dark:text-white truncate">
-                  Enjoy 20% OFF on Gentlemen's Combo!
-                </p>
-                <p className="text-[10px] text-amber-600 dark:text-amber-400 font-semibold mt-0.5">
-                  Tap to view details
-                </p>
-              </div>
-            </div>
-
-            {/* Offer 2 */}
-            <div className="min-w-[260px] p-3 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/10 border border-emerald-500/30 flex items-center gap-3 shrink-0">
-              <div className="h-9 w-9 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-sm shrink-0">
-                <Sparkles className="h-4.5 w-4.5" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs font-bold text-gray-900 dark:text-white truncate">
-                  Free Hot Towel Shave with Bandhan Card
-                </p>
-                <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5">
-                  Tap to view details
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* CAST / BARBERS & STYLISTS SECTION (Matches "Cast" section in Image 2) */}
+        {/* CAST / BARBERS & STYLISTS SECTION */}
         <div className="flex flex-col gap-3 pt-4 border-t border-gray-150/60 dark:border-zinc-850">
           <div className="flex items-center justify-between">
             <h3 className="font-display font-extrabold text-base text-gray-900 dark:text-white">
@@ -303,7 +251,7 @@ export const ShopDetails: React.FC = () => {
             </span>
           </div>
 
-          {/* Horizontal Swiping Photo Cards (Identical layout to Vijay, Bobby Deol, Pooja Hegde in Image 2) */}
+          {/* Horizontal Swiping Photo Cards */}
           <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2 pt-1">
             {shopBarbers.map((barber) => {
               const isSelected = selectedBarberId === barber.barber_id;
@@ -441,7 +389,7 @@ export const ShopDetails: React.FC = () => {
 
       </div>
 
-      {/* 3. FIXED FULL-WIDTH RED/AMBER BOTTOM BUTTON (Identical to BookMyShow "Book tickets" button in Image 2) */}
+      {/* 3. FIXED FULL-WIDTH RED/AMBER BOTTOM BUTTON */}
       <div className="fixed bottom-0 left-0 right-0 z-40 p-4 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl border-t border-gray-100 dark:border-zinc-800 shadow-2xl">
         <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
           <div className="flex flex-col min-w-0">
