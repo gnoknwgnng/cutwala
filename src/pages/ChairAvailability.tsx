@@ -277,7 +277,7 @@ export const ChairAvailability: React.FC = () => {
                       animate={{
                         scale: isSelected ? 1.06 : 1,
                       }}
-                      className={`relative w-24 h-24 rounded-2xl overflow-hidden border-2 transition-all bg-black ${
+                      className={`relative w-24 h-24 rounded-2xl overflow-hidden border-2 transition-all bg-white dark:bg-zinc-900 p-1 ${
                         isSelected
                           ? 'border-orange-500 ring-4 ring-orange-500/30 shadow-xl scale-105'
                           : isOccupied
@@ -285,11 +285,11 @@ export const ChairAvailability: React.FC = () => {
                           : 'border-emerald-500/50 hover:border-emerald-400 shadow-md'
                       }`}
                     >
-                      {/* REAL CHAIR IMAGE (occupied.jpeg vs unoccupied.jpeg) */}
+                      {/* REAL CHAIR IMAGE (occupied.jpg vs unoccupied.jpg) */}
                       <img
-                        src={isOccupied ? "/occupied.jpeg" : "/unoccupied.jpeg"}
+                        src={isOccupied ? "/occupied.jpg" : "/unoccupied.jpg"}
                         alt={isOccupied ? "Occupied Barber Chair" : "Available Barber Chair"}
-                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
                       />
 
                       {/* Numbered status badge */}
@@ -306,7 +306,7 @@ export const ChairAvailability: React.FC = () => {
                       </div>
 
                       {/* Status Overlay Pill */}
-                      <div className="absolute bottom-1 left-1 right-1 bg-black/75 backdrop-blur-xs py-0.5 rounded-lg text-center">
+                      <div className="absolute bottom-1 left-1 right-1 bg-black/75 backdrop-blur-xs py-0.5 rounded-lg text-center z-10">
                         <span className={`text-[9px] font-black uppercase tracking-wider ${
                           isSelected ? 'text-orange-400' : isOccupied ? 'text-rose-400' : 'text-emerald-400'
                         }`}>
@@ -326,20 +326,20 @@ export const ChairAvailability: React.FC = () => {
             {/* Legend Box with Image Samples */}
             <div className="mt-6 flex flex-wrap gap-5 text-[10px] font-bold text-gray-600 dark:text-zinc-400 border-t border-gray-200 dark:border-zinc-800 pt-4 w-full justify-center">
               <div className="flex items-center gap-2">
-                <div className="h-6 w-6 rounded-lg overflow-hidden border border-emerald-500/50 bg-black">
-                  <img src="/unoccupied.jpeg" alt="Vacant" className="h-full w-full object-cover" />
+                <div className="h-6 w-6 rounded-lg overflow-hidden border border-emerald-500/50 bg-white p-0.5">
+                  <img src="/unoccupied.jpg" alt="Vacant" className="h-full w-full object-contain" />
                 </div>
                 <span>Vacant (Green)</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="h-6 w-6 rounded-lg overflow-hidden border border-rose-500/50 bg-black">
-                  <img src="/occupied.jpeg" alt="Occupied" className="h-full w-full object-cover" />
+                <div className="h-6 w-6 rounded-lg overflow-hidden border border-rose-500/50 bg-white p-0.5">
+                  <img src="/occupied.jpg" alt="Occupied" className="h-full w-full object-contain" />
                 </div>
                 <span>Occupied (Red)</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="h-6 w-6 rounded-lg overflow-hidden border-2 border-orange-500 bg-black ring-2 ring-orange-500/30">
-                  <img src="/unoccupied.jpeg" alt="Selected" className="h-full w-full object-cover" />
+                <div className="h-6 w-6 rounded-lg overflow-hidden border-2 border-orange-500 bg-white p-0.5 ring-2 ring-orange-500/30">
+                  <img src="/unoccupied.jpg" alt="Selected" className="h-full w-full object-contain" />
                 </div>
                 <span>Selected (Orange)</span>
               </div>
