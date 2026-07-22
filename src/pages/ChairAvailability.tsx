@@ -182,14 +182,83 @@ export const ChairAvailability: React.FC = () => {
         </div>
       </header>
 
-      {/* 2. MAIN SELECTION CONTENT (All 3 Sections on Same Page) */}
+      {/* 2. MAIN SELECTION CONTENT (Re-ordered: 1. Date & Time FIRST, 2. Barbers SECOND, 3. Chairs THIRD) */}
       <div className="max-w-2xl mx-auto w-full px-4 pt-4 flex flex-col gap-8">
         
-        {/* SECTION 1: BARBERS & STYLISTS */}
-        <div className="flex flex-col gap-3">
+        {/* SECTION 1: SELECT DATE & TIME (FIRST) */}
+        <div className="flex flex-col gap-4">
+          <h3 className="font-display font-extrabold text-base text-gray-900 dark:text-white flex items-center gap-2">
+            <Calendar className="h-5 w-5 text-amber-500" /> 1. Select Date & Time
+          </h3>
+
+          {/* Date Picker Horizontal Strip */}
+          <div className="flex flex-col gap-2">
+            <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
+              Choose Date
+            </span>
+            <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-1">
+              {datesList.map((item) => {
+                const isSelected = selectedDateStr === item.fullDateStr;
+                return (
+                  <motion.div
+                    key={item.fullDateStr}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => handleSelectDate(item.fullDateStr)}
+                    className={`flex flex-col items-center justify-center min-w-[70px] px-3 py-3 rounded-2xl border transition-all cursor-pointer shrink-0 ${
+                      isSelected
+                        ? 'bg-amber-500 border-amber-400 text-black shadow-lg shadow-amber-500/20'
+                        : 'bg-gray-50 dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 text-gray-800 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800/80'
+                    }`}
+                  >
+                    <span className={`text-[9px] font-bold uppercase tracking-wider ${isSelected ? 'text-black/60' : 'text-gray-400 dark:text-zinc-500'}`}>
+                      {item.monthName}
+                    </span>
+                    <span className="text-xl font-extrabold font-display leading-tight my-1">
+                      {item.dayNum}
+                    </span>
+                    <span className={`text-[9px] font-extrabold uppercase tracking-widest ${isSelected ? 'text-black' : 'text-gray-500 dark:text-zinc-400'}`}>
+                      {item.dayName}
+                    </span>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Time Slots Grid */}
+          <div className="flex flex-col gap-2 pt-2">
+            <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider flex items-center gap-1">
+              <Clock className="h-3.5 w-3.5 text-amber-500" /> Choose Time Slot
+            </span>
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2.5">
+              {timeSlots.map((slot) => {
+                const isSelected = selectedTimeStr === slot.time;
+                return (
+                  <button
+                    key={slot.time}
+                    onClick={() => handleSelectTime(slot.time, slot.isBooked)}
+                    disabled={slot.isBooked}
+                    className={`py-2.5 px-2 rounded-xl border text-xs font-extrabold transition-all text-center select-none cursor-pointer ${
+                      isSelected
+                        ? 'bg-amber-500 border-amber-400 text-black shadow-md'
+                        : slot.isBooked
+                        ? 'bg-gray-100 border-gray-200 text-gray-300 dark:bg-zinc-850 dark:border-zinc-800 dark:text-zinc-700 pointer-events-none line-through'
+                        : 'bg-gray-50 dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 text-gray-800 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800'
+                    }`}
+                  >
+                    {slot.time}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* SECTION 2: BARBERS & STYLISTS (SECOND) */}
+        <div className="flex flex-col gap-3 pt-4 border-t border-gray-150/60 dark:border-zinc-850">
           <div className="flex items-center justify-between">
             <h3 className="font-display font-extrabold text-base text-gray-900 dark:text-white flex items-center gap-2">
-              <UserCheck className="h-5 w-5 text-amber-500" /> 1. Select Barber & Stylist
+              <UserCheck className="h-5 w-5 text-amber-500" /> 2. Select Barber & Stylist
             </h3>
             <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
               Tap photo to select
@@ -236,11 +305,11 @@ export const ChairAvailability: React.FC = () => {
           </div>
         </div>
 
-        {/* SECTION 2: LIVE CHAIR STATUS */}
-        <div className="flex flex-col gap-4 pt-4 border-t border-gray-150/60 dark:border-zinc-850">
+        {/* SECTION 3: LIVE CHAIR STATUS (THIRD) */}
+        <div className="flex flex-col gap-4 pt-4 border-t border-gray-150/60 dark:border-zinc-850 mb-6">
           <div className="flex items-center justify-between">
             <h3 className="font-display font-extrabold text-base text-gray-900 dark:text-white flex items-center gap-2">
-              <Armchair className="h-5 w-5 text-amber-500" /> 2. Live Chair Status
+              <Armchair className="h-5 w-5 text-amber-500" /> 3. Live Chair Status
             </h3>
             <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
               Tap green chair to select
@@ -318,75 +387,6 @@ export const ChairAvailability: React.FC = () => {
               </div>
             </div>
 
-          </div>
-        </div>
-
-        {/* SECTION 3: SELECT DATE & TIME */}
-        <div className="flex flex-col gap-4 pt-4 border-t border-gray-150/60 dark:border-zinc-850 mb-6">
-          <h3 className="font-display font-extrabold text-base text-gray-900 dark:text-white flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-amber-500" /> 3. Select Date & Time
-          </h3>
-
-          {/* Date Picker Horizontal Strip */}
-          <div className="flex flex-col gap-2">
-            <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
-              Choose Date
-            </span>
-            <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-1">
-              {datesList.map((item) => {
-                const isSelected = selectedDateStr === item.fullDateStr;
-                return (
-                  <motion.div
-                    key={item.fullDateStr}
-                    whileTap={{ scale: 0.97 }}
-                    onClick={() => handleSelectDate(item.fullDateStr)}
-                    className={`flex flex-col items-center justify-center min-w-[70px] px-3 py-3 rounded-2xl border transition-all cursor-pointer shrink-0 ${
-                      isSelected
-                        ? 'bg-amber-500 border-amber-400 text-black shadow-lg shadow-amber-500/20'
-                        : 'bg-gray-50 dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 text-gray-800 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800/80'
-                    }`}
-                  >
-                    <span className={`text-[9px] font-bold uppercase tracking-wider ${isSelected ? 'text-black/60' : 'text-gray-400 dark:text-zinc-500'}`}>
-                      {item.monthName}
-                    </span>
-                    <span className="text-xl font-extrabold font-display leading-tight my-1">
-                      {item.dayNum}
-                    </span>
-                    <span className={`text-[9px] font-extrabold uppercase tracking-widest ${isSelected ? 'text-black' : 'text-gray-500 dark:text-zinc-400'}`}>
-                      {item.dayName}
-                    </span>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Time Slots Grid */}
-          <div className="flex flex-col gap-2 pt-2">
-            <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider flex items-center gap-1">
-              <Clock className="h-3.5 w-3.5 text-amber-500" /> Choose Time Slot
-            </span>
-            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2.5">
-              {timeSlots.map((slot) => {
-                const isSelected = selectedTimeStr === slot.time;
-                return (
-                  <button
-                    key={slot.time}
-                    onClick={() => handleSelectTime(slot.time, slot.isBooked)}
-                    disabled={slot.isBooked}
-                    className={`py-2.5 px-2 rounded-xl border text-xs font-extrabold transition-all text-center select-none cursor-pointer ${
-                      isSelected
-                        ? 'bg-amber-500 border-amber-400 text-black shadow-md'
-                        : slot.isBooked
-                        ? 'bg-gray-100 border-gray-200 text-gray-300 dark:bg-zinc-850 dark:border-zinc-800 dark:text-zinc-700 pointer-events-none line-through'
-                        : 'bg-gray-50 dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 text-gray-800 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800'
-                    }`}
-                  >
-                    {slot.time}
-                  </button>
-                );
-              })}
-            </div>
           </div>
         </div>
 
