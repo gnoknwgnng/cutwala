@@ -304,15 +304,6 @@ export const ChairAvailability: React.FC = () => {
                           {isSelected ? <Check className="h-3 w-3 stroke-[3.5]" /> : (index + 1)}
                         </span>
                       </div>
-
-                      {/* Status Overlay Pill */}
-                      <div className="absolute bottom-1 left-1 right-1 bg-black/75 backdrop-blur-xs py-0.5 rounded-lg text-center z-10">
-                        <span className={`text-[9px] font-black uppercase tracking-wider ${
-                          isSelected ? 'text-orange-400' : isOccupied ? 'text-rose-400' : 'text-emerald-400'
-                        }`}>
-                          {isSelected ? 'SELECTED' : isOccupied ? 'OCCUPIED' : 'VACANT'}
-                        </span>
-                      </div>
                     </motion.div>
 
                     <span className="text-xs font-extrabold text-gray-800 dark:text-zinc-200">
