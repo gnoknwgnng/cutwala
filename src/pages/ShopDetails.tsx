@@ -1,9 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Heart, Star, Clock, MapPin, ChevronLeft, UserCheck, Armchair, Check, ArrowRight } from 'lucide-react';
+import { 
+  Heart, 
+  Star, 
+  MapPin, 
+  ChevronLeft, 
+  Armchair, 
+  Check, 
+  Share2, 
+  Play, 
+  ThumbsUp, 
+  TrendingUp, 
+  Tag, 
+  Sparkles,
+  ArrowRight
+} from 'lucide-react';
 import { useStore } from '../store/useStore';
-import { Button, GlassCard, Badge } from '../components/UI';
+import { Button } from '../components/UI';
 
 export const ShopDetails: React.FC = () => {
   const { shopId } = useParams<{ shopId: string }>();
@@ -24,12 +38,13 @@ export const ShopDetails: React.FC = () => {
   } = useStore();
 
   const [selectedChair, setSelectedChair] = useState<string>(currentBookingFlow.chairId || '');
+  const [isInterested, setIsInterested] = useState<boolean>(false);
 
   // Find shop
   const shop = shops.find(s => s.shop_id === shopId) || shops[0];
   const isFav = favoriteShops.includes(shop.shop_id);
 
-  // Barbers working at this shop
+  // Barbers & chairs working at this shop
   const shopBarbers = barbers.filter(b => b.shop_id === shop.shop_id);
   const shopChairs = chairs.filter(c => c.shop_id === shop.shop_id);
 
@@ -83,171 +98,259 @@ export const ShopDetails: React.FC = () => {
     }
   };
 
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: shop.name,
+        text: `Book your cut at ${shop.name} on CutWala!`,
+        url: window.location.href,
+      }).catch(() => {});
+    } else {
+      showToast('Shop link copied to clipboard!', 'info');
+    }
+  };
+
   const selectedBarber = barbers.find(b => b.barber_id === selectedBarberId);
   const canProceed = selectedBarberId && selectedChair;
 
   return (
-    <div className="flex-1 flex flex-col bg-gray-50 dark:bg-zinc-950 pb-28 relative overflow-y-auto no-scrollbar">
+    <div className="flex-1 flex flex-col bg-white dark:bg-[#0b0b0c] pb-24 relative overflow-y-auto no-scrollbar">
       
-      {/* 1. Header Banner & Floating buttons */}
-      <div className="relative h-64 md:h-80 w-full overflow-hidden shrink-0 border-b border-gray-150/20 dark:border-zinc-800">
-        <img 
-          src={shop.image} 
-          alt={shop.name} 
-          className="h-full w-full object-cover"
-        />
-        {/* Dark overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/40" />
-
-        {/* Back and Favorite buttons */}
-        <div className="absolute top-4 left-4 right-4 flex justify-between items-center z-10">
+      {/* 1. BOOKMYSHOW STYLE TOP HEADER BAR */}
+      <header className="sticky top-0 z-30 flex h-14 items-center justify-between px-4 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border-b border-gray-100 dark:border-zinc-800">
+        <div className="flex items-center gap-3 min-w-0">
           <button 
             onClick={() => {
               resetBookingFlow();
               navigate('/app/home');
             }}
-            className="p-2.5 rounded-2xl bg-black/50 text-white backdrop-blur-md hover:bg-black/60 transition-colors border border-white/10 cursor-pointer"
+            className="p-1.5 rounded-full text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft className="h-6 w-6" />
           </button>
-          
-          <button 
-            onClick={() => setFavorite(shop.shop_id)}
-            className={`p-2.5 rounded-2xl backdrop-blur-md transition-colors border cursor-pointer ${
-              isFav 
-                ? 'bg-amber-500 text-black border-amber-400 font-bold' 
-                : 'bg-black/50 text-white border-white/10 hover:bg-black/60'
-            }`}
-          >
-            <Heart className={`h-5 w-5 ${isFav ? 'fill-black' : ''}`} />
-          </button>
-        </div>
-
-        {/* Shop Name & Details overlaid */}
-        <div className="absolute bottom-6 left-6 right-6 text-white">
-          <div className="flex items-center gap-2 mb-2">
-            <Badge status="OPEN" className="scale-90 origin-left" />
-            <div className="flex items-center gap-1 text-xs font-semibold text-amber-400">
-              <Star className="h-4 w-4 fill-amber-400" /> {shop.rating} (120+ reviews)
-            </div>
-          </div>
-          <h1 className="font-display font-extrabold text-2xl md:text-4xl tracking-tight">
+          <h1 className="font-display font-extrabold text-base text-gray-900 dark:text-white truncate">
             {shop.name}
           </h1>
-          <p className="text-sm text-gray-300 flex items-center gap-1.5 mt-1.5">
-            <MapPin className="h-4 w-4 text-amber-500 shrink-0" /> {shop.address}
-          </p>
         </div>
-      </div>
 
-      {/* 2. Content Panels */}
-      <div className="max-w-3xl mx-auto w-full px-4 mt-6 flex flex-col gap-8">
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={handleShare}
+            className="p-2 text-gray-600 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full transition-colors cursor-pointer"
+            title="Share"
+          >
+            <Share2 className="h-5 w-5" />
+          </button>
+          <button 
+            onClick={() => setFavorite(shop.shop_id)}
+            className="p-2 text-gray-600 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-full transition-colors cursor-pointer"
+            title="Favorite"
+          >
+            <Heart className={`h-5 w-5 ${isFav ? 'fill-rose-500 text-rose-500' : ''}`} />
+          </button>
+        </div>
+      </header>
+
+      {/* 2. MAIN CONTENT (BookMyShow Movie Details Structure) */}
+      <div className="max-w-2xl mx-auto w-full px-4 pt-4 flex flex-col gap-5">
         
-        {/* Description & Operating Hours */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="md:col-span-2">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-zinc-550 mb-2">
-              About the Shop
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-zinc-450 leading-relaxed font-medium">
-              {shop.description}
-            </p>
-          </div>
+        {/* HERO MEDIA POSTER CARD (Image 2 style) */}
+        <div className="relative w-full h-56 md:h-72 rounded-2xl overflow-hidden shadow-lg border border-gray-250/20 bg-zinc-900">
+          <img 
+            src={shop.image} 
+            alt={shop.name} 
+            className="w-full h-full object-cover"
+          />
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/20" />
 
-          <GlassCard className="!p-4 h-fit">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-zinc-500 mb-3 flex items-center gap-1.5">
-              <Clock className="h-4 w-4 text-amber-500" /> Working Hours
-            </h4>
-            <div className="flex justify-between text-xs font-semibold text-gray-700 dark:text-zinc-350">
-              <span>Mon - Sun</span>
-              <span>{shop.opening_time} - {shop.closing_time}</span>
-            </div>
-          </GlassCard>
-        </div>
-
-        {/* Gallery */}
-        <div>
-          <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-zinc-550 mb-3">
-            Gallery
-          </h3>
-          <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1.5 snap-x">
-            {shop.gallery.map((imgUrl, idx) => (
-              <div 
-                key={idx} 
-                className="w-40 h-28 rounded-2xl overflow-hidden shrink-0 border border-gray-250/20 snap-start bg-zinc-150 dark:bg-zinc-800"
-              >
-                <img 
-                  src={imgUrl} 
-                  alt="Gallery preview" 
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                />
+          {/* Center Play / Trailer Button */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <button className="flex items-center gap-2 px-4 py-2 rounded-full bg-black/60 backdrop-blur-md text-white border border-white/20 hover:scale-105 transition-transform cursor-pointer shadow-xl">
+              <div className="h-6 w-6 rounded-full bg-white text-black flex items-center justify-center pl-0.5">
+                <Play className="h-3.5 w-3.5 fill-black" />
               </div>
-            ))}
+              <span className="text-xs font-bold tracking-wide">Virtual Tour</span>
+            </button>
+          </div>
+
+          {/* Bottom Banner Strip across Poster (matches Releasing banner in Image 2) */}
+          <div className="absolute bottom-0 left-0 right-0 bg-black/80 backdrop-blur-md py-2 px-4 text-center border-t border-white/10">
+            <span className="text-xs font-bold text-white tracking-wide">
+              🟢 Open Now • Working Hours: {shop.opening_time} - {shop.closing_time}
+            </span>
           </div>
         </div>
 
-        {/* 3. AVAILABLE BARBERS (Auto-selected first one by default) */}
-        <div>
-          <h3 className="text-xs font-bold uppercase tracking-wider text-gray-450 dark:text-zinc-400 mb-4 flex items-center gap-2">
-            <span>💈</span> Available Barbers (Default Selected)
+        {/* INTERESTED / WISHLIST BAR (Matches "40.8K+ are interested" in Image 2) */}
+        <div className="flex items-center justify-between p-3.5 rounded-2xl bg-rose-50/60 dark:bg-rose-950/20 border border-rose-200/60 dark:border-rose-900/40">
+          <div className="flex items-center gap-3">
+            <div className="h-8 w-8 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center font-bold text-base shrink-0">
+              <ThumbsUp className="h-4.5 w-4.5 fill-rose-500 text-rose-500" />
+            </div>
+            <div>
+              <p className="text-xs font-extrabold text-gray-900 dark:text-white">
+                1.4K+ clients interested
+              </p>
+              <p className="text-[10px] text-gray-500 dark:text-zinc-400 font-medium">
+                Mark interested to add to your Wishlist
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={() => setIsInterested(!isInterested)}
+            className={`px-4 py-1.5 rounded-full border text-xs font-extrabold transition-all cursor-pointer ${
+              isInterested || isFav
+                ? 'bg-rose-500 text-white border-rose-500 shadow-md'
+                : 'border-rose-500/60 text-rose-600 dark:text-rose-400 hover:bg-rose-500/10'
+            }`}
+          >
+            {isInterested || isFav ? "Interested ✓" : "I'm interested"}
+          </button>
+        </div>
+
+        {/* SUB-INFO LINE & BADGES (Matches Image 2 format) */}
+        <div className="flex flex-col gap-2.5">
+          <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-gray-600 dark:text-zinc-350">
+            <span className="flex items-center gap-1 font-bold text-gray-900 dark:text-white">
+              <Star className="h-4 w-4 text-amber-500 fill-amber-500" /> {shop.rating} (120+ reviews)
+            </span>
+            <span>•</span>
+            <span className="flex items-center gap-1">
+              <MapPin className="h-3.5 w-3.5 text-amber-500" /> SOMA, San Francisco
+            </span>
+            <span>•</span>
+            <span className="font-bold text-amber-500">0.4 mi</span>
+          </div>
+
+          {/* Feature Badges */}
+          <div className="flex flex-wrap gap-2 text-[10px] font-bold uppercase tracking-wider">
+            <span className="px-2.5 py-1 rounded-md bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 border border-gray-200 dark:border-zinc-700">
+              AIR CONDITIONED
+            </span>
+            <span className="px-2.5 py-1 rounded-md bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 border border-gray-200 dark:border-zinc-700">
+              FREE ESPRESSO & BEER
+            </span>
+            <span className="px-2.5 py-1 rounded-md bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 border border-gray-200 dark:border-zinc-700">
+              HIGH SPEED WIFI
+            </span>
+          </div>
+        </div>
+
+        {/* TAGLINE / SYNOPSIS (Matches Movie Synopsis in Image 2) */}
+        <p className="text-xs text-gray-600 dark:text-zinc-400 font-medium leading-relaxed italic border-l-2 border-amber-500 pl-3 py-0.5">
+          "{shop.description}"
+        </p>
+
+        {/* TRENDING HYPE BOX (Matches blue Trending box in Image 2) */}
+        <div className="flex items-center gap-2.5 p-3 rounded-xl bg-blue-500/10 dark:bg-blue-500/10 border border-blue-500/20 text-xs">
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-600 text-white font-extrabold text-[10px] uppercase tracking-wider shrink-0 shadow-sm">
+            <TrendingUp className="h-3.5 w-3.5" /> Trending
+          </div>
+          <span className="font-bold text-blue-700 dark:text-blue-300 text-xs">
+            42 grooming appointments booked in last 24 hours
+          </span>
+        </div>
+
+        {/* TOP OFFERS FOR YOU (Matches Offers Row in Image 2) */}
+        <div className="flex flex-col gap-3 pt-2">
+          <h3 className="font-display font-extrabold text-base text-gray-900 dark:text-white">
+            Top offers for you
           </h3>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+          <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
+            {/* Offer 1 */}
+            <div className="min-w-[260px] p-3 rounded-2xl bg-amber-500/10 dark:bg-amber-500/10 border border-amber-500/30 flex items-center gap-3 shrink-0">
+              <div className="h-9 w-9 rounded-full bg-amber-500 text-black flex items-center justify-center font-bold text-sm shrink-0">
+                <Tag className="h-4.5 w-4.5" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-bold text-gray-900 dark:text-white truncate">
+                  Enjoy 20% OFF on Gentlemen's Combo!
+                </p>
+                <p className="text-[10px] text-amber-600 dark:text-amber-400 font-semibold mt-0.5">
+                  Tap to view details
+                </p>
+              </div>
+            </div>
+
+            {/* Offer 2 */}
+            <div className="min-w-[260px] p-3 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/10 border border-emerald-500/30 flex items-center gap-3 shrink-0">
+              <div className="h-9 w-9 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-sm shrink-0">
+                <Sparkles className="h-4.5 w-4.5" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-bold text-gray-900 dark:text-white truncate">
+                  Free Hot Towel Shave with Bandhan Card
+                </p>
+                <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5">
+                  Tap to view details
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* CAST / BARBERS & STYLISTS SECTION (Matches "Cast" section in Image 2) */}
+        <div className="flex flex-col gap-3 pt-4 border-t border-gray-150/60 dark:border-zinc-850">
+          <div className="flex items-center justify-between">
+            <h3 className="font-display font-extrabold text-base text-gray-900 dark:text-white">
+              Barbers & Stylists
+            </h3>
+            <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
+              Tap photo to select
+            </span>
+          </div>
+
+          {/* Horizontal Swiping Photo Cards (Identical layout to Vijay, Bobby Deol, Pooja Hegde in Image 2) */}
+          <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2 pt-1">
             {shopBarbers.map((barber) => {
               const isSelected = selectedBarberId === barber.barber_id;
               return (
                 <div
                   key={barber.barber_id}
                   onClick={() => handleSelectBarber(barber.barber_id)}
-                  className={`flex items-start gap-4 p-4 rounded-3xl border transition-all cursor-pointer select-none ${
-                    isSelected
-                      ? 'bg-amber-500/10 border-amber-500 shadow-md dark:bg-amber-500/5'
-                      : 'bg-white dark:bg-zinc-900 border-gray-150 dark:border-zinc-850 hover:bg-gray-50/50 dark:hover:bg-zinc-850/30'
-                  }`}
+                  className="flex flex-col items-center w-24 shrink-0 cursor-pointer group"
                 >
-                  <img
-                    src={barber.photo}
-                    alt={barber.name}
-                    className="h-16 w-16 rounded-2xl object-cover border border-gray-250/20 bg-zinc-150 dark:bg-zinc-800"
-                  />
+                  {/* Photo Container */}
+                  <div className={`relative h-24 w-24 rounded-2xl overflow-hidden mb-2 border-2 transition-all ${
+                    isSelected 
+                      ? 'border-amber-500 shadow-lg scale-105 ring-2 ring-amber-500/20' 
+                      : 'border-transparent group-hover:border-gray-300 dark:group-hover:border-zinc-700'
+                  }`}>
+                    <img
+                      src={barber.photo}
+                      alt={barber.name}
+                      className="h-full w-full object-cover"
+                    />
 
-                  <div className="flex-1 min-w-0 flex flex-col justify-between h-full">
-                    <div>
-                      <h4 className="font-bold text-sm text-gray-900 dark:text-white truncate">
-                        {barber.name}
-                      </h4>
-                      <p className="text-xs text-amber-500 dark:text-amber-400 font-semibold truncate mt-0.5">
-                        {barber.specialization}
-                      </p>
-                      <p className="text-[10px] text-gray-500 dark:text-zinc-500 font-bold uppercase mt-1">
-                        Exp: {barber.experience}
-                      </p>
-                    </div>
-
-                    <div className="flex items-center justify-between mt-2.5">
-                      <span className="text-[10px] bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-zinc-450 px-2 py-0.5 rounded-full font-bold">
-                        ⭐ {barber.rating}
-                      </span>
-                      
-                      <div className={`h-5 w-5 rounded-full border flex items-center justify-center transition-all ${
-                        isSelected 
-                          ? 'bg-amber-500 border-amber-400 text-black' 
-                          : 'border-gray-300 dark:border-zinc-700'
-                      }`}>
-                        {isSelected && <Check className="h-3.5 w-3.5 text-black stroke-[3.5]" />}
+                    {/* Selected badge overlay */}
+                    {isSelected && (
+                      <div className="absolute top-1.5 right-1.5 h-5 w-5 rounded-full bg-amber-500 text-black flex items-center justify-center shadow-md">
+                        <Check className="h-3.5 w-3.5 stroke-[3.5]" />
                       </div>
-                    </div>
+                    )}
                   </div>
+
+                  {/* Stylist Name */}
+                  <h4 className="font-bold text-xs text-gray-900 dark:text-white text-center truncate w-full">
+                    {barber.name}
+                  </h4>
+                  {/* Role / Specialization */}
+                  <p className="text-[10px] text-gray-500 dark:text-zinc-450 text-center truncate w-full font-medium mt-0.5">
+                    {barber.specialization.split('&')[0]}
+                  </p>
                 </div>
               );
             })}
           </div>
         </div>
 
-        {/* 4. LIVE CHAIR AVAILABILITY */}
-        <div className="border-t border-gray-200/60 dark:border-zinc-850 pt-8 mb-6">
-          <div className="flex items-center justify-between mb-6 px-1">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-450 dark:text-zinc-400 flex items-center gap-2">
+        {/* LIVE CHAIR AVAILABILITY SECTION */}
+        <div className="flex flex-col gap-4 pt-4 border-t border-gray-150/60 dark:border-zinc-850 mb-6">
+          <div className="flex items-center justify-between">
+            <h3 className="font-display font-extrabold text-base text-gray-900 dark:text-white flex items-center gap-2">
               <span>💺</span> Live Chair Status
             </h3>
             
@@ -257,15 +360,15 @@ export const ShopDetails: React.FC = () => {
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
               </span>
               <span className="text-[9px] uppercase font-bold tracking-wider text-gray-400 dark:text-zinc-500">
-                Live Polling Active
+                Live Polling
               </span>
             </div>
           </div>
 
-          <div className="flex flex-col items-center p-6 bg-white dark:bg-zinc-900 border border-gray-150/40 dark:border-zinc-800/80 rounded-3xl shadow-sm">
+          <div className="flex flex-col items-center p-6 bg-gray-50 dark:bg-zinc-900 border border-gray-200/60 dark:border-zinc-800/80 rounded-3xl shadow-sm">
             {/* Mirrors line */}
             <div className="w-4/5 h-2 rounded-full bg-zinc-300 dark:bg-zinc-800 shadow-inner mb-2" />
-            <p className="text-[9px] text-gray-400 dark:text-zinc-550 uppercase tracking-widest font-extrabold mb-10">
+            <p className="text-[9px] text-gray-400 dark:text-zinc-550 uppercase tracking-widest font-extrabold mb-8">
               Stylist Mirrors Workspace
             </p>
 
@@ -291,12 +394,11 @@ export const ShopDetails: React.FC = () => {
                           ? 'bg-amber-500/10 border-amber-500 text-amber-500 dark:bg-amber-500/5'
                           : isOccupied
                           ? 'bg-rose-500/10 border-rose-500/30 text-rose-500/80 dark:bg-rose-500/5'
-                          : 'bg-gray-50 dark:bg-zinc-950 border-gray-200 dark:border-zinc-800 text-emerald-500 hover:border-emerald-400'
+                          : 'bg-white dark:bg-zinc-950 border-gray-200 dark:border-zinc-800 text-emerald-500 hover:border-emerald-400'
                       }`}
                     >
                       <Armchair className="h-7 w-7" />
 
-                      {/* Small number tag */}
                       <div className="absolute -top-1.5 -right-1.5">
                         <span className={`flex h-4.5 w-4.5 items-center justify-center rounded-full text-[8px] font-bold border ${
                           isSelected 
@@ -319,7 +421,7 @@ export const ShopDetails: React.FC = () => {
             </div>
 
             {/* Legend Box */}
-            <div className="mt-8 flex gap-6 text-[10px] font-semibold text-gray-500 dark:text-zinc-450 border-t border-gray-100 dark:border-zinc-850 pt-4 w-full justify-center">
+            <div className="mt-8 flex gap-6 text-[10px] font-semibold text-gray-500 dark:text-zinc-450 border-t border-gray-200 dark:border-zinc-800 pt-4 w-full justify-center">
               <div className="flex items-center gap-1.5">
                 <div className="h-3 w-3 rounded bg-emerald-500/15 border border-emerald-500/30" />
                 <span>Available</span>
@@ -339,45 +441,27 @@ export const ShopDetails: React.FC = () => {
 
       </div>
 
-      {/* 5. Sticky Checkout drawer at the bottom */}
-      <div className="fixed bottom-18 md:bottom-0 left-0 right-0 md:left-64 z-30 p-4 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl border-t border-gray-200/50 dark:border-zinc-800/80 shadow-2xl transition-all duration-300">
-        <div className="max-w-3xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          
-          {/* Selected highlights */}
-          <div className="flex flex-wrap items-center gap-3.5 text-xs font-semibold">
-            {selectedBarber ? (
-              <div className="flex items-center gap-1.5 text-gray-800 dark:text-zinc-200 bg-gray-100 dark:bg-zinc-800 px-3 py-1.5 rounded-xl">
-                <UserCheck className="h-3.5 w-3.5 text-amber-500" />
-                <span>Stylist: {selectedBarber.name}</span>
-              </div>
-            ) : (
-              <div className="text-gray-400 dark:text-zinc-500 flex items-center gap-1">
-                <span>• Select a barber</span>
-              </div>
-            )}
-
-            {selectedChair ? (
-              <div className="flex items-center gap-1.5 text-gray-800 dark:text-zinc-200 bg-gray-100 dark:bg-zinc-800 px-3 py-1.5 rounded-xl">
-                <Armchair className="h-3.5 w-3.5 text-amber-500" />
-                <span>Chair: {selectedChair.split('_')[1] ? `Chair ${selectedChair.split('_')[1]}` : selectedChair}</span>
-              </div>
-            ) : (
-              <div className="text-gray-400 dark:text-zinc-500 flex items-center gap-1">
-                <span>• Choose an available chair</span>
-              </div>
-            )}
+      {/* 3. FIXED FULL-WIDTH RED/AMBER BOTTOM BUTTON (Identical to BookMyShow "Book tickets" button in Image 2) */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 p-4 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl border-t border-gray-100 dark:border-zinc-800 shadow-2xl">
+        <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
+          <div className="flex flex-col min-w-0">
+            <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
+              {selectedBarber ? `Stylist: ${selectedBarber.name}` : 'Stylist auto-selected'}
+            </span>
+            <span className="text-sm font-extrabold text-amber-500 dark:text-amber-400">
+              {selectedChair ? `Chair ${selectedChair.split('_')[1] || '1'} Selected` : 'Tap a green chair above'}
+            </span>
           </div>
 
-          {/* Action button */}
           <Button
             variant="primary"
             disabled={!canProceed}
             onClick={() => navigate('/app/date')}
-            className="sm:w-64 cursor-pointer"
+            className="w-48 sm:w-64 h-12 text-sm font-extrabold rounded-2xl cursor-pointer bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-600/25 border-none"
           >
-            Choose Date & Time <ArrowRight className="ml-2 h-4 w-4" />
+            <span>Book Appointment</span>
+            <ArrowRight className="ml-1.5 h-4 w-4" />
           </Button>
-
         </div>
       </div>
 
