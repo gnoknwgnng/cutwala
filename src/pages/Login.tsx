@@ -79,9 +79,9 @@ export const Login: React.FC = () => {
             {/* Logo */}
             <div className="flex flex-col items-center mb-8">
               <img 
-                src="/logo.svg" 
+                src="/cutwalalogo.jpeg" 
                 alt="CutWala Logo" 
-                className="h-20 w-20 object-contain drop-shadow-xl mb-3"
+                className="h-20 w-20 object-contain drop-shadow-xl mb-3 rounded-2xl"
               />
               <h2 className="font-display font-extrabold text-3xl tracking-tight text-gray-900 dark:text-white">
                 Welcome to CutWala

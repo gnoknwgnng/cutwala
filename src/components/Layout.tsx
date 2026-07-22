@@ -40,7 +40,7 @@ export const Layout: React.FC = () => {
             {/* Logo Brand */}
             <div className="flex items-center gap-3">
               <img 
-                src="/logo.svg" 
+                src="/cutwalalogo.jpeg" 
                 alt="CutWala Logo" 
                 className="h-10 w-10 object-contain drop-shadow-md"
               />
@@ -175,7 +175,7 @@ export const Layout: React.FC = () => {
           <header className="md:hidden flex h-14 items-center justify-between px-4 bg-white dark:bg-zinc-900 border-b border-gray-100 dark:border-zinc-800 shrink-0 sticky top-0 z-35 backdrop-blur-md bg-opacity-70 dark:bg-opacity-70">
             <div className="flex items-center gap-2.5">
               <img 
-                src="/logo.svg" 
+                src="/cutwalalogo.jpeg" 
                 alt="CutWala Logo" 
                 className="h-7 w-7 object-contain"
               />

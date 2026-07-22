@@ -29,9 +29,9 @@ export const SplashScreen: React.FC = () => {
         className="relative flex h-32 w-32 items-center justify-center rounded-3xl bg-zinc-900/80 p-4 border border-orange-500/30 shadow-2xl shadow-orange-500/20 backdrop-blur-xl"
       >
         <img 
-          src="/logo.svg" 
+          src="/cutwalalogo.jpeg" 
           alt="CutWala Logo" 
-          className="h-full w-full object-contain filter drop-shadow-[0_10px_20px_rgba(255,96,0,0.4)]"
+          className="h-full w-full object-contain filter drop-shadow-[0_10px_20px_rgba(255,96,0,0.4)] rounded-2xl"
         />
         
         {/* Decorative glowing background rings */}
