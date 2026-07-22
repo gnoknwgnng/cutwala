@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ChevronLeft, Armchair, Check, ArrowRight } from 'lucide-react';
+import { ChevronLeft, Armchair, Check, Calendar, Clock, ArrowRight, UserCheck } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { Button } from '../components/UI';
 
@@ -13,25 +13,77 @@ export const ChairAvailability: React.FC = () => {
     chairs, 
     setBookingBarber,
     setBookingChair, 
+    setBookingDate,
+    setBookingTime,
     tickChairs,
     showToast 
   } = useStore();
 
-  const [selectedChair, setSelectedChair] = useState<string>(currentBookingFlow.chairId || '');
   const shopId = currentBookingFlow.shopId || 'shop1';
 
   // Barbers and chairs for this shop
   const shopBarbers = barbers.filter(b => b.shop_id === shopId);
   const shopChairs = chairs.filter(c => c.shop_id === shopId);
 
-  const selectedBarberId = currentBookingFlow.barberId || (shopBarbers[0] ? shopBarbers[0].barber_id : '');
+  // Default state initialization
+  const [selectedBarberId, setSelectedBarberId] = useState<string>(
+    currentBookingFlow.barberId || (shopBarbers[0] ? shopBarbers[0].barber_id : '')
+  );
+  const [selectedChair, setSelectedChair] = useState<string>(currentBookingFlow.chairId || '');
 
-  // Auto-select first barber if none selected
+  // Generate next 14 days starting from today
+  const getDates = () => {
+    const dates = [];
+    const today = new Date();
+    
+    for (let i = 0; i < 14; i++) {
+      const targetDate = new Date(today);
+      targetDate.setDate(today.getDate() + i);
+      
+      const dayName = targetDate.toLocaleDateString('en-US', { weekday: 'short' });
+      const dayNum = targetDate.getDate();
+      const monthName = targetDate.toLocaleDateString('en-US', { month: 'short' });
+      const fullDateStr = targetDate.toISOString().split('T')[0]; // YYYY-MM-DD
+
+      dates.push({ dayName, dayNum, monthName, fullDateStr });
+    }
+    return dates;
+  };
+
+  const datesList = getDates();
+  const defaultDateStr = currentBookingFlow.date || datesList[0].fullDateStr;
+  const [selectedDateStr, setSelectedDateStr] = useState<string>(defaultDateStr);
+
+  const timeSlots = [
+    { time: '10:00 AM', isBooked: false },
+    { time: '10:30 AM', isBooked: false },
+    { time: '11:00 AM', isBooked: true },
+    { time: '11:30 AM', isBooked: false },
+    { time: '12:00 PM', isBooked: false },
+    { time: '01:30 PM', isBooked: true },
+    { time: '02:00 PM', isBooked: false },
+    { time: '03:00 PM', isBooked: false },
+    { time: '04:00 PM', isBooked: true },
+    { time: '04:30 PM', isBooked: false },
+    { time: '05:30 PM', isBooked: false },
+    { time: '06:00 PM', isBooked: false },
+  ];
+
+  const defaultTimeStr = currentBookingFlow.time || timeSlots[0].time;
+  const [selectedTimeStr, setSelectedTimeStr] = useState<string>(defaultTimeStr);
+
+  // Synchronize store defaults on mount
   useEffect(() => {
     if (!currentBookingFlow.barberId && shopBarbers.length > 0) {
       setBookingBarber(shopBarbers[0].barber_id);
     }
-  }, [shopId, shopBarbers, currentBookingFlow.barberId, setBookingBarber]);
+    if (!currentBookingFlow.date) {
+      setBookingDate(defaultDateStr);
+    }
+    if (!currentBookingFlow.time) {
+      setBookingTime(defaultTimeStr);
+    }
+  }, [shopId]);
 
   // Set up live ticking status simulation (toggles chair availability every 3.5s)
   useEffect(() => {
@@ -55,6 +107,7 @@ export const ChairAvailability: React.FC = () => {
   }, [chairs, selectedChair, shopChairs, setBookingChair, showToast]);
 
   const handleSelectBarber = (id: string) => {
+    setSelectedBarberId(id);
     setBookingBarber(id);
   };
 
@@ -73,17 +126,36 @@ export const ChairAvailability: React.FC = () => {
     }
   };
 
+  const handleSelectDate = (dateStr: string) => {
+    setSelectedDateStr(dateStr);
+    setBookingDate(dateStr);
+  };
+
+  const handleSelectTime = (timeStr: string, isBooked: boolean) => {
+    if (isBooked) return;
+    setSelectedTimeStr(timeStr);
+    setBookingTime(timeStr);
+  };
+
   const handleProceed = () => {
-    if (selectedBarberId && selectedChair) {
-      navigate('/app/date');
+    if (selectedBarberId && selectedChair && selectedDateStr && selectedTimeStr) {
+      navigate('/app/summary');
+    } else if (!selectedChair) {
+      showToast('Please select an available chair to proceed.', 'error');
     }
   };
 
   const selectedBarber = barbers.find(b => b.barber_id === selectedBarberId);
-  const canProceed = Boolean(selectedBarberId && selectedChair);
+  const canProceed = Boolean(selectedBarberId && selectedChair && selectedDateStr && selectedTimeStr);
+
+  const formatSelectedDateDisplay = (dateStr: string) => {
+    if (!dateStr) return '';
+    const dateObj = new Date(dateStr);
+    return dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  };
 
   return (
-    <div className="flex-1 flex flex-col bg-white dark:bg-[#0b0b0c] pb-24 relative select-none overflow-y-auto no-scrollbar">
+    <div className="flex-1 flex flex-col bg-white dark:bg-[#0b0b0c] pb-28 relative select-none overflow-y-auto no-scrollbar">
       
       {/* 1. TOP HEADER BAR */}
       <header className="flex h-14 items-center justify-between px-4 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border-b border-gray-100 dark:border-zinc-800 sticky top-0 z-30">
@@ -95,7 +167,7 @@ export const ChairAvailability: React.FC = () => {
             <ChevronLeft className="h-6 w-6" />
           </button>
           <h1 className="font-display font-extrabold text-base text-gray-900 dark:text-white">
-            Select Barber & Chair
+            Book Appointment
           </h1>
         </div>
 
@@ -110,14 +182,14 @@ export const ChairAvailability: React.FC = () => {
         </div>
       </header>
 
-      {/* 2. MAIN SELECTION CONTENT */}
-      <div className="max-w-2xl mx-auto w-full px-4 pt-4 flex flex-col gap-6">
+      {/* 2. MAIN SELECTION CONTENT (All 3 Sections on Same Page) */}
+      <div className="max-w-2xl mx-auto w-full px-4 pt-4 flex flex-col gap-8">
         
-        {/* BARBERS & STYLISTS SECTION */}
+        {/* SECTION 1: BARBERS & STYLISTS */}
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
-            <h3 className="font-display font-extrabold text-base text-gray-900 dark:text-white">
-              Barbers & Stylists
+            <h3 className="font-display font-extrabold text-base text-gray-900 dark:text-white flex items-center gap-2">
+              <UserCheck className="h-5 w-5 text-amber-500" /> 1. Select Barber & Stylist
             </h3>
             <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
               Tap photo to select
@@ -164,13 +236,12 @@ export const ChairAvailability: React.FC = () => {
           </div>
         </div>
 
-        {/* LIVE CHAIR AVAILABILITY SECTION */}
+        {/* SECTION 2: LIVE CHAIR STATUS */}
         <div className="flex flex-col gap-4 pt-4 border-t border-gray-150/60 dark:border-zinc-850">
           <div className="flex items-center justify-between">
             <h3 className="font-display font-extrabold text-base text-gray-900 dark:text-white flex items-center gap-2">
-              <span>💺</span> Live Chair Status
+              <Armchair className="h-5 w-5 text-amber-500" /> 2. Live Chair Status
             </h3>
-            
             <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
               Tap green chair to select
             </span>
@@ -250,17 +321,86 @@ export const ChairAvailability: React.FC = () => {
           </div>
         </div>
 
+        {/* SECTION 3: SELECT DATE & TIME */}
+        <div className="flex flex-col gap-4 pt-4 border-t border-gray-150/60 dark:border-zinc-850 mb-6">
+          <h3 className="font-display font-extrabold text-base text-gray-900 dark:text-white flex items-center gap-2">
+            <Calendar className="h-5 w-5 text-amber-500" /> 3. Select Date & Time
+          </h3>
+
+          {/* Date Picker Horizontal Strip */}
+          <div className="flex flex-col gap-2">
+            <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
+              Choose Date
+            </span>
+            <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-1">
+              {datesList.map((item) => {
+                const isSelected = selectedDateStr === item.fullDateStr;
+                return (
+                  <motion.div
+                    key={item.fullDateStr}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => handleSelectDate(item.fullDateStr)}
+                    className={`flex flex-col items-center justify-center min-w-[70px] px-3 py-3 rounded-2xl border transition-all cursor-pointer shrink-0 ${
+                      isSelected
+                        ? 'bg-amber-500 border-amber-400 text-black shadow-lg shadow-amber-500/20'
+                        : 'bg-gray-50 dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 text-gray-800 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800/80'
+                    }`}
+                  >
+                    <span className={`text-[9px] font-bold uppercase tracking-wider ${isSelected ? 'text-black/60' : 'text-gray-400 dark:text-zinc-500'}`}>
+                      {item.monthName}
+                    </span>
+                    <span className="text-xl font-extrabold font-display leading-tight my-1">
+                      {item.dayNum}
+                    </span>
+                    <span className={`text-[9px] font-extrabold uppercase tracking-widest ${isSelected ? 'text-black' : 'text-gray-500 dark:text-zinc-400'}`}>
+                      {item.dayName}
+                    </span>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Time Slots Grid */}
+          <div className="flex flex-col gap-2 pt-2">
+            <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider flex items-center gap-1">
+              <Clock className="h-3.5 w-3.5 text-amber-500" /> Choose Time Slot
+            </span>
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2.5">
+              {timeSlots.map((slot) => {
+                const isSelected = selectedTimeStr === slot.time;
+                return (
+                  <button
+                    key={slot.time}
+                    onClick={() => handleSelectTime(slot.time, slot.isBooked)}
+                    disabled={slot.isBooked}
+                    className={`py-2.5 px-2 rounded-xl border text-xs font-extrabold transition-all text-center select-none cursor-pointer ${
+                      isSelected
+                        ? 'bg-amber-500 border-amber-400 text-black shadow-md'
+                        : slot.isBooked
+                        ? 'bg-gray-100 border-gray-200 text-gray-300 dark:bg-zinc-850 dark:border-zinc-800 dark:text-zinc-700 pointer-events-none line-through'
+                        : 'bg-gray-50 dark:bg-zinc-900 border-gray-200 dark:border-zinc-800 text-gray-800 dark:text-zinc-300 hover:bg-gray-100 dark:hover:bg-zinc-800'
+                    }`}
+                  >
+                    {slot.time}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
       </div>
 
-      {/* 3. FIXED BOTTOM ACTION BUTTON */}
+      {/* 3. FIXED BOTTOM SUMMARY & PROCEED BUTTON */}
       <div className="fixed bottom-0 left-0 right-0 z-40 p-4 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl border-t border-gray-100 dark:border-zinc-800 shadow-2xl">
         <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
           <div className="flex flex-col min-w-0">
-            <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
-              {selectedBarber ? `Stylist: ${selectedBarber.name}` : 'Select a barber'}
+            <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider truncate">
+              {selectedBarber ? `Stylist: ${selectedBarber.name}` : 'Stylist: Auto'} • {selectedChair ? `Chair ${selectedChair.split('_')[1] || '1'}` : 'No Chair'}
             </span>
-            <span className="text-sm font-extrabold text-amber-500 dark:text-amber-400">
-              {selectedChair ? `Chair ${selectedChair.split('_')[1] || '1'} Selected` : 'Choose an available chair'}
+            <span className="text-xs font-extrabold text-amber-500 dark:text-amber-400 truncate mt-0.5">
+              📅 {formatSelectedDateDisplay(selectedDateStr)} @ {selectedTimeStr}
             </span>
           </div>
 
@@ -270,7 +410,7 @@ export const ChairAvailability: React.FC = () => {
             onClick={handleProceed}
             className="w-48 sm:w-64 h-12 text-sm font-extrabold rounded-2xl cursor-pointer bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-600/25 border-none"
           >
-            <span>Select Date & Time</span>
+            <span>Proceed to Summary</span>
             <ArrowRight className="ml-1.5 h-4 w-4" />
           </Button>
         </div>
