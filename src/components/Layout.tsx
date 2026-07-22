@@ -8,13 +8,13 @@ import { DrawerModal } from './UI';
 export const Layout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, theme, toggleTheme } = useStore();
+  const { user, theme, toggleTheme, userAddress } = useStore();
 
   // Saved locations state for header dropdown
   const savedAddresses = [
-    { id: '1', tag: 'Home', address: 'HNo 1-7-201/2/1 Kamala Nagar, Hyderabad' },
-    { id: '2', tag: 'Work', address: 'Building 4B, SOMA Tech District, SF' },
-    { id: '3', tag: 'Current GPS', address: 'San Francisco, CA 94103' },
+    { id: '1', tag: 'Current GPS', address: userAddress },
+    { id: '2', tag: 'Home', address: 'HNo 1-7-201/2/1 Kamala Nagar, Hyderabad' },
+    { id: '3', tag: 'Work', address: 'Building 4B, SOMA Tech District, SF' },
   ];
   
   const [activeAddress, setActiveAddress] = useState(savedAddresses[0]);

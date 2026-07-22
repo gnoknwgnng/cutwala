@@ -30,6 +30,7 @@ interface State {
   phoneToVerify: string | null;
   locationPermission: 'prompt' | 'granted' | 'denied';
   userLocation: { latitude: number; longitude: number } | null;
+  userAddress: string;
   shops: BarberShop[];
   barbers: Barber[];
   chairs: Chair[];
@@ -45,6 +46,7 @@ interface State {
   verifyOTP: (otp: string) => boolean;
   setLocationPermission: (status: 'granted' | 'denied') => void;
   requestRealLocation: () => void;
+  updateShopsAroundLocation: (lat: number, lng: number) => void;
   setFavorite: (shopId: string) => void;
   toggleTheme: () => void;
   showToast: (message: string, type?: 'success' | 'error' | 'info') => void;
@@ -57,24 +59,22 @@ interface State {
   setBookingChair: (chairId: string) => void;
   setBookingDate: (date: string) => void;
   setBookingTime: (time: string) => void;
-  setBookingService: (serviceId: string, serviceName: string, price: number) => void;
+  setBookingService: (serviceId: string, name: string, price: number) => void;
+  resetBookingFlow: () => void;
   confirmBooking: () => Booking;
   cancelBooking: (bookingId: string) => void;
-  resetBookingFlow: () => void;
-  
-  // Live Simulation
   tickChairs: () => void;
 }
 
 const initialBookingFlow: BookingFlow = {
-  shopId: '',
-  barberId: '',
-  chairId: '',
+  shopId: 'shop1',
+  barberId: 'barber1',
+  chairId: 'chair1_1',
   date: '',
   time: '',
-  serviceId: '',
-  serviceName: '',
-  price: 0,
+  serviceId: 's1',
+  serviceName: 'Signature Haircut',
+  price: 25
 };
 
 export const useStore = create<State>((set, get) => ({
@@ -83,6 +83,7 @@ export const useStore = create<State>((set, get) => ({
   phoneToVerify: null,
   locationPermission: 'prompt',
   userLocation: null,
+  userAddress: 'HNo 1-7-201/2/1 Kamala Nagar, Hyderabad',
   shops: mockShops,
   barbers: mockBarbers,
   chairs: mockChairs,
@@ -120,8 +121,8 @@ export const useStore = create<State>((set, get) => ({
         profile_image: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120&auto=format&fit=crop&q=80',
         created_at: new Date().toISOString(),
       };
-      set({ user: mockPhoneUser, otpSent: false, phoneToVerify: null });
-      get().showToast('Phone verified successfully!', 'success');
+      set({ user: mockPhoneUser });
+      get().showToast('Logged in successfully!', 'success');
       return true;
     } else {
       get().showToast('Invalid OTP! Please try "4827"', 'error');
@@ -138,6 +139,27 @@ export const useStore = create<State>((set, get) => ({
     }
   },
 
+  updateShopsAroundLocation: (lat: number, lng: number) => {
+    // Generate realistic shop locations distributed around user coordinates (300m - 1km radius)
+    const offsets = [
+      { dLat: 0.0032, dLng: 0.0025 },
+      { dLat: -0.0028, dLng: 0.0041 },
+      { dLat: 0.0045, dLng: -0.0035 },
+      { dLat: -0.0039, dLng: -0.0021 },
+    ];
+
+    const updatedShops = get().shops.map((shop, idx) => {
+      const offset = offsets[idx % offsets.length];
+      return {
+        ...shop,
+        latitude: lat + offset.dLat,
+        longitude: lng + offset.dLng,
+      };
+    });
+
+    set({ shops: updatedShops });
+  },
+
   requestRealLocation: () => {
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
@@ -147,24 +169,45 @@ export const useStore = create<State>((set, get) => ({
             locationPermission: 'granted',
             userLocation: { latitude, longitude }
           });
-          get().showToast('GPS Location detected!', 'success');
+
+          // Position all shops around user's real location
+          get().updateShopsAroundLocation(latitude, longitude);
+
+          // Reverse geocode to get city/street name for header
+          fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
+            .then(res => res.json())
+            .then(data => {
+              if (data && data.display_name) {
+                const parts = data.display_name.split(',');
+                const addressStr = parts.slice(0, 3).join(', ');
+                set({ userAddress: addressStr });
+              }
+            })
+            .catch(() => {});
+
+          get().showToast('GPS Location detected! Nearby shops loaded.', 'success');
         },
         (error) => {
           console.warn('Geolocation error or denied:', error.message);
-          // Fallback to Hyderabad / San Francisco if location denied/unavailable
+          const fallbackLat = 17.4065;
+          const fallbackLng = 78.4772;
           set({ 
             locationPermission: 'granted',
-            userLocation: { latitude: 17.4065, longitude: 78.4772 }
+            userLocation: { latitude: fallbackLat, longitude: fallbackLng }
           });
-          get().showToast('City location loaded', 'info');
+          get().updateShopsAroundLocation(fallbackLat, fallbackLng);
+          get().showToast('Showing nearby shops for your area', 'info');
         },
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
       );
     } else {
+      const fallbackLat = 17.4065;
+      const fallbackLng = 78.4772;
       set({ 
         locationPermission: 'granted',
-        userLocation: { latitude: 17.4065, longitude: 78.4772 }
+        userLocation: { latitude: fallbackLat, longitude: fallbackLng }
       });
+      get().updateShopsAroundLocation(fallbackLat, fallbackLng);
     }
   },
 
@@ -209,106 +252,124 @@ export const useStore = create<State>((set, get) => ({
   },
 
   logout: () => {
-    set({ user: null, locationPermission: 'prompt', userLocation: null });
-    get().showToast('Logged out safely', 'info');
+    set({ 
+      user: null, 
+      otpSent: false, 
+      phoneToVerify: null,
+      currentBookingFlow: initialBookingFlow 
+    });
+    get().showToast('Logged out successfully', 'info');
   },
 
-  // Booking actions
+  // Booking Flow Actions
   setBookingShop: (shopId: string) => {
-    const firstBarber = get().barbers.find(b => b.shop_id === shopId);
-    const barberId = firstBarber ? firstBarber.barber_id : '';
-    set((state) => ({ 
-      currentBookingFlow: { 
-        ...state.currentBookingFlow, 
-        shopId,
-        barberId,
-        serviceId: 's1',
-        serviceName: 'Signature Haircut',
-        price: 25
-      } 
+    set((state) => ({
+      currentBookingFlow: {
+        ...state.currentBookingFlow,
+        shopId
+      }
     }));
   },
 
   setBookingBarber: (barberId: string) => {
-    set((state) => ({ currentBookingFlow: { ...state.currentBookingFlow, barberId } }));
+    set((state) => ({
+      currentBookingFlow: {
+        ...state.currentBookingFlow,
+        barberId
+      }
+    }));
   },
 
   setBookingChair: (chairId: string) => {
-    set((state) => ({ currentBookingFlow: { ...state.currentBookingFlow, chairId } }));
+    set((state) => ({
+      currentBookingFlow: {
+        ...state.currentBookingFlow,
+        chairId
+      }
+    }));
   },
 
   setBookingDate: (date: string) => {
-    set((state) => ({ currentBookingFlow: { ...state.currentBookingFlow, date } }));
+    set((state) => ({
+      currentBookingFlow: {
+        ...state.currentBookingFlow,
+        date
+      }
+    }));
   },
 
   setBookingTime: (time: string) => {
-    set((state) => ({ currentBookingFlow: { ...state.currentBookingFlow, time } }));
-  },
-
-  setBookingService: (serviceId: string, serviceName: string, price: number) => {
-    set((state) => ({ 
-      currentBookingFlow: { 
-        ...state.currentBookingFlow, 
-        serviceId, 
-        serviceName, 
-        price 
-      } 
-    }));
-  },
-
-  confirmBooking: () => {
-    const flow = get().currentBookingFlow;
-    const user = get().user;
-    
-    const newBooking: Booking = {
-      booking_id: 'bk_' + Math.random().toString(36).substr(2, 9),
-      user_id: user?.id || 'guest_user',
-      shop_id: flow.shopId,
-      barber_id: flow.barberId,
-      chair_id: flow.chairId,
-      date: flow.date,
-      time: flow.time,
-      service: flow.serviceName,
-      price: flow.price,
-      otp: Math.floor(1000 + Math.random() * 9000).toString(),
-      status: 'upcoming',
-      created_at: new Date().toISOString(),
-    };
-
     set((state) => ({
-      bookings: [newBooking, ...state.bookings],
+      currentBookingFlow: {
+        ...state.currentBookingFlow,
+        time
+      }
     }));
-
-    get().showToast('Appointment confirmed!', 'success');
-    return newBooking;
   },
 
-  cancelBooking: (bookingId: string) => {
+  setBookingService: (serviceId: string, name: string, price: number) => {
     set((state) => ({
-      bookings: state.bookings.map((b) => 
-        b.booking_id === bookingId ? { ...b, status: 'cancelled' as const } : b
-      )
+      currentBookingFlow: {
+        ...state.currentBookingFlow,
+        serviceId,
+        serviceName: name,
+        price
+      }
     }));
-    get().showToast('Booking cancelled successfully', 'info');
   },
 
   resetBookingFlow: () => {
     set({ currentBookingFlow: initialBookingFlow });
   },
 
-  // Live simulation ticks: Toggles chair statuses randomly to feel active
-  tickChairs: () => {
+  confirmBooking: () => {
+    const { currentBookingFlow, user, bookings } = get();
+    const newBooking: Booking = {
+      booking_id: 'bk_' + Math.random().toString(36).substr(2, 9),
+      user_id: user ? user.id : 'guest',
+      shop_id: currentBookingFlow.shopId,
+      barber_id: currentBookingFlow.barberId,
+      chair_id: currentBookingFlow.chairId,
+      date: currentBookingFlow.date || new Date().toISOString().split('T')[0],
+      time: currentBookingFlow.time || '10:00 AM',
+      service: currentBookingFlow.serviceName || 'Signature Haircut',
+      price: currentBookingFlow.price || 25,
+      otp: Math.floor(1000 + Math.random() * 9000).toString(),
+      status: 'upcoming',
+      created_at: new Date().toISOString()
+    };
+
+    set({ 
+      bookings: [newBooking, ...bookings],
+      currentBookingFlow: initialBookingFlow 
+    });
+
+    return newBooking;
+  },
+
+  cancelBooking: (bookingId: string) => {
     set((state) => ({
-      chairs: state.chairs.map((chair) => {
-        // 15% chance to toggle a chair status randomly
+      bookings: state.bookings.map((b) =>
+        b.booking_id === bookingId ? { ...b, status: 'cancelled' as const } : b
+      ),
+    }));
+    get().showToast('Booking cancelled', 'info');
+  },
+
+  // Live ticking simulation toggling chair status
+  tickChairs: () => {
+    set((state) => {
+      const updatedChairs = state.chairs.map((chair) => {
+        // 15% chance to toggle status on each tick
         if (Math.random() < 0.15) {
           return {
             ...chair,
-            status: chair.status === 'available' ? 'occupied' : 'available',
-          };
+            status: chair.status === 'available' ? 'occupied' : 'available'
+          } as Chair;
         }
         return chair;
-      }),
-    }));
-  },
+      });
+      return { chairs: updatedChairs };
+    });
+  }
 }));
