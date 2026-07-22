@@ -88,7 +88,7 @@ export const useStore = create<State>((set, get) => ({
   bookings: mockBookingHistory,
   currentBookingFlow: initialBookingFlow,
   favoriteShops: ['shop1'], // Default favorite
-  theme: 'dark', // default theme
+  theme: 'light', // default theme is white/light mode
   toast: null,
 
   loginWithGoogle: () => {
