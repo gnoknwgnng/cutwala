@@ -15,6 +15,7 @@ export const ChairAvailability: React.FC = () => {
     setBookingChair, 
     setBookingDate,
     setBookingTime,
+    confirmBooking,
     tickChairs,
     showToast 
   } = useStore();
@@ -138,7 +139,8 @@ export const ChairAvailability: React.FC = () => {
 
   const handleProceed = () => {
     if (selectedBarberId && selectedChair && selectedDateStr && selectedTimeStr) {
-      navigate('/app/summary');
+      const newBooking = confirmBooking();
+      navigate('/app/success', { state: { booking: newBooking } });
     } else if (!selectedChair) {
       showToast('Please select an available chair to proceed.', 'error');
     }
@@ -404,7 +406,7 @@ export const ChairAvailability: React.FC = () => {
             onClick={handleProceed}
             className="w-48 sm:w-64 h-12 text-sm font-extrabold rounded-2xl cursor-pointer bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/25 border-none"
           >
-            <span>Proceed to Summary</span>
+            <span>Confirm & Book</span>
             <ArrowRight className="ml-1.5 h-4 w-4" />
           </Button>
         </div>
