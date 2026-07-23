@@ -49,28 +49,52 @@ export const ChairAvailability: React.FC = () => {
   const defaultDateStr = currentBookingFlow.date || datesList[0].fullDateStr;
   const [selectedDateStr, setSelectedDateStr] = useState<string>(defaultDateStr);
 
-  const timeSlots = [
-    { time: '12:00 PM', isBooked: false },
-    { time: '12:30 PM', isBooked: false },
-    { time: '01:00 PM', isBooked: false },
-    { time: '01:30 PM', isBooked: true },
-    { time: '02:00 PM', isBooked: false },
-    { time: '02:30 PM', isBooked: false },
-    { time: '03:00 PM', isBooked: false },
-    { time: '03:30 PM', isBooked: true },
-    { time: '04:00 PM', isBooked: false },
-    { time: '04:30 PM', isBooked: false },
-    { time: '05:30 PM', isBooked: false },
-    { time: '06:00 PM', isBooked: false },
-  ];
+  // Dynamic time slots calculation from 10:00 AM to 08:00 PM based on selected date & barber
+  const generateTimeSlots = (dateStr: string, barberId: string) => {
+    const rawSlots = [
+      '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM',
+      '12:00 PM', '12:30 PM', '01:00 PM', '01:30 PM',
+      '02:00 PM', '02:30 PM', '03:00 PM', '03:30 PM',
+      '04:00 PM', '04:30 PM', '05:00 PM', '05:30 PM',
+      '06:00 PM', '06:30 PM', '07:00 PM', '07:30 PM', '08:00 PM'
+    ];
 
-  const defaultTimeStr = currentBookingFlow.time || timeSlots[0].time;
-  const [selectedTimeStr, setSelectedTimeStr] = useState<string>(defaultTimeStr);
+    // Seed pseudo-random generator based on date and barberId
+    const seedStr = `${dateStr}_${barberId}`;
+    let hash = 0;
+    for (let i = 0; i < seedStr.length; i++) {
+      hash = (hash << 5) - hash + seedStr.charCodeAt(i);
+      hash |= 0;
+    }
+
+    return rawSlots.map((time, index) => {
+      // Deterministic booked slots pattern per barber & date combination
+      const isBooked = ((Math.abs(hash) + index * 7 + (index % 3)) % 5) === 0;
+      return { time, isBooked };
+    });
+  };
 
   const [selectedChair, setSelectedChair] = useState<string>(currentBookingFlow.chairId || '');
   const [selectedBarberId, setSelectedBarberId] = useState<string>(
     currentBookingFlow.barberId || (shopBarbers[0] ? shopBarbers[0].barber_id : '')
   );
+
+  const timeSlots = generateTimeSlots(selectedDateStr, selectedBarberId);
+
+  const defaultTimeStr = currentBookingFlow.time || (timeSlots.find(s => !s.isBooked)?.time || '10:00 AM');
+  const [selectedTimeStr, setSelectedTimeStr] = useState<string>(defaultTimeStr);
+
+  // Auto-adjust selected time if it becomes booked on date or barber change
+  useEffect(() => {
+    const currentSlot = timeSlots.find(s => s.time === selectedTimeStr);
+    if (!currentSlot || currentSlot.isBooked) {
+      const firstAvailable = timeSlots.find(s => !s.isBooked);
+      if (firstAvailable) {
+        setSelectedTimeStr(firstAvailable.time);
+        setBookingTime(firstAvailable.time);
+      }
+    }
+  }, [selectedDateStr, selectedBarberId]);
 
   // Synchronize store defaults on mount
   useEffect(() => {
