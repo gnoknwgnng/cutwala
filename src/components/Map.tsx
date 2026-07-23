@@ -78,7 +78,7 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
       return '1.1 km';
     };
 
-    // Add Real Interactive Markers for each Shop (Matching Exact User Reference Image)
+    // Add Real Interactive Markers for each Shop (Compact & Sleek Design to prevent map overlap)
     openShops.forEach((shop) => {
       const isSelected = selectedShop?.shop_id === shop.shop_id;
       const distanceDisplay = getDistanceStr(shop.latitude, shop.longitude, shop.shop_id);
@@ -87,31 +87,32 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
         className: 'custom-shop-card-marker',
         html: `
           <div class="relative group cursor-pointer flex flex-col items-center select-none" style="transform: translate(-50%, -100%);">
-            <!-- White Card Banner -->
-            <div class="flex items-center gap-2.5 p-2 bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border transition-all duration-300 ${
+            <!-- White Card / Compact Pill -->
+            <div class="flex items-center ${
               isSelected 
-                ? 'border-orange-500 ring-4 ring-orange-500/30 scale-105' 
-                : 'border-gray-150/80 dark:border-zinc-800 hover:scale-105'
-            }">
+                ? 'gap-2 p-1.5 pr-3 bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border-2 border-orange-500 ring-4 ring-orange-500/30 scale-110 z-50' 
+                : 'gap-1.5 p-1 pr-2 bg-white/95 dark:bg-zinc-900/95 rounded-full shadow-md border border-gray-250/90 dark:border-zinc-800 hover:scale-105'
+            } transition-all duration-200">
+              
               <!-- Thumbnail Photo -->
               <img 
                 src="${shop.image}" 
                 alt="${shop.name}" 
-                class="h-10 w-10 rounded-xl object-cover border border-gray-100 dark:border-zinc-800 shrink-0" 
+                class="${isSelected ? 'h-8 w-8 rounded-xl' : 'h-5 w-5 rounded-full'} object-cover border border-gray-100 dark:border-zinc-800 shrink-0" 
               />
               
               <!-- Shop Info -->
-              <div class="flex flex-col text-left min-w-0 pr-1">
-                <span class="text-[11px] font-black text-gray-900 dark:text-white truncate max-w-[115px] leading-tight">
+              <div class="flex flex-col text-left min-w-0 pr-0.5">
+                <span class="${isSelected ? 'text-[11px] max-w-[95px]' : 'text-[9.5px] max-w-[62px]'} font-extrabold text-gray-900 dark:text-white truncate leading-tight">
                   ${shop.name}
                 </span>
                 
-                <div class="flex items-center gap-1 mt-0.5">
-                  <span class="text-[10px] font-extrabold text-orange-500 flex items-center">
-                    ★ ${shop.rating}
+                <div class="flex items-center gap-0.5">
+                  <span class="text-[9px] font-black text-orange-500 flex items-center">
+                    ★${shop.rating}
                   </span>
-                  <span class="text-[9px] font-bold text-gray-400 dark:text-zinc-400">
-                    ${distanceDisplay}
+                  <span class="text-[8px] font-bold text-gray-400 dark:text-zinc-400">
+                    • ${distanceDisplay}
                   </span>
                 </div>
               </div>
@@ -119,10 +120,8 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
 
             <!-- Pointer Triangle & Orange Location Pin Dot -->
             <div class="flex flex-col items-center -mt-0.5">
-              <div class="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[6px] border-t-white dark:border-t-zinc-900"></div>
-              <div class="h-3.5 w-3.5 rounded-full bg-orange-500 border-2 border-white dark:border-zinc-900 shadow-lg -mt-1 flex items-center justify-center">
-                <div class="h-1 w-1 rounded-full bg-white"></div>
-              </div>
+              <div class="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[5px] ${isSelected ? 'border-t-orange-500' : 'border-t-white dark:border-t-zinc-900'}"></div>
+              <div class="h-2.5 w-2.5 rounded-full bg-orange-500 border border-white dark:border-zinc-900 shadow-md -mt-0.5"></div>
             </div>
           </div>
         `,
@@ -130,7 +129,10 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
         iconAnchor: [0, 0],
       });
 
-      const marker = L.marker([shop.latitude, shop.longitude], { icon: customIcon }).addTo(map);
+      const marker = L.marker([shop.latitude, shop.longitude], { 
+        icon: customIcon,
+        zIndexOffset: isSelected ? 1000 : 10
+      }).addTo(map);
 
       marker.on('click', () => {
         onSelectShop(shop);
@@ -139,9 +141,9 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
       markersRef.current[shop.shop_id] = marker;
     });
 
-  }, [shops, openShops, userLocation]);
+  }, [shops, openShops, userLocation, selectedShop]);
 
-  // Handle Real User Location Pulsing Marker
+  // Handle Real User Location Pulsing Marker (Always on Top Layer)
   useEffect(() => {
     if (!mapInstanceRef.current || !userLocation) return;
     const map = mapInstanceRef.current;
@@ -154,15 +156,18 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
       className: 'user-gps-marker',
       html: `
         <div class="relative flex h-8 w-8 items-center justify-center -translate-x-1/2 -translate-y-1/2">
-          <div class="absolute h-full w-full animate-ping rounded-full bg-blue-500/40 opacity-75"></div>
-          <div class="relative h-4 w-4 rounded-full bg-blue-600 border-2 border-white shadow-lg"></div>
+          <div class="absolute h-full w-full animate-ping rounded-full bg-blue-500/50 opacity-75"></div>
+          <div class="relative h-4.5 w-4.5 rounded-full bg-blue-600 border-2 border-white shadow-xl"></div>
         </div>
       `,
       iconSize: [32, 32],
       iconAnchor: [16, 16]
     });
 
-    userMarkerRef.current = L.marker([userLocation.latitude, userLocation.longitude], { icon: userIcon }).addTo(map);
+    userMarkerRef.current = L.marker([userLocation.latitude, userLocation.longitude], { 
+      icon: userIcon,
+      zIndexOffset: 2000 // Always render above shop cards so user location is 100% visible
+    }).addTo(map);
 
     // Pan smoothly to real user location on initial detection
     map.flyTo([userLocation.latitude, userLocation.longitude], 14, { duration: 1.5 });
