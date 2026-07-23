@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { Compass, Calendar, Sparkles, Sun, Moon, MapPin, ChevronDown, Check, Search, SlidersHorizontal, LogOut, Heart } from 'lucide-react';
+import { Compass, Calendar, Sparkles, Sun, Moon, MapPin, ChevronDown, Check, Search, LogOut, Heart, Bell } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { motion } from 'framer-motion';
 import { DrawerModal, Button } from './UI';
@@ -32,6 +32,7 @@ export const Layout: React.FC = () => {
   const [isAddressModalOpen, setIsAddressModalOpen] = useState<boolean>(false);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState<boolean>(false);
   const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
+  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState<boolean>(false);
 
   // Filter state inside drawer
   const [tempDistance, setTempDistance] = useState<number>(maxDistance);
@@ -203,89 +204,105 @@ export const Layout: React.FC = () => {
       {/* 3. MAIN CONTENT CONTAINER */}
       <main className={`flex-1 min-h-screen relative flex flex-col ${isMainTab ? 'md:pl-64 pb-18 md:pb-0' : 'pb-0'}`}>
         
-        {/* TOP HEADER: Logo with Address + Gender Category Toggle + Search Bar */}
+        {/* TOP HEADER: Logo with Address + Gender Toggle + Full Search Bar + Notification Bell */}
         {isMainTab && (
-          <header className="flex h-20 items-center justify-between px-2.5 sm:px-4 md:px-6 bg-white/95 dark:bg-zinc-900/95 border-b border-gray-100 dark:border-zinc-800 shrink-0 sticky top-0 z-35 backdrop-blur-md gap-2 md:gap-4">
+          <header className="flex flex-col bg-white/95 dark:bg-zinc-900/95 border-b border-gray-100 dark:border-zinc-800 shrink-0 sticky top-0 z-35 backdrop-blur-md px-3 md:px-6 py-2.5 gap-2.5 shadow-sm">
             
-            {/* Logo & User Address Stacked Directly Below */}
-            <div className="flex flex-col justify-center min-w-0 shrink-0">
-              {/* Logo */}
-              <div className="flex items-center gap-1.5">
-                <img 
-                  src="/cutwalalogo.jpeg" 
-                  alt="CutWala Logo" 
-                  className="h-7 w-7 object-contain rounded-lg shadow-sm"
-                />
-                <span className="font-display font-extrabold text-base md:text-lg bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
-                  CutWala
-                </span>
+            {/* ROW 1: Logo & Address (Left) | Gender Toggle (Center) | Notification Bell (Right) */}
+            <div className="flex items-center justify-between gap-2 w-full">
+              
+              {/* Logo & User Address Stacked Directly Below */}
+              <div className="flex flex-col justify-center min-w-0 shrink-0">
+                {/* Logo */}
+                <div className="flex items-center gap-1.5">
+                  <img 
+                    src="/cutwalalogo.jpeg" 
+                    alt="CutWala Logo" 
+                    className="h-7 w-7 object-contain rounded-lg shadow-sm"
+                  />
+                  <span className="font-display font-extrabold text-base md:text-lg bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
+                    CutWala
+                  </span>
+                </div>
+
+                {/* USER ADDRESS VISIBLE DIRECTLY BELOW LOGO */}
+                <button
+                  onClick={() => setIsAddressModalOpen(true)}
+                  className="flex items-center gap-1 text-[10px] font-extrabold text-gray-700 dark:text-zinc-300 hover:text-orange-500 transition-colors cursor-pointer max-w-[130px] sm:max-w-[200px] truncate mt-0.5"
+                  title="Change Location"
+                >
+                  <MapPin className="h-3 w-3 text-orange-500 shrink-0 fill-orange-500" />
+                  <span className="truncate">{activeAddress.tag} - {activeAddress.address}</span>
+                  <ChevronDown className="h-3 w-3 text-gray-400 shrink-0" />
+                </button>
               </div>
 
-              {/* USER ADDRESS VISIBLE DIRECTLY BELOW LOGO */}
+              {/* GENDER CATEGORY TOGGLE BAR (MEN vs WOMEN vs ALL) */}
+              <div className="flex items-center p-1 bg-gray-100 dark:bg-zinc-800 rounded-2xl border border-gray-200/60 dark:border-zinc-750 shrink-0 shadow-inner">
+                <button
+                  onClick={() => setFilters({ genderFilter: 'men' })}
+                  className={`px-3 py-1 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-1 ${
+                    genderFilter === 'men'
+                      ? 'bg-orange-500 text-white shadow-md'
+                      : 'text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white'
+                  }`}
+                >
+                  <span>👨 Men</span>
+                </button>
+
+                <button
+                  onClick={() => setFilters({ genderFilter: 'women' })}
+                  className={`px-3 py-1 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-1 ${
+                    genderFilter === 'women'
+                      ? 'bg-orange-500 text-white shadow-md'
+                      : 'text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white'
+                  }`}
+                >
+                  <span>👩 Women</span>
+                </button>
+
+                <button
+                  onClick={() => setFilters({ genderFilter: 'all' })}
+                  className={`px-2.5 py-1 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-1 ${
+                    genderFilter === 'all'
+                      ? 'bg-orange-500 text-white shadow-md'
+                      : 'text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white'
+                  }`}
+                >
+                  <span>💈 All</span>
+                </button>
+              </div>
+
+              {/* NOTIFICATION BELL BUTTON (REPLACES FILTER BUTTON) */}
               <button
-                onClick={() => setIsAddressModalOpen(true)}
-                className="flex items-center gap-1 text-[10px] md:text-[11px] font-extrabold text-gray-700 dark:text-zinc-300 hover:text-orange-500 transition-colors cursor-pointer max-w-[130px] xs:max-w-[180px] sm:max-w-[240px] truncate mt-0.5"
-                title="Change Location"
+                onClick={() => setIsNotificationModalOpen(true)}
+                className="relative h-9 w-9 rounded-2xl bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-700 dark:text-zinc-200 flex items-center justify-center shrink-0 cursor-pointer transition-all active:scale-95 border border-gray-200/50 dark:border-zinc-700/50"
+                title="Notifications"
               >
-                <MapPin className="h-3 w-3 text-orange-500 shrink-0 fill-orange-500" />
-                <span className="truncate">{activeAddress.tag} - {activeAddress.address}</span>
-                <ChevronDown className="h-3 w-3 text-gray-400 shrink-0" />
+                <Bell className="h-4.5 w-4.5 text-orange-500" />
+                {/* Active Notification Badge Red Dot */}
+                <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-white dark:ring-zinc-900 animate-pulse"></span>
               </button>
+
             </div>
 
-            {/* GENDER CATEGORY TOGGLE DIRECTLY ON HEADER */}
-            <div className="flex items-center p-1 bg-gray-100 dark:bg-zinc-800 rounded-2xl border border-gray-200/60 dark:border-zinc-750 shrink-0 shadow-inner">
-              <button
-                onClick={() => setFilters({ genderFilter: 'men' })}
-                className={`px-2.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-1 ${
-                  genderFilter === 'men'
-                    ? 'bg-orange-500 text-white shadow-md scale-102'
-                    : 'text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white'
-                }`}
-              >
-                <span>👨 Men</span>
-              </button>
-
-              <button
-                onClick={() => setFilters({ genderFilter: 'women' })}
-                className={`px-2.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-1 ${
-                  genderFilter === 'women'
-                    ? 'bg-orange-500 text-white shadow-md scale-102'
-                    : 'text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white'
-                }`}
-              >
-                <span>👩 Women</span>
-              </button>
-
-              <button
-                onClick={() => setFilters({ genderFilter: 'all' })}
-                className={`px-2 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-1 ${
-                  genderFilter === 'all'
-                    ? 'bg-orange-500 text-white shadow-md scale-102'
-                    : 'text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white'
-                }`}
-              >
-                <span>💈 All</span>
-              </button>
-            </div>
-
-            {/* SEARCH BAR WITH SIDE FILTER & RECOMMENDATIONS DROPDOWN */}
-            <div className="flex-1 flex items-center gap-2 max-w-sm ml-auto relative">
-              <div className="relative flex-1 min-w-[120px]">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            {/* ROW 2: FULLY VISIBLE PROMINENT SEARCH BAR */}
+            <div className="w-full relative">
+              <div className="relative w-full">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Search 'Best Barber'..."
+                  placeholder="Search 'Best Barber', shops, services..."
                   value={searchQuery}
                   onFocus={() => setIsSearchFocused(true)}
                   onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full h-10 pl-9 pr-3 text-xs font-semibold rounded-2xl bg-gray-100 dark:bg-zinc-800 border border-transparent focus:border-orange-500 focus:bg-white dark:focus:bg-zinc-900 text-gray-900 dark:text-white transition-all outline-none"
+                  className="w-full h-9.5 pl-10 pr-4 text-xs font-semibold rounded-2xl bg-gray-100 dark:bg-zinc-800 border border-transparent focus:border-orange-500 focus:bg-white dark:focus:bg-zinc-900 text-gray-900 dark:text-white transition-all outline-none"
                 />
 
                 {/* SEARCH RECOMMENDATIONS POPOVER */}
                 {isSearchFocused && (
-                  <div className="absolute top-12 left-0 right-0 z-50 bg-white dark:bg-zinc-900 rounded-2xl p-3.5 shadow-2xl border border-gray-150 dark:border-zinc-800 flex flex-col gap-2.5 animate-fade-in min-w-[220px]">
+                  <div className="absolute top-11 left-0 right-0 z-50 bg-white dark:bg-zinc-900 rounded-2xl p-3.5 shadow-2xl border border-gray-150 dark:border-zinc-800 flex flex-col gap-2.5 animate-fade-in">
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-extrabold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
                         Recommended Searches
@@ -322,15 +339,6 @@ export const Layout: React.FC = () => {
                   </div>
                 )}
               </div>
-
-              {/* Side Filter Icon Button */}
-              <button
-                onClick={() => setIsFilterModalOpen(true)}
-                className="h-10 w-10 rounded-2xl bg-orange-500 hover:bg-orange-600 text-white flex items-center justify-center shadow-md shadow-orange-500/20 shrink-0 cursor-pointer transition-all active:scale-95"
-                title="Filter Options"
-              >
-                <SlidersHorizontal className="h-4.5 w-4.5" />
-              </button>
             </div>
 
           </header>
@@ -398,6 +406,37 @@ export const Layout: React.FC = () => {
             </Button>
           </div>
 
+        </div>
+      </DrawerModal>
+
+      {/* 5. NOTIFICATIONS DRAWER MODAL */}
+      <DrawerModal
+        isOpen={isNotificationModalOpen}
+        onClose={() => setIsNotificationModalOpen(false)}
+        title="Notifications & Updates"
+      >
+        <div className="flex flex-col gap-3 pt-2">
+          <div className="p-3.5 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex gap-3 items-start">
+            <div className="h-8 w-8 rounded-xl bg-orange-500 text-white flex items-center justify-center shrink-0">
+              <Calendar className="h-4 w-4" />
+            </div>
+            <div>
+              <p className="text-xs font-extrabold text-gray-900 dark:text-white">Active Appointment Scheduled</p>
+              <p className="text-[11px] text-gray-500 dark:text-zinc-400 mt-0.5">Your haircut at The Razor's Edge is confirmed for 10:30 AM.</p>
+              <span className="text-[9px] font-bold text-orange-500 mt-1 block">10 mins ago</span>
+            </div>
+          </div>
+
+          <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex gap-3 items-start">
+            <div className="h-8 w-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
+              <Sparkles className="h-4 w-4" />
+            </div>
+            <div>
+              <p className="text-xs font-extrabold text-gray-900 dark:text-white">CutWala AI Hairstyle Feature</p>
+              <p className="text-[11px] text-gray-500 dark:text-zinc-400 mt-0.5">AI virtual try-on features coming soon to your area!</p>
+              <span className="text-[9px] font-bold text-emerald-500 mt-1 block">1 hour ago</span>
+            </div>
+          </div>
         </div>
       </DrawerModal>
 
