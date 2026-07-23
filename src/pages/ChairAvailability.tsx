@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ChevronLeft, Check, Calendar, Clock, ArrowRight, UserCheck } from 'lucide-react';
+import { ChevronLeft, Check, Calendar, Clock, ArrowRight, UserCheck, Home, AlertTriangle } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { Button } from '../components/UI';
 
@@ -164,7 +164,14 @@ export const ChairAvailability: React.FC = () => {
     setBookingBarber(id);
   };
 
+  // Check if ALL chairs in the shop/slot are occupied
+  const areAllChairsOccupied = shopChairs.length > 0 && shopChairs.every(c => c.status === 'occupied');
+
   const handleProceed = () => {
+    if (areAllChairsOccupied) {
+      showToast('All chairs are currently occupied for this slot.', 'error');
+      return;
+    }
     if (selectedBarberId && selectedChair && selectedDateStr && selectedTimeStr) {
       const newBooking = confirmBooking();
       navigate('/app/success', { state: { booking: newBooking } });
@@ -173,7 +180,7 @@ export const ChairAvailability: React.FC = () => {
     }
   };
 
-  const canProceed = Boolean(selectedBarberId && selectedChair && selectedDateStr && selectedTimeStr);
+  const canProceed = Boolean(!areAllChairsOccupied && selectedBarberId && selectedChair && selectedDateStr && selectedTimeStr);
 
   return (
     <div className="flex-1 flex flex-col bg-white dark:bg-[#0b0b0c] pb-24 relative select-none overflow-y-auto no-scrollbar">
@@ -277,9 +284,24 @@ export const ChairAvailability: React.FC = () => {
               <span className="text-xl">💺</span> Live Chair Seating
             </h3>
             <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
-              Tap empty chair to select
+              {areAllChairsOccupied ? 'All Seats Full' : 'Tap empty chair to select'}
             </span>
           </div>
+
+          {/* ALL CHAIRS FULL ALERT BANNER */}
+          {areAllChairsOccupied && (
+            <motion.div
+              initial={{ opacity: 0, y: -5 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center gap-3 text-rose-600 dark:text-rose-400"
+            >
+              <AlertTriangle className="h-5 w-5 text-rose-500 shrink-0" />
+              <div>
+                <p className="text-xs font-black uppercase tracking-wider">All Chairs Currently Occupied</p>
+                <p className="text-[11px] font-semibold opacity-90">All seats are full for this slot. Please select another slot or return to Home.</p>
+              </div>
+            </motion.div>
+          )}
 
           <div className="flex flex-col items-center p-5 bg-gray-50 dark:bg-zinc-900 border border-gray-200/60 dark:border-zinc-800/80 rounded-3xl shadow-sm">
             {/* Mirrors line */}
@@ -419,17 +441,35 @@ export const ChairAvailability: React.FC = () => {
 
       </div>
 
-      {/* 3. FIXED BOTTOM FULL-WIDTH CONFIRM BUTTON */}
+      {/* 3. FIXED BOTTOM ACTION CONTAINER */}
       <div className="fixed bottom-0 left-0 right-0 z-40 p-3 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl border-t border-gray-100 dark:border-zinc-800 shadow-2xl">
-        <div className="max-w-2xl mx-auto w-full">
+        <div className="max-w-2xl mx-auto w-full flex flex-col gap-2">
+          
+          {/* RETURN BACK TO HOME SCREEN BUTTON (APPEARS WHEN ALL CHAIRS FILLED) */}
+          {areAllChairsOccupied && (
+            <Button
+              variant="outline"
+              onClick={() => navigate('/app/home')}
+              className="w-full h-11 text-xs font-extrabold rounded-2xl cursor-pointer bg-orange-500 hover:bg-orange-600 text-white border-none shadow-md flex items-center justify-center gap-2 active:scale-95 transition-all"
+            >
+              <Home className="h-4 w-4" />
+              <span>Return Back to Home Screen</span>
+            </Button>
+          )}
+
+          {/* CONFIRM & BOOK BUTTON (DISABLED WHEN ALL CHAIRS FILLED) */}
           <Button
             variant="primary"
-            disabled={!canProceed}
+            disabled={!canProceed || areAllChairsOccupied}
             onClick={handleProceed}
-            className="w-full h-12 text-sm font-extrabold rounded-2xl cursor-pointer bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/25 border-none flex items-center justify-center gap-2"
+            className={`w-full h-12 text-sm font-extrabold rounded-2xl border-none flex items-center justify-center gap-2 transition-all ${
+              areAllChairsOccupied || !canProceed
+                ? 'bg-gray-200 dark:bg-zinc-850 text-gray-400 dark:text-zinc-600 cursor-not-allowed opacity-60 pointer-events-none'
+                : 'bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/25 cursor-pointer active:scale-95'
+            }`}
           >
-            <span>Confirm & Book</span>
-            <ArrowRight className="h-4 w-4" />
+            <span>{areAllChairsOccupied ? 'Confirm & Book (Disabled)' : 'Confirm & Book'}</span>
+            {!areAllChairsOccupied && <ArrowRight className="h-4 w-4" />}
           </Button>
         </div>
       </div>
