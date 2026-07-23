@@ -402,8 +402,8 @@ export const ChairAvailability: React.FC = () => {
             </span>
           </div>
 
-          {/* SINGLE HORIZONTAL LINE FOR ALL BARBERS */}
-          <div className="flex gap-4 overflow-x-auto no-scrollbar pt-1 pb-2">
+          {/* RESPONSIVE GRID LAYOUT FOR ALL BARBERS (FITS IN WINDOW WITHOUT HORIZONTAL SCROLL) */}
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 gap-3 sm:gap-4 pt-1 pb-2">
             
             {/* 1. Last Time Barbers */}
             {lastTimeBarbers.map((barber) => {
@@ -412,9 +412,9 @@ export const ChairAvailability: React.FC = () => {
                 <div
                   key={barber.barber_id}
                   onClick={() => handleSelectBarber(barber.barber_id)}
-                  className="flex flex-col items-center w-24 shrink-0 cursor-pointer group"
+                  className="flex flex-col items-center w-full cursor-pointer group"
                 >
-                  <div className={`relative h-24 w-24 rounded-2xl overflow-hidden mb-1.5 border-2 transition-all ${
+                  <div className={`relative w-full aspect-square rounded-2xl overflow-hidden mb-1.5 border-2 transition-all ${
                     isSelected 
                       ? 'border-orange-500 shadow-lg scale-105 ring-2 ring-orange-500/30' 
                       : 'border-orange-400 dark:border-orange-500/50 group-hover:border-orange-500 shadow-md'
@@ -450,9 +450,9 @@ export const ChairAvailability: React.FC = () => {
                 <div
                   key={barber.barber_id}
                   onClick={() => handleSelectBarber(barber.barber_id)}
-                  className="flex flex-col items-center w-24 shrink-0 cursor-pointer group"
+                  className="flex flex-col items-center w-full cursor-pointer group"
                 >
-                  <div className={`relative h-24 w-24 rounded-2xl overflow-hidden mb-1.5 border-2 transition-all ${
+                  <div className={`relative w-full aspect-square rounded-2xl overflow-hidden mb-1.5 border-2 transition-all ${
                     isSelected 
                       ? 'border-orange-500 shadow-lg scale-105 ring-2 ring-orange-500/20' 
                       : 'border-emerald-500/50 group-hover:border-emerald-500 shadow-sm'
@@ -486,9 +486,9 @@ export const ChairAvailability: React.FC = () => {
               return (
                 <div
                   key={barber.barber_id}
-                  className="flex flex-col items-center w-24 shrink-0 opacity-70 cursor-not-allowed pointer-events-none select-none"
+                  className="flex flex-col items-center w-full opacity-70 cursor-not-allowed pointer-events-none select-none"
                 >
-                  <div className="relative h-24 w-24 rounded-2xl overflow-hidden mb-1.5 border-2 border-gray-250 dark:border-zinc-800 bg-gray-200">
+                  <div className="relative w-full aspect-square rounded-2xl overflow-hidden mb-1.5 border-2 border-gray-250 dark:border-zinc-800 bg-gray-200">
                     {/* BLACK AND WHITE PHOTO */}
                     <img
                       src={barber.photo}
