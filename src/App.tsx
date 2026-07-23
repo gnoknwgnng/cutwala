@@ -16,6 +16,7 @@ import { SelectDate } from './pages/SelectDate';
 import { SelectTime } from './pages/SelectTime';
 import { BookingSummary } from './pages/BookingSummary';
 import { BookingSuccess } from './pages/BookingSuccess';
+import { Favorites } from './pages/Favorites';
 import { UpcomingBooking } from './pages/UpcomingBooking';
 import { BookingHistory } from './pages/BookingHistory';
 import { Profile } from './pages/Profile';
@@ -78,6 +79,7 @@ function App() {
           
           {/* Sidebar/Bottom-nav main views */}
           <Route path="home" element={<Home />} />
+          <Route path="favorites" element={<Favorites />} />
           <Route path="bookings" element={<UpcomingBooking />} />
           <Route path="history" element={<BookingHistory />} />
           <Route path="profile" element={<Profile />} />

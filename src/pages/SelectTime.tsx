@@ -11,20 +11,11 @@ export const SelectTime: React.FC = () => {
   const [selectedTime, setSelectedTime] = useState<string>(currentBookingFlow.time || '');
 
   const timeSlots = [
+    { time: '10:00 AM', isBooked: false },
+    { time: '10:30 AM', isBooked: false },
+    { time: '11:00 AM', isBooked: true },
+    { time: '11:30 AM', isBooked: false },
     { time: '12:00 PM', isBooked: false },
-    { time: '12:30 PM', isBooked: false },
-    { time: '01:00 PM', isBooked: false },
-    { time: '01:30 PM', isBooked: true },
-    { time: '02:00 PM', isBooked: false },
-    { time: '02:30 PM', isBooked: false },
-    { time: '03:00 PM', isBooked: false },
-    { time: '03:30 PM', isBooked: false },
-    { time: '04:00 PM', isBooked: true },
-    { time: '04:30 PM', isBooked: false },
-    { time: '05:00 PM', isBooked: false },
-    { time: '05:30 PM', isBooked: false },
-    { time: '06:00 PM', isBooked: false },
-    { time: '06:30 PM', isBooked: false },
   ];
 
   const handleSelectTime = (timeStr: string, isBooked: boolean) => {

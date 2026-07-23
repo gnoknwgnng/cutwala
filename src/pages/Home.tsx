@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Star, DollarSign, ArrowRight, X, Compass } from 'lucide-react';
+import { MapPin, Star, DollarSign, ArrowRight, X, Heart } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { Map } from '../components/Map';
 import type { BarberShop } from '../mock/mockData';
@@ -9,7 +9,7 @@ import { Badge } from '../components/UI';
 
 export const Home: React.FC = () => {
   const navigate = useNavigate();
-  const { setBookingShop } = useStore();
+  const { setBookingShop, favoriteShops, setFavorite } = useStore();
   const [selectedShop, setSelectedShop] = useState<BarberShop | null>(null);
 
   const handleSelectShop = (shop: BarberShop) => {
@@ -45,17 +45,7 @@ export const Home: React.FC = () => {
         />
       </div>
 
-      {/* 2. Bottom Guidance Badge when no pin is selected */}
-      {!selectedShop && (
-        <div className="absolute bottom-6 left-4 right-4 z-10 max-w-sm mx-auto text-center pointer-events-none">
-          <div className="bg-black/80 dark:bg-zinc-900/90 backdrop-blur-md text-white text-xs font-semibold py-2.5 px-4 rounded-full shadow-2xl border border-white/10 inline-flex items-center gap-2">
-            <Compass className="h-4 w-4 text-orange-400 animate-spin" style={{ animationDuration: '6s' }} />
-            <span>Tap any pin on the map to view shop & book</span>
-          </div>
-        </div>
-      )}
-
-      {/* 3. Single Selected Shop Slide-Up Card (Google Maps style) */}
+      {/* 2. Single Selected Shop Slide-Up Card (Google Maps style) */}
       <AnimatePresence>
         {selectedShop && (
           <motion.div
@@ -69,17 +59,34 @@ export const Home: React.FC = () => {
               onClick={() => handleOpenDetails(selectedShop.shop_id)}
               className="bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl rounded-3xl p-4 shadow-2xl border border-orange-500/30 flex gap-4 cursor-pointer relative group overflow-hidden"
             >
-              {/* Close Button */}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedShop(null);
-                }}
-                className="absolute top-3 right-3 h-7 w-7 rounded-full bg-gray-100 dark:bg-zinc-800 text-gray-500 dark:text-zinc-400 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-zinc-700 transition-colors z-10 cursor-pointer"
-                title="Dismiss"
-              >
-                <X className="h-4 w-4" />
-              </button>
+              {/* Top Action Buttons (Close & Favorite) */}
+              <div className="absolute top-3 right-3 flex items-center gap-1.5 z-10">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setFavorite(selectedShop.shop_id);
+                  }}
+                  className={`h-7 w-7 rounded-full flex items-center justify-center transition-colors cursor-pointer ${
+                    favoriteShops.includes(selectedShop.shop_id)
+                      ? 'bg-rose-500/10 text-rose-500'
+                      : 'bg-gray-100 dark:bg-zinc-800 text-gray-400 hover:text-rose-500'
+                  }`}
+                  title="Favorite"
+                >
+                  <Heart className={`h-4 w-4 ${favoriteShops.includes(selectedShop.shop_id) ? 'fill-rose-500' : ''}`} />
+                </button>
+
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedShop(null);
+                  }}
+                  className="h-7 w-7 rounded-full bg-gray-100 dark:bg-zinc-800 text-gray-500 dark:text-zinc-400 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-zinc-700 transition-colors cursor-pointer"
+                  title="Dismiss"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
 
               {/* Shop Image */}
               <div className="h-24 w-24 rounded-2xl overflow-hidden shrink-0 bg-zinc-100 dark:bg-zinc-800 relative border border-gray-250/20">

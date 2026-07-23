@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { Compass, Calendar, Sparkles, Sun, Moon, MapPin, ChevronDown, Check, Search, SlidersHorizontal, LogOut } from 'lucide-react';
+import { Compass, Calendar, Sparkles, Sun, Moon, MapPin, ChevronDown, Check, Search, SlidersHorizontal, LogOut, Heart } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { motion } from 'framer-motion';
 import { DrawerModal, Button } from './UI';
@@ -38,12 +38,13 @@ export const Layout: React.FC = () => {
 
   const mainNavItems = [
     { path: '/app/home', label: 'Explore', icon: Compass, isAction: false },
+    { path: '/app/favorites', label: 'Favorites', icon: Heart, isAction: false },
     { path: '/app/bookings', label: 'Bookings', icon: Calendar, isAction: false },
     { path: '#ai-hairstyle', label: 'AI Hairstyle', icon: Sparkles, isAction: true },
   ];
 
   // Bottom nav and sidebar only render on main tab routes
-  const isMainTab = ['/app/home', '/app/bookings', '/app/history', '/app/profile'].includes(location.pathname);
+  const isMainTab = ['/app/home', '/app/favorites', '/app/bookings', '/app/history', '/app/profile'].includes(location.pathname);
 
   const handleNavClick = (item: typeof mainNavItems[0], e: React.MouseEvent) => {
     if (item.isAction) {
