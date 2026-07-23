@@ -203,14 +203,14 @@ export const Layout: React.FC = () => {
       {/* 3. MAIN CONTENT CONTAINER */}
       <main className={`flex-1 min-h-screen relative flex flex-col ${isMainTab ? 'md:pl-64 pb-18 md:pb-0' : 'pb-0'}`}>
         
-        {/* TOP HEADER: Logo with Address Stacked Below + Search Bar with Recommendations */}
+        {/* TOP HEADER: Logo with Address + Gender Category Toggle + Search Bar */}
         {isMainTab && (
-          <header className="flex h-20 items-center justify-between px-3 md:px-6 bg-white/95 dark:bg-zinc-900/95 border-b border-gray-100 dark:border-zinc-800 shrink-0 sticky top-0 z-35 backdrop-blur-md gap-3">
+          <header className="flex h-20 items-center justify-between px-2.5 sm:px-4 md:px-6 bg-white/95 dark:bg-zinc-900/95 border-b border-gray-100 dark:border-zinc-800 shrink-0 sticky top-0 z-35 backdrop-blur-md gap-2 md:gap-4">
             
             {/* Logo & User Address Stacked Directly Below */}
             <div className="flex flex-col justify-center min-w-0 shrink-0">
               {/* Logo */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <img 
                   src="/cutwalalogo.jpeg" 
                   alt="CutWala Logo" 
@@ -224,8 +224,8 @@ export const Layout: React.FC = () => {
               {/* USER ADDRESS VISIBLE DIRECTLY BELOW LOGO */}
               <button
                 onClick={() => setIsAddressModalOpen(true)}
-                className="flex items-center gap-1 text-[11px] font-extrabold text-gray-700 dark:text-zinc-300 hover:text-orange-500 transition-colors cursor-pointer max-w-[160px] xs:max-w-[220px] sm:max-w-[280px] truncate mt-0.5"
-                title="Change Delivery Location"
+                className="flex items-center gap-1 text-[10px] md:text-[11px] font-extrabold text-gray-700 dark:text-zinc-300 hover:text-orange-500 transition-colors cursor-pointer max-w-[130px] xs:max-w-[180px] sm:max-w-[240px] truncate mt-0.5"
+                title="Change Location"
               >
                 <MapPin className="h-3 w-3 text-orange-500 shrink-0 fill-orange-500" />
                 <span className="truncate">{activeAddress.tag} - {activeAddress.address}</span>
@@ -233,13 +233,49 @@ export const Layout: React.FC = () => {
               </button>
             </div>
 
+            {/* GENDER CATEGORY TOGGLE DIRECTLY ON HEADER */}
+            <div className="flex items-center p-1 bg-gray-100 dark:bg-zinc-800 rounded-2xl border border-gray-200/60 dark:border-zinc-750 shrink-0 shadow-inner">
+              <button
+                onClick={() => setFilters({ genderFilter: 'men' })}
+                className={`px-2.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-1 ${
+                  genderFilter === 'men'
+                    ? 'bg-orange-500 text-white shadow-md scale-102'
+                    : 'text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white'
+                }`}
+              >
+                <span>👨 Men</span>
+              </button>
+
+              <button
+                onClick={() => setFilters({ genderFilter: 'women' })}
+                className={`px-2.5 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-1 ${
+                  genderFilter === 'women'
+                    ? 'bg-orange-500 text-white shadow-md scale-102'
+                    : 'text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white'
+                }`}
+              >
+                <span>👩 Women</span>
+              </button>
+
+              <button
+                onClick={() => setFilters({ genderFilter: 'all' })}
+                className={`px-2 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-1 ${
+                  genderFilter === 'all'
+                    ? 'bg-orange-500 text-white shadow-md scale-102'
+                    : 'text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white'
+                }`}
+              >
+                <span>💈 All</span>
+              </button>
+            </div>
+
             {/* SEARCH BAR WITH SIDE FILTER & RECOMMENDATIONS DROPDOWN */}
-            <div className="flex-1 flex items-center gap-2 max-w-md ml-auto relative">
-              <div className="relative flex-1">
+            <div className="flex-1 flex items-center gap-2 max-w-sm ml-auto relative">
+              <div className="relative flex-1 min-w-[120px]">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Search 'Best Barber', shops..."
+                  placeholder="Search 'Best Barber'..."
                   value={searchQuery}
                   onFocus={() => setIsSearchFocused(true)}
                   onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
@@ -249,7 +285,7 @@ export const Layout: React.FC = () => {
 
                 {/* SEARCH RECOMMENDATIONS POPOVER */}
                 {isSearchFocused && (
-                  <div className="absolute top-12 left-0 right-0 z-50 bg-white dark:bg-zinc-900 rounded-2xl p-3.5 shadow-2xl border border-gray-150 dark:border-zinc-800 flex flex-col gap-2.5 animate-fade-in">
+                  <div className="absolute top-12 left-0 right-0 z-50 bg-white dark:bg-zinc-900 rounded-2xl p-3.5 shadow-2xl border border-gray-150 dark:border-zinc-800 flex flex-col gap-2.5 animate-fade-in min-w-[220px]">
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-extrabold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
                         Recommended Searches
@@ -313,45 +349,6 @@ export const Layout: React.FC = () => {
         title="Filter Barber Shops"
       >
         <div className="flex flex-col gap-6 pt-2">
-          
-          {/* A. MEN vs WOMEN TOGGLE BAR */}
-          <div className="flex flex-col gap-2">
-            <label className="text-xs font-extrabold text-gray-800 dark:text-zinc-200 uppercase tracking-wider">
-              Gender Category
-            </label>
-            <div className="grid grid-cols-3 gap-2 p-1.5 bg-gray-100 dark:bg-zinc-850 rounded-2xl border border-gray-200 dark:border-zinc-800">
-              <button
-                onClick={() => setTempGender('men')}
-                className={`py-2.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
-                  tempGender === 'men'
-                    ? 'bg-orange-500 text-white shadow-md'
-                    : 'text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white'
-                }`}
-              >
-                👨 Men
-              </button>
-              <button
-                onClick={() => setTempGender('women')}
-                className={`py-2.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
-                  tempGender === 'women'
-                    ? 'bg-orange-500 text-white shadow-md'
-                    : 'text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white'
-                }`}
-              >
-                👩 Women
-              </button>
-              <button
-                onClick={() => setTempGender('all')}
-                className={`py-2.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
-                  tempGender === 'all'
-                    ? 'bg-orange-500 text-white shadow-md'
-                    : 'text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white'
-                }`}
-              >
-                💈 All
-              </button>
-            </div>
-          </div>
 
           {/* B. DISTANCE RANGE SLIDER */}
           <div className="flex flex-col gap-3">
