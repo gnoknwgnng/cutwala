@@ -391,148 +391,126 @@ export const ChairAvailability: React.FC = () => {
           </div>
         </div>
 
-        {/* 3. BARBERS & STYLISTS SELECTION (3 SECTONS: Last Time Barber, Available, Not Available B&W) */}
-        <div className="flex flex-col gap-5 pt-2 mb-6">
+        {/* 3. BARBERS & STYLISTS SELECTION (ALL IN ONE HORIZONTAL LINE WITHOUT SUBHEADINGS) */}
+        <div className="flex flex-col gap-3 pt-2 mb-6">
           <div className="flex items-center justify-between">
             <h3 className="font-display font-extrabold text-base text-gray-900 dark:text-white flex items-center gap-2">
               <UserCheck className="h-5 w-5 text-orange-500" /> Barbers & Stylists
             </h3>
             <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
-              Select your preferred stylist
+              Tap photo to select
             </span>
           </div>
 
-          {/* SECTION 1: LAST TIME BARBER (YOUR PREVIOUS BARBER) */}
-          {lastTimeBarbers.length > 0 && (
-            <div className="flex flex-col gap-2 p-3 bg-orange-500/5 dark:bg-orange-500/10 rounded-2xl border border-orange-500/20">
-              <span className="text-[11px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-wider flex items-center gap-1.5">
-                ✨ Last Time Barber (Your Previous Stylist)
-              </span>
-              <div className="flex gap-4 overflow-x-auto no-scrollbar pt-1">
-                {lastTimeBarbers.map((barber) => {
-                  const isSelected = selectedBarberId === barber.barber_id;
-                  return (
-                    <div
-                      key={barber.barber_id}
-                      onClick={() => handleSelectBarber(barber.barber_id)}
-                      className="flex flex-col items-center w-24 shrink-0 cursor-pointer group"
-                    >
-                      <div className={`relative h-24 w-24 rounded-2xl overflow-hidden mb-1.5 border-2 transition-all ${
-                        isSelected 
-                          ? 'border-orange-500 shadow-lg scale-105 ring-2 ring-orange-500/30' 
-                          : 'border-orange-300 dark:border-orange-500/40 group-hover:border-orange-500'
-                      }`}>
-                        <img
-                          src={barber.photo}
-                          alt={barber.name}
-                          className="h-full w-full object-cover"
-                        />
-                        <div className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-orange-500 text-[8px] font-black text-white uppercase shadow-md">
-                          Last Time
-                        </div>
-                        {isSelected && (
-                          <div className="absolute top-1.5 right-1.5 h-5 w-5 rounded-full bg-orange-500 text-white flex items-center justify-center shadow-md">
-                            <Check className="h-3.5 w-3.5 stroke-[3.5]" />
-                          </div>
-                        )}
-                      </div>
-                      <h4 className="font-bold text-xs text-gray-900 dark:text-white text-center truncate w-full">
-                        {barber.name}
-                      </h4>
-                      <p className="text-[10px] text-orange-500 text-center truncate w-full font-bold">
-                        ★ {barber.rating} • {barber.experience}
-                      </p>
+          {/* SINGLE HORIZONTAL LINE FOR ALL BARBERS */}
+          <div className="flex gap-4 overflow-x-auto no-scrollbar pt-1 pb-2">
+            
+            {/* 1. Last Time Barbers */}
+            {lastTimeBarbers.map((barber) => {
+              const isSelected = selectedBarberId === barber.barber_id;
+              return (
+                <div
+                  key={barber.barber_id}
+                  onClick={() => handleSelectBarber(barber.barber_id)}
+                  className="flex flex-col items-center w-24 shrink-0 cursor-pointer group"
+                >
+                  <div className={`relative h-24 w-24 rounded-2xl overflow-hidden mb-1.5 border-2 transition-all ${
+                    isSelected 
+                      ? 'border-orange-500 shadow-lg scale-105 ring-2 ring-orange-500/30' 
+                      : 'border-orange-400 dark:border-orange-500/50 group-hover:border-orange-500 shadow-md'
+                  }`}>
+                    <img
+                      src={barber.photo}
+                      alt={barber.name}
+                      className="h-full w-full object-cover"
+                    />
+                    <div className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-orange-500 text-[8px] font-black text-white uppercase shadow-md">
+                      ✨ Last Time
                     </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+                    {isSelected && (
+                      <div className="absolute top-1.5 right-1.5 h-5 w-5 rounded-full bg-orange-500 text-white flex items-center justify-center shadow-md">
+                        <Check className="h-3.5 w-3.5 stroke-[3.5]" />
+                      </div>
+                    )}
+                  </div>
+                  <h4 className="font-bold text-xs text-gray-900 dark:text-white text-center truncate w-full">
+                    {barber.name}
+                  </h4>
+                  <p className="text-[10px] text-orange-500 text-center truncate w-full font-bold">
+                    ★ {barber.rating}
+                  </p>
+                </div>
+              );
+            })}
 
-          {/* SECTION 2: AVAILABLE BARBERS */}
-          {availableBarbers.length > 0 && (
-            <div className="flex flex-col gap-2">
-              <span className="text-[11px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
-                🟢 Available Barbers
-              </span>
-              <div className="flex gap-4 overflow-x-auto no-scrollbar pt-1">
-                {availableBarbers.map((barber) => {
-                  const isSelected = selectedBarberId === barber.barber_id;
-                  return (
-                    <div
-                      key={barber.barber_id}
-                      onClick={() => handleSelectBarber(barber.barber_id)}
-                      className="flex flex-col items-center w-24 shrink-0 cursor-pointer group"
-                    >
-                      <div className={`relative h-24 w-24 rounded-2xl overflow-hidden mb-1.5 border-2 transition-all ${
-                        isSelected 
-                          ? 'border-orange-500 shadow-lg scale-105 ring-2 ring-orange-500/20' 
-                          : 'border-emerald-500/40 group-hover:border-emerald-500'
-                      }`}>
-                        <img
-                          src={barber.photo}
-                          alt={barber.name}
-                          className="h-full w-full object-cover"
-                        />
-                        <div className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-emerald-600 text-[8px] font-black text-white uppercase shadow-md">
-                          Available
-                        </div>
-                        {isSelected && (
-                          <div className="absolute top-1.5 right-1.5 h-5 w-5 rounded-full bg-orange-500 text-white flex items-center justify-center shadow-md">
-                            <Check className="h-3.5 w-3.5 stroke-[3.5]" />
-                          </div>
-                        )}
-                      </div>
-                      <h4 className="font-bold text-xs text-gray-900 dark:text-white text-center truncate w-full">
-                        {barber.name}
-                      </h4>
-                      <p className="text-[10px] text-gray-500 dark:text-zinc-450 text-center truncate w-full font-medium">
-                        {barber.specialization.split('&')[0]}
-                      </p>
+            {/* 2. Available Barbers */}
+            {availableBarbers.map((barber) => {
+              const isSelected = selectedBarberId === barber.barber_id;
+              return (
+                <div
+                  key={barber.barber_id}
+                  onClick={() => handleSelectBarber(barber.barber_id)}
+                  className="flex flex-col items-center w-24 shrink-0 cursor-pointer group"
+                >
+                  <div className={`relative h-24 w-24 rounded-2xl overflow-hidden mb-1.5 border-2 transition-all ${
+                    isSelected 
+                      ? 'border-orange-500 shadow-lg scale-105 ring-2 ring-orange-500/20' 
+                      : 'border-emerald-500/50 group-hover:border-emerald-500 shadow-sm'
+                  }`}>
+                    <img
+                      src={barber.photo}
+                      alt={barber.name}
+                      className="h-full w-full object-cover"
+                    />
+                    <div className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-emerald-600 text-[8px] font-black text-white uppercase shadow-md">
+                      Available
                     </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+                    {isSelected && (
+                      <div className="absolute top-1.5 right-1.5 h-5 w-5 rounded-full bg-orange-500 text-white flex items-center justify-center shadow-md">
+                        <Check className="h-3.5 w-3.5 stroke-[3.5]" />
+                      </div>
+                    )}
+                  </div>
+                  <h4 className="font-bold text-xs text-gray-900 dark:text-white text-center truncate w-full">
+                    {barber.name}
+                  </h4>
+                  <p className="text-[10px] text-gray-500 dark:text-zinc-450 text-center truncate w-full font-medium">
+                    {barber.specialization.split('&')[0]}
+                  </p>
+                </div>
+              );
+            })}
 
-          {/* SECTION 3: NOT AVAILABLE BARBERS (STRICTLY BLACK AND WHITE PHOTOS) */}
-          {notAvailableBarbers.length > 0 && (
-            <div className="flex flex-col gap-2">
-              <span className="text-[11px] font-black text-rose-500 dark:text-rose-400 uppercase tracking-wider flex items-center gap-1.5">
-                🔴 Not Available (Booked / Off Duty)
-              </span>
-              <div className="flex gap-4 overflow-x-auto no-scrollbar pt-1">
-                {notAvailableBarbers.map((barber) => {
-                  return (
-                    <div
-                      key={barber.barber_id}
-                      className="flex flex-col items-center w-24 shrink-0 opacity-75 cursor-not-allowed pointer-events-none select-none"
-                    >
-                      <div className="relative h-24 w-24 rounded-2xl overflow-hidden mb-1.5 border-2 border-gray-250 dark:border-zinc-800 bg-gray-200">
-                        {/* BLACK AND WHITE PHOTO */}
-                        <img
-                          src={barber.photo}
-                          alt={barber.name}
-                          className="h-full w-full object-cover grayscale contrast-75"
-                          style={{ filter: 'grayscale(100%)' }}
-                        />
-                        <div className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-zinc-800 text-[8px] font-black text-white uppercase shadow-md opacity-90">
-                          Not Available
-                        </div>
-                      </div>
-                      <h4 className="font-bold text-xs text-gray-400 dark:text-zinc-500 text-center truncate w-full line-through">
-                        {barber.name}
-                      </h4>
-                      <p className="text-[9px] text-rose-500 text-center truncate w-full font-bold">
-                        Occupied
-                      </p>
+            {/* 3. Not Available Barbers (Black & White Photos) */}
+            {notAvailableBarbers.map((barber) => {
+              return (
+                <div
+                  key={barber.barber_id}
+                  className="flex flex-col items-center w-24 shrink-0 opacity-70 cursor-not-allowed pointer-events-none select-none"
+                >
+                  <div className="relative h-24 w-24 rounded-2xl overflow-hidden mb-1.5 border-2 border-gray-250 dark:border-zinc-800 bg-gray-200">
+                    {/* BLACK AND WHITE PHOTO */}
+                    <img
+                      src={barber.photo}
+                      alt={barber.name}
+                      className="h-full w-full object-cover grayscale contrast-75"
+                      style={{ filter: 'grayscale(100%)' }}
+                    />
+                    <div className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-zinc-800 text-[8px] font-black text-white uppercase shadow-md opacity-90">
+                      Not Available
                     </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+                  </div>
+                  <h4 className="font-bold text-xs text-gray-400 dark:text-zinc-500 text-center truncate w-full line-through">
+                    {barber.name}
+                  </h4>
+                  <p className="text-[9px] text-rose-500 text-center truncate w-full font-bold">
+                    Occupied
+                  </p>
+                </div>
+              );
+            })}
+
+          </div>
         </div>
 
       </div>
