@@ -237,46 +237,48 @@ export const Layout: React.FC = () => {
                 </button>
               </div>
 
-              {/* GENDER CATEGORY TOGGLE BAR (MEN vs WOMEN vs ALL) */}
-              <div className="flex items-center p-1 bg-gray-100 dark:bg-zinc-800 rounded-2xl border border-gray-200/60 dark:border-zinc-750 shrink-0 shadow-inner">
+              {/* SLIDING MEN vs WOMEN TOGGLE BAR (NO 'ALL' OPTION, LEFT MEN - RIGHT WOMEN) */}
+              <div className="relative flex items-center p-1 bg-gray-150 dark:bg-zinc-800 rounded-full border border-gray-250 dark:border-zinc-700 shrink-0 shadow-inner">
+                {/* Sliding active orange background pill */}
+                <motion.div
+                  className="absolute top-1 bottom-1 rounded-full bg-orange-500 shadow-md"
+                  initial={false}
+                  animate={{
+                    left: genderFilter === 'women' ? '50%' : '4px',
+                    width: 'calc(50% - 4px)',
+                  }}
+                  transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                />
+
+                {/* Left: Men */}
                 <button
                   onClick={() => setFilters({ genderFilter: 'men' })}
-                  className={`px-3 py-1 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-1 ${
-                    genderFilter === 'men'
-                      ? 'bg-orange-500 text-white shadow-md'
+                  className={`relative z-10 px-3.5 py-1 text-xs font-black transition-colors cursor-pointer flex items-center gap-1 ${
+                    genderFilter !== 'women'
+                      ? 'text-white'
                       : 'text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white'
                   }`}
                 >
                   <span>👨 Men</span>
                 </button>
 
+                {/* Right: Women */}
                 <button
                   onClick={() => setFilters({ genderFilter: 'women' })}
-                  className={`px-3 py-1 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-1 ${
+                  className={`relative z-10 px-3.5 py-1 text-xs font-black transition-colors cursor-pointer flex items-center gap-1 ${
                     genderFilter === 'women'
-                      ? 'bg-orange-500 text-white shadow-md'
+                      ? 'text-white'
                       : 'text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white'
                   }`}
                 >
                   <span>👩 Women</span>
                 </button>
-
-                <button
-                  onClick={() => setFilters({ genderFilter: 'all' })}
-                  className={`px-2.5 py-1 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-1 ${
-                    genderFilter === 'all'
-                      ? 'bg-orange-500 text-white shadow-md'
-                      : 'text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white'
-                  }`}
-                >
-                  <span>💈 All</span>
-                </button>
               </div>
 
-              {/* NOTIFICATION BELL BUTTON (REPLACES FILTER BUTTON) */}
+              {/* NOTIFICATION BELL BUTTON (100% VISIBLE ON FAR RIGHT) */}
               <button
                 onClick={() => setIsNotificationModalOpen(true)}
-                className="relative h-9 w-9 rounded-2xl bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-700 dark:text-zinc-200 flex items-center justify-center shrink-0 cursor-pointer transition-all active:scale-95 border border-gray-200/50 dark:border-zinc-700/50"
+                className="relative h-9 w-9 rounded-2xl bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-700 dark:text-zinc-200 flex items-center justify-center shrink-0 cursor-pointer transition-all active:scale-95 border border-gray-200/50 dark:border-zinc-700/50 ml-1"
                 title="Notifications"
               >
                 <Bell className="h-4.5 w-4.5 text-orange-500" />
