@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Compass, Calendar, Sparkles, Sun, Moon, MapPin, ChevronDown, Check, Search, LogOut, Heart, Bell } from 'lucide-react';
 import { useStore } from '../store/useStore';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { DrawerModal, Button } from './UI';
 
 export const Layout: React.FC = () => {
@@ -33,6 +33,25 @@ export const Layout: React.FC = () => {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState<boolean>(false);
   const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState<boolean>(false);
+
+  // Flashing rotating recommendation suggestions inside the search bar
+  const recommendationList = [
+    { text: '✨ Best Barber', query: 'Best Barber' },
+    { text: '🔥 Top Rated', query: 'Top Rated' },
+    { text: '💈 Crown Salon', query: 'Crown Salon' },
+    { text: '✂️ Fade Studio', query: 'Fade Studio' },
+    { text: '⚡ Razor Edge', query: 'Razor Edge' },
+    { text: '🧔 Beard Sculpt', query: 'Beard Sculpt' },
+  ];
+
+  const [recIndex, setRecIndex] = useState<number>(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setRecIndex((prev) => (prev + 1) % recommendationList.length);
+    }, 2200);
+    return () => clearInterval(interval);
+  }, [recommendationList.length]);
 
   // Filter state inside drawer
   const [tempDistance, setTempDistance] = useState<number>(maxDistance);
@@ -288,13 +307,37 @@ export const Layout: React.FC = () => {
 
             </div>
 
-            {/* ROW 2: FULLY VISIBLE PROMINENT SEARCH BAR */}
+            {/* ROW 2: FULLY VISIBLE PROMINENT SEARCH BAR WITH FLASHING ANIMATED RECOMMENDATION */}
             <div className="w-full relative">
-              <div className="relative w-full">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <div className="relative w-full flex items-center">
+                <Search className="absolute left-3.5 z-20 h-4 w-4 text-orange-500" />
+                
+                {/* FLASHING / ROTATING RECOMMENDATION PLACEHOLDER OVERLAY */}
+                {!searchQuery && (
+                  <div 
+                    onClick={() => {
+                      setSearchQuery(recommendationList[recIndex].query);
+                    }}
+                    className="absolute left-9.5 right-4 z-10 flex items-center gap-1.5 pointer-events-auto cursor-text text-xs font-bold text-gray-400 dark:text-zinc-500 overflow-hidden select-none"
+                  >
+                    <span className="shrink-0 text-gray-400 dark:text-zinc-500 font-normal text-[11px]">Search</span>
+                    <AnimatePresence mode="wait">
+                      <motion.span
+                        key={recIndex}
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -5 }}
+                        transition={{ duration: 0.2 }}
+                        className="px-2 py-0.5 rounded-lg bg-orange-500/10 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 font-extrabold text-[11px] border border-orange-500/20 flex items-center gap-1 shadow-sm"
+                      >
+                        {recommendationList[recIndex].text}
+                      </motion.span>
+                    </AnimatePresence>
+                  </div>
+                )}
+
                 <input
                   type="text"
-                  placeholder="Search 'Best Barber', shops, services..."
                   value={searchQuery}
                   onFocus={() => setIsSearchFocused(true)}
                   onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
@@ -307,7 +350,7 @@ export const Layout: React.FC = () => {
                   <div className="absolute top-11 left-0 right-0 z-50 bg-white dark:bg-zinc-900 rounded-2xl p-3.5 shadow-2xl border border-gray-150 dark:border-zinc-800 flex flex-col gap-2.5 animate-fade-in">
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-extrabold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
-                        Recommended Searches
+                        Quick Suggestions
                       </span>
                       {searchQuery && (
                         <button
@@ -319,22 +362,16 @@ export const Layout: React.FC = () => {
                       )}
                     </div>
                     <div className="flex flex-wrap gap-1.5">
-                      {[
-                        { label: '✨ Best Barber', query: 'Best Barber' },
-                        { label: '🔥 Top Rated', query: 'Top Rated' },
-                        { label: '💈 Crown Salon', query: 'Crown Salon' },
-                        { label: '✂️ Fade Studio', query: 'Fade Studio' },
-                        { label: '⚡ Razor Edge', query: 'Razor Edge' },
-                      ].map((rec) => (
+                      {recommendationList.map((rec) => (
                         <button
-                          key={rec.label}
+                          key={rec.text}
                           onMouseDown={() => {
                             setSearchQuery(rec.query);
                             setIsSearchFocused(false);
                           }}
                           className="px-2.5 py-1 rounded-xl text-xs font-extrabold bg-orange-50 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 hover:bg-orange-500 hover:text-white dark:hover:bg-orange-500 dark:hover:text-white transition-all cursor-pointer border border-orange-200/60 dark:border-orange-500/20 active:scale-95"
                         >
-                          {rec.label}
+                          {rec.text}
                         </button>
                       ))}
                     </div>
