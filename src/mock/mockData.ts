@@ -31,6 +31,7 @@ export interface Barber {
   rating: number;
   availability: boolean;
   photo: string;
+  isLastTimeBarber?: boolean;
 }
 
 export interface Chair {
@@ -155,6 +156,7 @@ export const mockBarbers: Barber[] = [
     specialization: 'Fades & Classic Tapers',
     rating: 4.9,
     availability: true,
+    isLastTimeBarber: true,
     photo: 'https://images.unsplash.com/photo-1600486913747-55e5470d6f40?w=300&auto=format&fit=crop&q=80'
   },
   {
@@ -174,8 +176,18 @@ export const mockBarbers: Barber[] = [
     experience: '4 years',
     specialization: 'Scissor Cuts & Hair Flow',
     rating: 4.7,
-    availability: true,
+    availability: false,
     photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80'
+  },
+  {
+    barber_id: 'b8',
+    shop_id: 'shop1',
+    name: 'Derrick Sterling',
+    experience: '5 years',
+    specialization: 'Beard Sculpt & Trims',
+    rating: 4.6,
+    availability: false,
+    photo: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&auto=format&fit=crop&q=80'
   },
 
   // Shop 2 Barbers
@@ -187,6 +199,7 @@ export const mockBarbers: Barber[] = [
     specialization: 'Skin Fades & Hair Art',
     rating: 4.9,
     availability: true,
+    isLastTimeBarber: true,
     photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80'
   },
   {
@@ -199,6 +212,16 @@ export const mockBarbers: Barber[] = [
     availability: true,
     photo: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&auto=format&fit=crop&q=80'
   },
+  {
+    barber_id: 'b9',
+    shop_id: 'shop2',
+    name: 'Tariq Miller',
+    experience: '6 years',
+    specialization: 'Hot Towel & Razor Shave',
+    rating: 4.7,
+    availability: false,
+    photo: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300&auto=format&fit=crop&q=80'
+  },
 
   // Shop 3 Barbers
   {
@@ -209,6 +232,7 @@ export const mockBarbers: Barber[] = [
     specialization: 'Executive Grooming & Shaves',
     rating: 4.9,
     availability: true,
+    isLastTimeBarber: true,
     photo: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300&auto=format&fit=crop&q=80'
   },
   {
@@ -220,6 +244,16 @@ export const mockBarbers: Barber[] = [
     rating: 4.6,
     availability: true,
     photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&auto=format&fit=crop&q=80'
+  },
+  {
+    barber_id: 'b10',
+    shop_id: 'shop3',
+    name: 'Victor Rossi',
+    experience: '8 years',
+    specialization: 'Classic Scissor Cut',
+    rating: 4.8,
+    availability: false,
+    photo: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=300&auto=format&fit=crop&q=80'
   }
 ];
 
