@@ -37,6 +37,9 @@ interface State {
   bookings: Booking[];
   currentBookingFlow: BookingFlow;
   favoriteShops: string[];
+  searchQuery: string;
+  maxDistance: number;
+  genderFilter: 'men' | 'women' | 'all';
   theme: 'light' | 'dark';
   toast: { message: string; type: 'success' | 'error' | 'info'; id: number } | null;
   
@@ -47,6 +50,8 @@ interface State {
   setLocationPermission: (status: 'granted' | 'denied') => void;
   requestRealLocation: () => void;
   updateShopsAroundLocation: (lat: number, lng: number) => void;
+  setSearchQuery: (query: string) => void;
+  setFilters: (filters: { maxDistance?: number; genderFilter?: 'men' | 'women' | 'all' }) => void;
   setFavorite: (shopId: string) => void;
   toggleTheme: () => void;
   showToast: (message: string, type?: 'success' | 'error' | 'info') => void;
@@ -92,6 +97,20 @@ export const useStore = create<State>((set, get) => ({
   favoriteShops: ['shop1'], // Default favorite
   theme: 'light', // default theme is white/light mode
   toast: null,
+  searchQuery: '',
+  maxDistance: 10,
+  genderFilter: 'men',
+
+  setSearchQuery: (query: string) => {
+    set({ searchQuery: query });
+  },
+
+  setFilters: (filters) => {
+    set((state) => ({
+      maxDistance: filters.maxDistance !== undefined ? filters.maxDistance : state.maxDistance,
+      genderFilter: filters.genderFilter !== undefined ? filters.genderFilter : state.genderFilter
+    }));
+  },
 
   loginWithGoogle: () => {
     const mockGoogleUser: User = {

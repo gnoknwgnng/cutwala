@@ -122,16 +122,43 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
     map.flyTo([userLocation.latitude, userLocation.longitude], 14, { duration: 1.5 });
   }, [userLocation]);
 
-  // Handle camera panning when selectedShop changes
+  const routePolylineRef = useRef<L.Polyline | null>(null);
+
+  // Handle camera panning and direction route line when selectedShop changes
   useEffect(() => {
-    if (mapInstanceRef.current && selectedShop) {
-      mapInstanceRef.current.flyTo(
-        [selectedShop.latitude, selectedShop.longitude],
-        15,
-        { duration: 1.2, easeLinearity: 0.25 }
-      );
+    if (!mapInstanceRef.current) return;
+    const map = mapInstanceRef.current;
+
+    // Remove previous route line if any
+    if (routePolylineRef.current) {
+      routePolylineRef.current.remove();
+      routePolylineRef.current = null;
     }
-  }, [selectedShop]);
+
+    if (selectedShop) {
+      const startLat = userLocation ? userLocation.latitude : defaultLat;
+      const startLng = userLocation ? userLocation.longitude : defaultLng;
+
+      const routeCoordinates: [number, number][] = [
+        [startLat, startLng],
+        [selectedShop.latitude, selectedShop.longitude]
+      ];
+
+      // Draw active directions polyline
+      const polyline = L.polyline(routeCoordinates, {
+        color: '#ff6000',
+        weight: 5,
+        opacity: 0.85,
+        dashArray: '8, 8',
+        lineCap: 'round'
+      }).addTo(map);
+
+      routePolylineRef.current = polyline;
+
+      // Fit map bounds so both user location and shop directions are clearly visible
+      map.fitBounds(L.latLngBounds(routeCoordinates), { padding: [70, 70], maxZoom: 16 });
+    }
+  }, [selectedShop, userLocation]);
 
   // Handle Search Query filtering
   useEffect(() => {

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Check, Calendar, MapPin, Scissors, ArrowRight, Home } from 'lucide-react';
+import { Check, Calendar, MapPin, Scissors, Home } from 'lucide-react';
 import type { Booking } from '../mock/mockData';
 import { useStore } from '../store/useStore';
 import { Button } from '../components/UI';
@@ -175,21 +175,12 @@ export const BookingSuccess: React.FC = () => {
         </div>
 
         {/* Navigation Action Buttons */}
-        <div className="mt-8 flex flex-col gap-3.5 w-full">
+        <div className="mt-8 w-full">
           <Button
             variant="primary"
-            onClick={() => navigate('/app/bookings')}
-            fullWidth
-            className="h-12 cursor-pointer"
-          >
-            Track Active Booking <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-
-          <Button
-            variant="secondary"
             onClick={() => navigate('/app/home')}
             fullWidth
-            className="h-12 cursor-pointer"
+            className="h-12 cursor-pointer bg-orange-500 hover:bg-orange-600 text-white font-extrabold"
           >
             <Home className="mr-2 h-4.5 w-4.5" /> Back to Home
           </Button>
