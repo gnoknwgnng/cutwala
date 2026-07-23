@@ -143,22 +143,22 @@ export const Rewards: React.FC = () => {
                           className="relative"
                         >
                           {/* Inner Stamp Circle Wrapper */}
-                          <div className={`h-13 w-13 sm:h-15 sm:w-15 rounded-full flex items-center justify-center transition-all p-0.5 bg-white dark:bg-zinc-900 ${
+                          <div className={`h-12 w-12 sm:h-14 sm:w-14 rounded-full flex items-center justify-center transition-all overflow-hidden p-0.5 ${
                             isCollected
-                              ? 'border-2 border-emerald-500 shadow-md ring-2 ring-emerald-500/20'
-                              : 'border-2 border-dashed border-gray-300 dark:border-zinc-750'
+                              ? 'border-2 border-emerald-500 bg-white dark:bg-zinc-900 shadow-md ring-2 ring-emerald-500/20'
+                              : 'border-2 border-dashed border-gray-300 dark:border-zinc-750 bg-gray-50 dark:bg-zinc-900/50'
                           }`}>
                             {/* STAMP IMAGE: /stamped.jpg (COLLECTED) vs /unstamped.jpg (UNCOLLECTED) */}
                             <img
                               src={isCollected ? "/stamped.jpg" : "/unstamped.jpg"}
                               alt={isCollected ? "Stamped" : "Unstamped"}
-                              className="h-full w-full object-contain"
+                              className="h-full w-full object-contain rounded-full"
                             />
                           </div>
 
                           {/* Green Checkmark Badge OUTSIDE the circle */}
                           {isCollected && (
-                            <div className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-lg z-20 ring-2 ring-white dark:ring-zinc-900">
+                            <div className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-lg z-20 ring-2 ring-white dark:ring-zinc-900">
                               <CheckCircle className="h-3.5 w-3.5 stroke-[3]" />
                             </div>
                           )}

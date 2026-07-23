@@ -61,7 +61,7 @@ export const Layout: React.FC = () => {
   const mainNavItems = [
     { path: '/app/home', label: 'Explore', icon: Compass, isAction: false },
     { path: '/app/favorites', label: 'Favorites', icon: Heart, isAction: false },
-    { path: '/app/rewards', label: 'Free 🎁', icon: Gift, isAction: false },
+    { path: '/app/rewards', label: 'Free', icon: Gift, isAction: false },
     { path: '/app/bookings', label: 'Bookings', icon: Calendar, isAction: false },
     { path: '#ai-hairstyle', label: 'AI Hairstyle', icon: Sparkles, isAction: true },
   ];
