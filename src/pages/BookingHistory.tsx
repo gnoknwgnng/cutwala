@@ -102,12 +102,6 @@ export const BookingHistory: React.FC = () => {
                       Service: <span className="font-semibold text-gray-750 dark:text-zinc-300">{booking.service}</span>
                     </p>
                   </div>
-
-                  <div className="text-right shrink-0">
-                    <span className="text-sm font-extrabold text-gray-900 dark:text-white">
-                      ${booking.price}
-                    </span>
-                  </div>
                 </div>
 
                 {/* Action buttons footer */}
@@ -176,12 +170,6 @@ export const BookingHistory: React.FC = () => {
                   </p>
                 </div>
               </div>
-            </div>
-
-            {/* Price paid summary */}
-            <div className="flex justify-between items-center px-4 py-2 mt-2">
-              <span className="font-bold text-gray-700 dark:text-zinc-300">Total Price Paid</span>
-              <span className="text-lg font-extrabold text-amber-500">${selectedDetails.price.toFixed(2)}</span>
             </div>
 
             <Button

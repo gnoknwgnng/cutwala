@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Scissors, Calendar, Clock, MapPin, Armchair, Receipt, ShieldCheck } from 'lucide-react';
+import { ChevronLeft, Scissors, Calendar, Clock, MapPin, Armchair, ShieldCheck } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { mockServices } from '../mock/mockData';
 import { Button, GlassCard } from '../components/UI';
@@ -24,11 +24,6 @@ export const BookingSummary: React.FC = () => {
   const dateStr = currentBookingFlow.date;
   const timeStr = currentBookingFlow.time;
   const chairId = currentBookingFlow.chairId;
-
-  // Pricing calculations
-  const basePrice = service.price;
-  const serviceTax = parseFloat((basePrice * 0.08).toFixed(2));
-  const totalFee = basePrice + serviceTax;
 
   const handleConfirm = () => {
     setIsBooking(true);
@@ -146,34 +141,8 @@ export const BookingSummary: React.FC = () => {
                   <p className="text-xs font-bold text-gray-900 dark:text-white">{service.name}</p>
                 </div>
               </div>
-
-              <span className="text-sm font-bold text-gray-900 dark:text-white">
-                ${service.price}
-              </span>
             </div>
 
-          </div>
-
-          {/* Pricing detail receipts */}
-          <div className="bg-white dark:bg-zinc-900 rounded-3xl p-5 border border-gray-150/40 dark:border-zinc-800/80 shadow-sm flex flex-col gap-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-zinc-500 flex items-center gap-1.5 mb-1">
-              <Receipt className="h-4 w-4 text-amber-500" /> Price Details
-            </h4>
-            
-            <div className="flex justify-between text-xs font-semibold text-gray-600 dark:text-zinc-400">
-              <span>Service Charge</span>
-              <span>${basePrice.toFixed(2)}</span>
-            </div>
-            
-            <div className="flex justify-between text-xs font-semibold text-gray-600 dark:text-zinc-400">
-              <span>GST & Platform Taxes (8%)</span>
-              <span>${serviceTax.toFixed(2)}</span>
-            </div>
-
-            <div className="border-t border-gray-100 dark:border-zinc-850 pt-2.5 mt-1 flex justify-between text-sm font-bold text-gray-900 dark:text-white">
-              <span>Grand Total</span>
-              <span className="text-base text-amber-500 font-extrabold">${totalFee.toFixed(2)}</span>
-            </div>
           </div>
 
           {/* Trust statement */}

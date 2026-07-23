@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Star, DollarSign, ArrowRight, X, Heart } from 'lucide-react';
+import { MapPin, Star, ArrowRight, X, Heart } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { Map } from '../components/Map';
 import type { BarberShop } from '../mock/mockData';
@@ -26,11 +26,6 @@ export const Home: React.FC = () => {
     if (shopId === 'shop2') return '0.7 mi';
     if (shopId === 'shop3') return '1.2 mi';
     return '1.5 mi';
-  };
-
-  const getStartingPrice = (shopId: string) => {
-    if (shopId === 'shop3') return '$20';
-    return '$25';
   };
 
   return (
@@ -115,9 +110,6 @@ export const Home: React.FC = () => {
                   <div className="flex items-center gap-2.5">
                     <span className="text-xs font-bold text-gray-800 dark:text-zinc-200 flex items-center gap-1">
                       <Star className="h-3.5 w-3.5 text-orange-500 fill-orange-500" /> {selectedShop.rating}
-                    </span>
-                    <span className="text-xs font-bold text-gray-800 dark:text-zinc-200 flex items-center gap-0.5">
-                      <DollarSign className="h-3.5 w-3.5 text-emerald-500" /> {getStartingPrice(selectedShop.shop_id)}+
                     </span>
                     <span className="text-[10px] font-bold text-gray-400 dark:text-zinc-500 flex items-center gap-0.5">
                       <MapPin className="h-3 w-3 text-orange-500" /> {getDistanceStr(selectedShop.shop_id)}
