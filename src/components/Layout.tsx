@@ -273,25 +273,25 @@ export const Layout: React.FC = () => {
                 {/* Left: Men */}
                 <button
                   onClick={() => setFilters({ genderFilter: 'men' })}
-                  className={`relative z-10 px-3.5 py-1 text-xs font-black transition-colors cursor-pointer flex items-center gap-1 ${
+                  className={`relative z-10 px-3.5 py-1 text-xs font-black transition-colors cursor-pointer flex items-center justify-center ${
                     genderFilter !== 'women'
                       ? 'text-white'
                       : 'text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white'
                   }`}
                 >
-                  <span>👨 Men</span>
+                  <span>Men</span>
                 </button>
 
                 {/* Right: Women */}
                 <button
                   onClick={() => setFilters({ genderFilter: 'women' })}
-                  className={`relative z-10 px-3.5 py-1 text-xs font-black transition-colors cursor-pointer flex items-center gap-1 ${
+                  className={`relative z-10 px-3.5 py-1 text-xs font-black transition-colors cursor-pointer flex items-center justify-center ${
                     genderFilter === 'women'
                       ? 'text-white'
                       : 'text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white'
                   }`}
                 >
-                  <span>👩 Women</span>
+                  <span>Women</span>
                 </button>
               </div>
 
