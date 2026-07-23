@@ -43,6 +43,10 @@ interface State {
   theme: 'light' | 'dark';
   toast: { message: string; type: 'success' | 'error' | 'info'; id: number } | null;
   
+  stampsCount: number;
+  referralPoints: number;
+  lastStampAnimationTime: number;
+  
   // Actions
   loginWithGoogle: () => void;
   sendOTP: (phone: string) => void;
@@ -57,6 +61,9 @@ interface State {
   showToast: (message: string, type?: 'success' | 'error' | 'info') => void;
   hideToast: () => void;
   logout: () => void;
+  addStamp: () => void;
+  claimFreeHaircut: () => void;
+  addReferralPoints: (pts: number) => void;
   
   // Booking Flow Actions
   setBookingShop: (shopId: string) => void;
@@ -100,6 +107,31 @@ export const useStore = create<State>((set, get) => ({
   searchQuery: '',
   maxDistance: 10,
   genderFilter: 'men',
+  stampsCount: 5, // Default 5/10 stamps collected
+  referralPoints: 450, // Default 450 referral points
+  lastStampAnimationTime: 0,
+
+  addStamp: () => {
+    const current = get().stampsCount;
+    if (current >= 10) {
+      get().showToast('🎉 You already unlocked 10/10 stamps! Claim your FREE haircut now.', 'success');
+      return;
+    }
+    const nextCount = current + 1;
+    set({ stampsCount: nextCount, lastStampAnimationTime: Date.now() });
+    get().showToast(`✨ Stamp Added! 💺 (${current}/10 → ${nextCount}/10 Loyalty Stamps)`, 'success');
+  },
+
+  claimFreeHaircut: () => {
+    set({ stampsCount: 0 });
+    get().showToast('🎉 Congratulations! FREE Haircut voucher claimed successfully.', 'success');
+  },
+
+  addReferralPoints: (pts: number) => {
+    const nextPts = get().referralPoints + pts;
+    set({ referralPoints: nextPts });
+    get().showToast(`🎉 +${pts} Referral Points added! Total: ${nextPts} pts`, 'success');
+  },
 
   setSearchQuery: (query: string) => {
     set({ searchQuery: query });
@@ -342,7 +374,7 @@ export const useStore = create<State>((set, get) => ({
   },
 
   confirmBooking: () => {
-    const { currentBookingFlow, user, bookings } = get();
+    const { currentBookingFlow, user, bookings, stampsCount } = get();
     const newBooking: Booking = {
       booking_id: 'bk_' + Math.random().toString(36).substr(2, 9),
       user_id: user ? user.id : 'guest',
@@ -358,10 +390,16 @@ export const useStore = create<State>((set, get) => ({
       created_at: new Date().toISOString()
     };
 
+    const nextStamps = Math.min(10, stampsCount + 1);
+
     set({ 
       bookings: [newBooking, ...bookings],
-      currentBookingFlow: initialBookingFlow 
+      currentBookingFlow: initialBookingFlow,
+      stampsCount: nextStamps,
+      lastStampAnimationTime: Date.now()
     });
+
+    get().showToast(`✨ Stamp Added! 💺 (${stampsCount}/10 → ${nextStamps}/10 Loyalty Stamps)`, 'success');
 
     return newBooking;
   },

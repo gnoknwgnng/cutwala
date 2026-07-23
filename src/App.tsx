@@ -20,6 +20,7 @@ import { Favorites } from './pages/Favorites';
 import { UpcomingBooking } from './pages/UpcomingBooking';
 import { BookingHistory } from './pages/BookingHistory';
 import { Profile } from './pages/Profile';
+import { Rewards } from './pages/Rewards';
 
 // Route Guards
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -80,6 +81,7 @@ function App() {
           {/* Sidebar/Bottom-nav main views */}
           <Route path="home" element={<Home />} />
           <Route path="favorites" element={<Favorites />} />
+          <Route path="rewards" element={<Rewards />} />
           <Route path="bookings" element={<UpcomingBooking />} />
           <Route path="history" element={<BookingHistory />} />
           <Route path="profile" element={<Profile />} />
