@@ -31,6 +31,7 @@ export const Layout: React.FC = () => {
   const [activeAddress, setActiveAddress] = useState(savedAddresses[0]);
   const [isAddressModalOpen, setIsAddressModalOpen] = useState<boolean>(false);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState<boolean>(false);
+  const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
 
   // Filter state inside drawer
   const [tempDistance, setTempDistance] = useState<number>(maxDistance);
@@ -202,46 +203,88 @@ export const Layout: React.FC = () => {
       {/* 3. MAIN CONTENT CONTAINER */}
       <main className={`flex-1 min-h-screen relative flex flex-col ${isMainTab ? 'md:pl-64 pb-18 md:pb-0' : 'pb-0'}`}>
         
-        {/* TOP HEADER: Search Bar with Side Filter (In Place of Profile) */}
+        {/* TOP HEADER: Logo with Address Stacked Below + Search Bar with Recommendations */}
         {isMainTab && (
-          <header className="flex h-16 items-center justify-between px-3 md:px-6 bg-white dark:bg-zinc-900 border-b border-gray-100 dark:border-zinc-800 shrink-0 sticky top-0 z-35 backdrop-blur-md bg-opacity-95 dark:bg-opacity-95 gap-3">
+          <header className="flex h-20 items-center justify-between px-3 md:px-6 bg-white/95 dark:bg-zinc-900/95 border-b border-gray-100 dark:border-zinc-800 shrink-0 sticky top-0 z-35 backdrop-blur-md gap-3">
             
-            {/* Logo */}
-            <div className="flex items-center gap-2 shrink-0">
-              <img 
-                src="/cutwalalogo.jpeg" 
-                alt="CutWala Logo" 
-                className="h-8 w-8 object-contain rounded-lg shadow-sm"
-              />
-              <span className="font-display font-extrabold text-lg bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent hidden sm:inline">
-                CutWala
-              </span>
+            {/* Logo & User Address Stacked Directly Below */}
+            <div className="flex flex-col justify-center min-w-0 shrink-0">
+              {/* Logo */}
+              <div className="flex items-center gap-2">
+                <img 
+                  src="/cutwalalogo.jpeg" 
+                  alt="CutWala Logo" 
+                  className="h-7 w-7 object-contain rounded-lg shadow-sm"
+                />
+                <span className="font-display font-extrabold text-base md:text-lg bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
+                  CutWala
+                </span>
+              </div>
+
+              {/* USER ADDRESS VISIBLE DIRECTLY BELOW LOGO */}
+              <button
+                onClick={() => setIsAddressModalOpen(true)}
+                className="flex items-center gap-1 text-[11px] font-extrabold text-gray-700 dark:text-zinc-300 hover:text-orange-500 transition-colors cursor-pointer max-w-[160px] xs:max-w-[220px] sm:max-w-[280px] truncate mt-0.5"
+                title="Change Delivery Location"
+              >
+                <MapPin className="h-3 w-3 text-orange-500 shrink-0 fill-orange-500" />
+                <span className="truncate">{activeAddress.tag} - {activeAddress.address}</span>
+                <ChevronDown className="h-3 w-3 text-gray-400 shrink-0" />
+              </button>
             </div>
 
-            {/* Address Capsule */}
-            <button
-              onClick={() => setIsAddressModalOpen(true)}
-              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 dark:bg-zinc-800 border border-orange-200/60 dark:border-zinc-700/60 rounded-xl text-left cursor-pointer hover:bg-orange-100/60 transition-colors"
-            >
-              <MapPin className="h-3.5 w-3.5 text-orange-500 shrink-0 fill-orange-500" />
-              <p className="text-xs font-extrabold text-gray-900 dark:text-white truncate leading-tight max-w-[200px]">
-                <span className="font-black text-gray-950 dark:text-white">{activeAddress.tag}</span>
-                <span className="font-normal text-gray-600 dark:text-zinc-400"> - {activeAddress.address}</span>
-              </p>
-              <ChevronDown className="h-3.5 w-3.5 text-gray-500 shrink-0" />
-            </button>
-
-            {/* SEARCH BAR WITH SIDE FILTER (Replaces Profile) */}
-            <div className="flex-1 flex items-center gap-2 max-w-md ml-auto">
+            {/* SEARCH BAR WITH SIDE FILTER & RECOMMENDATIONS DROPDOWN */}
+            <div className="flex-1 flex items-center gap-2 max-w-md ml-auto relative">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Search shops, barbers, services..."
+                  placeholder="Search 'Best Barber', shops..."
                   value={searchQuery}
+                  onFocus={() => setIsSearchFocused(true)}
+                  onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full h-10 pl-9 pr-3 text-xs font-semibold rounded-2xl bg-gray-100 dark:bg-zinc-800 border border-transparent focus:border-orange-500 focus:bg-white dark:focus:bg-zinc-900 text-gray-900 dark:text-white transition-all outline-none"
                 />
+
+                {/* SEARCH RECOMMENDATIONS POPOVER */}
+                {isSearchFocused && (
+                  <div className="absolute top-12 left-0 right-0 z-50 bg-white dark:bg-zinc-900 rounded-2xl p-3.5 shadow-2xl border border-gray-150 dark:border-zinc-800 flex flex-col gap-2.5 animate-fade-in">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-extrabold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
+                        Recommended Searches
+                      </span>
+                      {searchQuery && (
+                        <button
+                          onMouseDown={() => setSearchQuery('')}
+                          className="text-[10px] font-bold text-orange-500 hover:underline cursor-pointer"
+                        >
+                          Clear
+                        </button>
+                      )}
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {[
+                        { label: '✨ Best Barber', query: 'Best Barber' },
+                        { label: '🔥 Top Rated', query: 'Top Rated' },
+                        { label: '💈 Crown Salon', query: 'Crown Salon' },
+                        { label: '✂️ Fade Studio', query: 'Fade Studio' },
+                        { label: '⚡ Razor Edge', query: 'Razor Edge' },
+                      ].map((rec) => (
+                        <button
+                          key={rec.label}
+                          onMouseDown={() => {
+                            setSearchQuery(rec.query);
+                            setIsSearchFocused(false);
+                          }}
+                          className="px-2.5 py-1 rounded-xl text-xs font-extrabold bg-orange-50 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 hover:bg-orange-500 hover:text-white dark:hover:bg-orange-500 dark:hover:text-white transition-all cursor-pointer border border-orange-200/60 dark:border-orange-500/20 active:scale-95"
+                        >
+                          {rec.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Side Filter Icon Button */}
