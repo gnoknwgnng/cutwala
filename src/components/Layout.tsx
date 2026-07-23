@@ -34,14 +34,14 @@ export const Layout: React.FC = () => {
   const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState<boolean>(false);
 
-  // Flashing rotating recommendation suggestions inside the search bar
+  // Flashing rotating recommendation suggestions inside the search bar (clean format: Search "keyword")
   const recommendationList = [
-    { text: '✨ Best Barber', query: 'Best Barber' },
-    { text: '🔥 Top Rated', query: 'Top Rated' },
-    { text: '💈 Crown Salon', query: 'Crown Salon' },
-    { text: '✂️ Fade Studio', query: 'Fade Studio' },
-    { text: '⚡ Razor Edge', query: 'Razor Edge' },
-    { text: '🧔 Beard Sculpt', query: 'Beard Sculpt' },
+    { text: 'best barber', query: 'Best Barber' },
+    { text: 'top rated', query: 'Top Rated' },
+    { text: 'fade studio', query: 'Fade Studio' },
+    { text: 'crown salon', query: 'Crown Salon' },
+    { text: 'razor edge', query: 'Razor Edge' },
+    { text: 'beard trim', query: 'Beard Trim' },
   ];
 
   const [recIndex, setRecIndex] = useState<number>(0);
@@ -312,27 +312,28 @@ export const Layout: React.FC = () => {
               <div className="relative w-full flex items-center">
                 <Search className="absolute left-3.5 z-20 h-4 w-4 text-orange-500" />
                 
-                {/* FLASHING / ROTATING RECOMMENDATION PLACEHOLDER OVERLAY */}
+                {/* ROTATING RECOMMENDATION PLACEHOLDER (EXACT FORMAT LIKE IMAGE 2: Search "keyword") */}
                 {!searchQuery && (
                   <div 
                     onClick={() => {
                       setSearchQuery(recommendationList[recIndex].query);
                     }}
-                    className="absolute left-9.5 right-4 z-10 flex items-center gap-1.5 pointer-events-auto cursor-text text-xs font-bold text-gray-400 dark:text-zinc-500 overflow-hidden select-none"
+                    className="absolute left-9.5 right-4 z-10 flex items-center pointer-events-auto cursor-text text-xs md:text-sm font-medium text-gray-500 dark:text-zinc-400 overflow-hidden select-none"
                   >
-                    <span className="shrink-0 text-gray-400 dark:text-zinc-500 font-normal text-[11px]">Search</span>
+                    <span className="shrink-0 text-gray-500 dark:text-zinc-400 font-medium">Search &quot;</span>
                     <AnimatePresence mode="wait">
                       <motion.span
                         key={recIndex}
                         initial={{ opacity: 0, y: 5 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -5 }}
-                        transition={{ duration: 0.2 }}
-                        className="px-2 py-0.5 rounded-lg bg-orange-500/10 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 font-extrabold text-[11px] border border-orange-500/20 flex items-center gap-1 shadow-sm"
+                        transition={{ duration: 0.25 }}
+                        className="font-semibold text-gray-700 dark:text-zinc-200 inline-block"
                       >
                         {recommendationList[recIndex].text}
                       </motion.span>
                     </AnimatePresence>
+                    <span className="shrink-0 text-gray-500 dark:text-zinc-400 font-medium">&quot;</span>
                   </div>
                 )}
 
