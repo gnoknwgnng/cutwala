@@ -48,6 +48,16 @@ export interface Service {
   category: 'Hair' | 'Beard' | 'Grooming' | 'Combo';
 }
 
+export interface Review {
+  review_id: string;
+  shop_id: string;
+  user_name: string;
+  user_avatar: string;
+  rating: number;
+  date: string;
+  comment: string;
+}
+
 export interface Booking {
   booking_id: string;
   user_id: string;
@@ -320,5 +330,44 @@ export const mockBookingHistory: Booking[] = [
     status: 'cancelled',
     created_at: '2026-07-01T09:00:00Z',
     chair_id: 'c3_1'
+  }
+];
+
+export const mockReviews: Review[] = [
+  {
+    review_id: 'r1',
+    shop_id: 'shop1',
+    user_name: 'Alex Rivera',
+    user_avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+    rating: 5,
+    date: '2 days ago',
+    comment: 'Best haircut I have had in San Francisco! Marcus is a master of fades and the free espresso was top notch.'
+  },
+  {
+    review_id: 'r2',
+    shop_id: 'shop1',
+    user_name: 'David Kim',
+    user_avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
+    rating: 5,
+    date: '1 week ago',
+    comment: 'Super clean shop, great vintage leather chairs, and very friendly barbers. Highly recommended!'
+  },
+  {
+    review_id: 'r3',
+    shop_id: 'shop2',
+    user_name: 'Brandon Taylor',
+    user_avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
+    rating: 4,
+    date: '3 days ago',
+    comment: 'Jaxson Reed gave me a crisp skin fade. Atmosphere is high energy and modern.'
+  },
+  {
+    review_id: 'r4',
+    shop_id: 'shop3',
+    user_name: 'Michael Vance',
+    user_avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&auto=format&fit=crop&q=80',
+    rating: 5,
+    date: '5 days ago',
+    comment: 'The executive hot towel shave is legendary. Ethan is a true craftsman!'
   }
 ];
