@@ -170,7 +170,7 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
 
   const routePolylineRef = useRef<L.Polyline | null>(null);
 
-  // Handle camera panning and direction route line when selectedShop changes
+  // Handle camera panning and REAL street road navigation route
   useEffect(() => {
     if (!mapInstanceRef.current) return;
     const map = mapInstanceRef.current;
@@ -184,27 +184,68 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
     if (selectedShop) {
       const startLat = userLocation ? userLocation.latitude : defaultLat;
       const startLng = userLocation ? userLocation.longitude : defaultLng;
+      const endLat = selectedShop.latitude;
+      const endLng = selectedShop.longitude;
 
-      const routeCoordinates: [number, number][] = [
-        [startLat, startLng],
-        [selectedShop.latitude, selectedShop.longitude]
-      ];
+      // Fetch Real Street Driving Route from OpenStreetMap OSRM Engine
+      const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${startLng},${startLat};${endLng},${endLat}?overview=full&geometries=geojson`;
 
-      // Draw active directions polyline
-      const polyline = L.polyline(routeCoordinates, {
-        color: '#ff6000',
-        weight: 5,
-        opacity: 0.85,
-        dashArray: '8, 8',
-        lineCap: 'round'
-      }).addTo(map);
+      fetch(osrmUrl)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.routes && data.routes[0] && data.routes[0].geometry) {
+            const rawCoords = data.routes[0].geometry.coordinates; // [lng, lat]
+            const routeLatLngs: [number, number][] = rawCoords.map(([lng, lat]: [number, number]) => [lat, lng]);
 
-      routePolylineRef.current = polyline;
+            if (routePolylineRef.current) {
+              routePolylineRef.current.remove();
+            }
 
-      // Fit map bounds so both user location and shop directions are clearly visible
-      map.fitBounds(L.latLngBounds(routeCoordinates), { padding: [70, 70], maxZoom: 16 });
+            // Real Google Maps-style Blue Navigation Polyline following real roads
+            const polyline = L.polyline(routeLatLngs, {
+              color: '#3b82f6', // Electric Google Maps Blue
+              weight: 6,
+              opacity: 0.9,
+              lineCap: 'round',
+              lineJoin: 'round'
+            }).addTo(map);
+
+            routePolylineRef.current = polyline;
+
+            // Smoothly fit bounds to show full real street route
+            map.fitBounds(L.latLngBounds(routeLatLngs), { padding: [70, 70], maxZoom: 16 });
+          } else {
+            drawFallbackRoadRoute(startLat, startLng, endLat, endLng, map);
+          }
+        })
+        .catch(() => {
+          drawFallbackRoadRoute(startLat, startLng, endLat, endLng, map);
+        });
     }
   }, [selectedShop, userLocation]);
+
+  const drawFallbackRoadRoute = (startLat: number, startLng: number, endLat: number, endLng: number, map: L.Map) => {
+    // Generate right-angle street grid waypoints (Manhattan street grid path)
+    const midLat = startLat;
+    const midLng = endLng;
+
+    const gridWaypoints: [number, number][] = [
+      [startLat, startLng],
+      [midLat, midLng],
+      [endLat, endLng]
+    ];
+
+    const polyline = L.polyline(gridWaypoints, {
+      color: '#3b82f6',
+      weight: 6,
+      opacity: 0.9,
+      lineCap: 'round',
+      lineJoin: 'round'
+    }).addTo(map);
+
+    routePolylineRef.current = polyline;
+    map.fitBounds(L.latLngBounds(gridWaypoints), { padding: [70, 70], maxZoom: 16 });
+  };
 
   // Handle Search Query filtering
   useEffect(() => {
