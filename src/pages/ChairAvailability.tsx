@@ -49,10 +49,17 @@ export const ChairAvailability: React.FC = () => {
   const defaultDateStr = currentBookingFlow.date || datesList[0].fullDateStr;
   const [selectedDateStr, setSelectedDateStr] = useState<string>(defaultDateStr);
 
-  // Time slots calculation from 10:00 AM to 12:00 PM based on selected date & barber
+  // Time slots calculation from 10:00 AM to 12:00 AM based on selected date & barber
   const generateTimeSlots = (dateStr: string, barberId: string) => {
     const rawSlots = [
-      '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM', '12:00 PM'
+      '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM',
+      '12:00 PM', '12:30 PM', '01:00 PM', '01:30 PM',
+      '02:00 PM', '02:30 PM', '03:00 PM', '03:30 PM',
+      '04:00 PM', '04:30 PM', '05:00 PM', '05:30 PM',
+      '06:00 PM', '06:30 PM', '07:00 PM', '07:30 PM',
+      '08:00 PM', '08:30 PM', '09:00 PM', '09:30 PM',
+      '10:00 PM', '10:30 PM', '11:00 PM', '11:30 PM',
+      '12:00 AM'
     ];
 
     // Seed pseudo-random generator based on date and barberId
