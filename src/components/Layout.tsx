@@ -34,14 +34,15 @@ export const Layout: React.FC = () => {
   const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState<boolean>(false);
 
-  // Flashing rotating recommendation suggestions inside the search bar (clean format: Search "keyword")
+  // Flashing rotating recommendation suggestions inside the search bar (descriptive keywords only, NO shop names)
   const recommendationList = [
     { text: 'best barber', query: 'Best Barber' },
+    { text: 'best shop', query: 'Best Shop' },
     { text: 'top rated', query: 'Top Rated' },
-    { text: 'fade studio', query: 'Fade Studio' },
-    { text: 'crown salon', query: 'Crown Salon' },
-    { text: 'razor edge', query: 'Razor Edge' },
+    { text: 'skin fade', query: 'Skin Fade' },
     { text: 'beard trim', query: 'Beard Trim' },
+    { text: 'haircut', query: 'Haircut' },
+    { text: 'head massage', query: 'Head Massage' },
   ];
 
   const [recIndex, setRecIndex] = useState<number>(0);
