@@ -7,8 +7,7 @@ import {
   Award, 
   Share2, 
   Copy, 
-  Calendar, 
-  Sparkles, 
+  ChevronRight, 
   Plus
 } from 'lucide-react';
 import { useStore } from '../store/useStore';
@@ -20,13 +19,12 @@ export const Rewards: React.FC = () => {
     stampsCount, 
     referralPoints, 
     addStamp, 
-    claimFreeHaircut, 
-    addReferralPoints, 
     showToast 
   } = useStore();
 
   const [activeTab, setActiveTab] = useState<'stamps' | 'referrals'>('stamps');
   const [isHowItWorksOpen, setIsHowItWorksOpen] = useState<boolean>(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState<boolean>(false);
 
   const referralCode = 'CUTWALA100';
 
@@ -47,15 +45,22 @@ export const Rewards: React.FC = () => {
     }
   };
 
+  // Mock redeem options matching screenshot
+  const redeemItems = [
+    { id: 1, title: '₹50 OFF', points: 200, bg: 'bg-emerald-500', color: 'text-emerald-600', icon: '🏷️' },
+    { id: 2, title: '₹100 OFF', points: 350, bg: 'bg-purple-600', color: 'text-purple-600', icon: '🎟️' },
+    { id: 3, title: 'Beard Trim', points: 400, bg: 'bg-orange-500', color: 'text-orange-600', icon: '🧔' },
+    { id: 4, title: 'Hair Wash', points: 150, bg: 'bg-sky-500', color: 'text-sky-600', icon: '🧴' },
+  ];
+
   return (
-    <div className="flex-1 flex flex-col bg-amber-50/30 dark:bg-[#0b0b0c] pb-24 relative overflow-y-auto no-scrollbar select-none">
+    <div className="flex-1 flex flex-col bg-[#fbf9f5] dark:bg-[#0b0b0c] pb-24 relative overflow-y-auto no-scrollbar select-none">
       
-      {/* 1. TOP HEADER */}
+      {/* 1. TOP HEADER (MATCHING SCREENSHOT) */}
       <header className="sticky top-0 z-30 flex h-14 items-center justify-between px-4 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border-b border-gray-100 dark:border-zinc-800">
         <div className="flex items-center gap-2">
-          <Gift className="h-5 w-5 text-orange-500" />
           <h1 className="font-display font-extrabold text-base md:text-lg text-gray-900 dark:text-white">
-            Rewards & Benefits
+            Rewards
           </h1>
         </div>
 
@@ -63,32 +68,33 @@ export const Rewards: React.FC = () => {
           onClick={() => setIsHowItWorksOpen(true)}
           className="flex items-center gap-1 text-xs font-bold text-orange-500 hover:underline cursor-pointer"
         >
-          <HelpCircle className="h-4 w-4" />
           <span>How it works?</span>
+          <HelpCircle className="h-4 w-4" />
         </button>
       </header>
 
       {/* 2. MAIN CONTAINER */}
-      <div className="max-w-2xl mx-auto w-full px-4 pt-4 flex flex-col gap-5">
+      <div className="max-w-2xl mx-auto w-full px-4 pt-3 flex flex-col gap-4">
         
-        {/* SEGMENTED TAB TOGGLE (MATCHING IMAGE 1: Loyalty Stamps vs Referral Points) */}
-        <div className="relative flex items-center p-1 bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200/80 dark:border-zinc-800 shadow-sm">
+        {/* SEGMENTED TAB TOGGLE (MATCHING SCREENSHOT EXACTLY) */}
+        <div className="relative flex items-center p-1 bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200/80 dark:border-zinc-800 shadow-xs">
           <button
             onClick={() => setActiveTab('stamps')}
             className={`flex-1 py-2.5 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-2 ${
               activeTab === 'stamps'
-                ? 'bg-orange-500 text-white shadow-md'
+                ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20 shadow-xs'
                 : 'text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white'
             }`}
           >
-            <span>💺 Loyalty Stamps</span>
+            <span className="text-sm">💺</span>
+            <span>Loyalty Stamps</span>
           </button>
 
           <button
             onClick={() => setActiveTab('referrals')}
             className={`flex-1 py-2.5 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-2 ${
               activeTab === 'referrals'
-                ? 'bg-emerald-600 text-white shadow-md'
+                ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shadow-xs'
                 : 'text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white'
             }`}
           >
@@ -99,194 +105,197 @@ export const Rewards: React.FC = () => {
 
         {/* TAB 1: LOYALTY STAMPS CONTENT */}
         {activeTab === 'stamps' && (
-          <div className="flex flex-col gap-4 animate-fade-in">
+          <div className="flex flex-col gap-3 animate-fade-in">
             
             {/* DIGITAL LOYALTY STAMP CARD HEADER */}
-            <div className="p-4 rounded-3xl bg-white dark:bg-zinc-900 border border-orange-500/20 shadow-md flex flex-col gap-4">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-2xl bg-orange-500/10 text-orange-500 flex items-center justify-center shrink-0 border border-orange-500/20">
-                    <Gift className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-display font-extrabold text-sm text-gray-900 dark:text-white">
-                      Digital Loyalty Stamp Card
-                    </h3>
-                    <p className="text-xs text-gray-500 dark:text-zinc-400 font-medium mt-0.5">
-                      Book at CutWala 10 times and get your <span className="font-bold text-orange-500">11th haircut FREE!</span>
-                    </p>
-                  </div>
+            <div className="flex items-start justify-between px-1">
+              <div className="flex items-center gap-2.5">
+                <div className="h-9 w-9 rounded-xl bg-orange-500/10 text-orange-500 flex items-center justify-center shrink-0 border border-orange-500/20">
+                  <Gift className="h-5 w-5" />
                 </div>
-
-                <button
-                  onClick={() => setIsHowItWorksOpen(true)}
-                  className="px-2.5 py-1 rounded-xl bg-orange-500/10 text-orange-600 dark:text-orange-400 text-[10px] font-extrabold flex items-center gap-1 border border-orange-500/20 shrink-0"
-                >
-                  <span>How it works?</span>
-                  <HelpCircle className="h-3 w-3" />
-                </button>
-              </div>
-
-              {/* 10 STAMPS GRID (MATCHING IMAGE 3 EXACTLY) */}
-              <div className="p-4 rounded-2xl bg-amber-50/50 dark:bg-zinc-950 border border-orange-200/60 dark:border-zinc-800">
-                <div className="grid grid-cols-5 gap-3 sm:gap-4 justify-items-center">
-                  {Array.from({ length: 10 }).map((_, idx) => {
-                    const stampNum = idx + 1;
-                    const isCollected = stampNum <= stampsCount;
-
-                    return (
-                      <div key={stampNum} className="flex flex-col items-center gap-1">
-                        <motion.div
-                          initial={false}
-                          animate={isCollected ? { scale: [1, 1.2, 1] } : {}}
-                          transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                          className="relative"
-                        >
-                          {/* Inner Stamp Circle Wrapper */}
-                          <div className={`h-12 w-12 sm:h-14 sm:w-14 rounded-full flex items-center justify-center transition-all overflow-hidden p-0.5 ${
-                            isCollected
-                              ? 'border-2 border-emerald-500 bg-white dark:bg-zinc-900 shadow-md ring-2 ring-emerald-500/20'
-                              : 'border-2 border-dashed border-gray-300 dark:border-zinc-750 bg-gray-50 dark:bg-zinc-900/50'
-                          }`}>
-                            {/* STAMP IMAGE: /stamped.jpg (COLLECTED) vs /unstamped.jpg (UNCOLLECTED) */}
-                            <img
-                              src={isCollected ? "/stamped.jpg" : "/unstamped.jpg"}
-                              alt={isCollected ? "Stamped" : "Unstamped"}
-                              className="h-full w-full object-contain rounded-full"
-                            />
-                          </div>
-
-                          {/* Green Checkmark Badge OUTSIDE the circle */}
-                          {isCollected && (
-                            <div className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-lg z-20 ring-2 ring-white dark:ring-zinc-900">
-                              <CheckCircle className="h-3.5 w-3.5 stroke-[3]" />
-                            </div>
-                          )}
-                        </motion.div>
-
-                        <span className={`text-[11px] font-extrabold ${isCollected ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-400 dark:text-zinc-600'}`}>
-                          {stampNum}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* CONGRATULATIONS BANNER (WHEN 10 STAMPS COLLECTED, MATCHING IMAGE 1) */}
-              {stampsCount >= 10 ? (
-                <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex flex-col gap-3 relative overflow-hidden">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="h-12 w-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-md">
-                        <Gift className="h-6 w-6" />
-                      </div>
-                      <div>
-                        <h4 className="font-display font-extrabold text-sm text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
-                          Congratulations! 🎉
-                        </h4>
-                        <p className="text-xs text-emerald-700 dark:text-emerald-400 font-semibold mt-0.5">
-                          You've collected all 10 stamps. <br />
-                          <span className="font-black text-emerald-900 dark:text-emerald-200">Your 11th Haircut is FREE!</span>
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Badge */}
-                    <div className="h-16 w-16 rounded-full bg-emerald-600 text-white text-[9px] font-black uppercase text-center flex flex-col items-center justify-center shrink-0 shadow-lg leading-tight p-1 border-2 border-white">
-                      <span>11th</span>
-                      <span>HAIRCUT</span>
-                      <span>FREE</span>
-                    </div>
-                  </div>
-
-                  <Button
-                    variant="primary"
-                    onClick={claimFreeHaircut}
-                    className="w-full h-11 text-xs font-black bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl cursor-pointer shadow-md flex items-center justify-center gap-2"
-                  >
-                    <span>Claim FREE Haircut →</span>
-                  </Button>
-                  <p className="text-[10px] text-emerald-600 dark:text-emerald-400 text-center font-bold">
-                    Valid for 30 days from today
+                <div>
+                  <h3 className="font-display font-extrabold text-xs md:text-sm text-gray-900 dark:text-white">
+                    Digital Loyalty Stamp Card
+                  </h3>
+                  <p className="text-[11px] text-gray-500 dark:text-zinc-400 font-medium">
+                    Book at <span className="font-bold text-orange-500">CutWala</span> 10 times and get your <span className="font-bold text-orange-500">11th haircut FREE!</span>
                   </p>
                 </div>
-              ) : (
-                /* IN PROGRESS PROGRESS BANNER */
-                <div className="p-3.5 rounded-2xl bg-orange-500/5 dark:bg-orange-500/10 border border-orange-500/20 flex flex-col gap-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-black text-gray-900 dark:text-white flex items-center gap-1.5">
-                      <Sparkles className="h-4 w-4 text-orange-500" />
-                      {10 - stampsCount} haircuts away from FREE Haircut!
-                    </span>
-                    <span className="text-xs font-black text-orange-500">
-                      {stampsCount} / 10
-                    </span>
-                  </div>
+              </div>
 
-                  {/* Progress Bar */}
-                  <div className="w-full h-2.5 rounded-full bg-gray-200 dark:bg-zinc-800 overflow-hidden p-0.5">
-                    <motion.div
-                      className="h-full rounded-full bg-gradient-to-r from-orange-500 to-emerald-500 shadow-sm"
-                      initial={{ width: 0 }}
-                      animate={{ width: `${(stampsCount / 10) * 100}%` }}
-                      transition={{ duration: 0.5 }}
-                    />
-                  </div>
-                </div>
-              )}
+              <button
+                onClick={() => setIsHowItWorksOpen(true)}
+                className="px-2.5 py-1 rounded-xl bg-gray-100 dark:bg-zinc-800 text-orange-600 dark:text-orange-400 text-[10px] font-extrabold flex items-center gap-1 border border-gray-200 dark:border-zinc-700 shrink-0 cursor-pointer"
+              >
+                <span>How it works?</span>
+                <HelpCircle className="h-3 w-3" />
+              </button>
+            </div>
 
-              {/* STATS SUMMARY ROW (MATCHING IMAGE 1) */}
-              <div className="grid grid-cols-3 gap-2.5 pt-1">
-                <div className="p-3 rounded-2xl bg-gray-50 dark:bg-zinc-950 border border-gray-200/60 dark:border-zinc-800 flex flex-col gap-1 items-start">
-                  <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-extrabold text-sm">
-                    <Award className="h-4 w-4" />
-                    <span>{stampsCount} / 10</span>
-                  </div>
-                  <span className="text-[10px] text-gray-500 dark:text-zinc-400 font-bold">Stamps Collected</span>
-                  <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-md ${stampsCount >= 10 ? 'bg-emerald-500 text-white' : 'bg-orange-500/10 text-orange-500'}`}>
-                    {stampsCount >= 10 ? 'Completed ✓' : 'In Progress'}
+            {/* PHYSICAL TEXTURED LOYALTY CARD (MATCHING USER'S REFERENCE SCREENSHOT EXACTLY) */}
+            <div className="relative rounded-3xl bg-[#fdfbf7] dark:bg-[#18181b] border-2 border-[#e7ded0] dark:border-zinc-800 p-4 md:p-5 shadow-md flex flex-col gap-4 overflow-hidden">
+              
+              {/* Ticket Cutout Notch on Right Edge */}
+              <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-8 bg-[#fbf9f5] dark:bg-[#0b0b0c] rounded-l-full border-l-2 border-y-2 border-[#e7ded0] dark:border-zinc-800" />
+
+              {/* CARD TOP BRANDING BAR */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="font-serif italic font-extrabold text-xl text-[#3c2a21] dark:text-amber-100 tracking-tight leading-none">
+                    CutWala
+                  </h2>
+                  <span className="text-[9px] font-black uppercase tracking-widest text-[#8c7a6b] dark:text-zinc-400 block mt-0.5">
+                    LOYALTY CARD
                   </span>
                 </div>
 
-                <div className="p-3 rounded-2xl bg-gray-50 dark:bg-zinc-950 border border-gray-200/60 dark:border-zinc-800 flex flex-col gap-1 items-start">
-                  <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-extrabold text-xs">
-                    <Sparkles className="h-3.5 w-3.5" />
-                    <span>Reward Status</span>
-                  </div>
-                  <span className="text-[10px] text-gray-500 dark:text-zinc-400 font-medium">Use free haircut at any CutWala salon.</span>
-                </div>
-
-                <div className="p-3 rounded-2xl bg-gray-50 dark:bg-zinc-950 border border-gray-200/60 dark:border-zinc-800 flex flex-col gap-1 items-start">
-                  <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-extrabold text-xs">
-                    <Calendar className="h-3.5 w-3.5" />
-                    <span>Valid Till</span>
-                  </div>
-                  <span className="text-[10px] font-extrabold text-emerald-600 dark:text-emerald-400">24 Jun 2026</span>
-                  <span className="text-[9px] text-gray-400 dark:text-zinc-500 font-bold">(30 days left)</span>
+                {/* Ribbon Tag: CYCLE 2 Started */}
+                <div className="px-3 py-1 rounded-l-xl bg-[#3d271d] text-[#f4ece1] text-[10px] font-extrabold tracking-wide uppercase shadow-sm">
+                  CYCLE 2 <span className="font-normal opacity-80">Started</span>
                 </div>
               </div>
 
-              {/* DEMO TEST STAMP BUTTON FOR USER */}
-              <div className="pt-2 border-t border-gray-100 dark:border-zinc-800 flex items-center justify-between">
-                <span className="text-[10px] font-extrabold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
-                  Test Stamp Addition Animation:
-                </span>
-                <button
-                  onClick={addStamp}
-                  className="px-3 py-1.5 rounded-xl bg-orange-500 text-white text-xs font-extrabold cursor-pointer hover:bg-orange-600 transition-all flex items-center gap-1 shadow-md active:scale-95"
-                >
-                  <Plus className="h-3.5 w-3.5" />
-                  <span>Add Stamp (+1)</span>
-                </button>
+              {/* 10 STAMPS GRID (2 ROWS OF 5) */}
+              <div className="grid grid-cols-5 gap-y-4 gap-x-2 py-2 justify-items-center">
+                {Array.from({ length: 10 }).map((_, idx) => {
+                  const stampNum = idx + 1;
+                  const isCollected = stampNum <= stampsCount;
+
+                  return (
+                    <div key={stampNum} className="flex flex-col items-center gap-1">
+                      <motion.div
+                        initial={false}
+                        animate={isCollected ? { scale: [1, 1.15, 1] } : {}}
+                        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                        className="relative"
+                      >
+                        {/* Stamp Circle Container */}
+                        <div className={`h-12 w-12 sm:h-14 sm:w-14 rounded-full flex items-center justify-center transition-all overflow-hidden p-0.5 ${
+                          isCollected
+                            ? 'border-2 border-emerald-600 bg-white dark:bg-zinc-900 shadow-md'
+                            : 'border border-gray-300 dark:border-zinc-700 bg-[#f7f3ec]/60 dark:bg-zinc-900/60'
+                        }`}>
+                          <img
+                            src={isCollected ? "/stamped.jpg" : "/unstamped.jpg"}
+                            alt={isCollected ? "Stamped" : "Unstamped"}
+                            className="h-full w-full object-contain rounded-full"
+                          />
+                        </div>
+
+                        {/* Green Checkmark Badge OUTSIDE on top-right */}
+                        {isCollected && (
+                          <div className="absolute -top-1 -right-1 h-4.5 w-4.5 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow-md z-20 ring-2 ring-white dark:ring-zinc-900">
+                            <CheckCircle className="h-3.5 w-3.5 stroke-[3]" />
+                          </div>
+                        )}
+                      </motion.div>
+
+                      {/* Stamp Number */}
+                      <span className={`text-[11px] font-extrabold ${
+                        isCollected ? 'text-emerald-700 dark:text-emerald-400' : 'text-gray-500 dark:text-zinc-500'
+                      }`}>
+                        {stampNum}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
 
+              {/* Dotted Divider Line */}
+              <div className="border-t border-dashed border-[#e2d6c3] dark:border-zinc-800 my-1" />
+
+              {/* BOTTOM STATS INSIDE CARD (MATCHING SCREENSHOT) */}
+              <div className="grid grid-cols-2 gap-4 items-center">
+                
+                {/* Left Stat Box: Stamps Collected */}
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-500/20">
+                    <Award className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-baseline gap-1">
+                      <span className="font-display font-extrabold text-base text-gray-900 dark:text-white leading-none">
+                        {stampsCount}
+                      </span>
+                      <span className="text-xs font-bold text-gray-400 dark:text-zinc-500">
+                        / 10
+                      </span>
+                    </div>
+                    <span className="text-[10px] font-bold text-gray-600 dark:text-zinc-400 block">
+                      Stamps Collected
+                    </span>
+                    <span className="text-[10px] font-extrabold text-emerald-600 dark:text-emerald-400 block mt-0.5">
+                      {stampsCount >= 10 ? 'Reward Ready! 🎉' : 'Keep going!'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Right Stat Box: Next FREE Haircut */}
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-500/20">
+                    <Gift className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold text-gray-500 dark:text-zinc-400 block">
+                      Next FREE Haircut
+                    </span>
+                    <span className="text-xs font-extrabold text-emerald-600 dark:text-emerald-400 block leading-tight">
+                      {stampsCount >= 10 ? '11th FREE Haircut' : '22nd Booking'}
+                    </span>
+
+                    {/* 10 Dots Progress Bar */}
+                    <div className="flex items-center gap-1 mt-1.5">
+                      {Array.from({ length: 10 }).map((_, i) => (
+                        <div
+                          key={i}
+                          className={`h-2 w-2 rounded-full transition-all ${
+                            i < stampsCount
+                              ? 'bg-emerald-600 scale-110'
+                              : 'bg-gray-300 dark:bg-zinc-700'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+            {/* CARD FOOTER SUB-BAR (MATCHING SCREENSHOT) */}
+            <div className="flex items-center justify-between px-2 pt-1 text-xs">
+              <span className="text-[11px] font-bold text-orange-600 dark:text-orange-400 flex items-center gap-1">
+                ✦ Every completed booking = <span className="font-extrabold">1 Stamp</span>
+              </span>
+
+              <button
+                onClick={() => setIsHistoryOpen(true)}
+                className="text-[11px] font-extrabold text-orange-600 dark:text-orange-400 hover:underline flex items-center gap-0.5 cursor-pointer"
+              >
+                <span>History</span>
+                <ChevronRight className="h-3.5 w-3.5" />
+              </button>
+            </div>
+
+            {/* DEMO STAMP ADDITION TEST BUTTON */}
+            <div className="p-3 rounded-2xl bg-white dark:bg-zinc-900 border border-gray-200/80 dark:border-zinc-800 flex items-center justify-between shadow-xs">
+              <span className="text-[10px] font-extrabold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
+                Test Stamp Addition Animation:
+              </span>
+              <button
+                onClick={addStamp}
+                className="px-3 py-1.5 rounded-xl bg-orange-500 text-white text-xs font-extrabold cursor-pointer hover:bg-orange-600 transition-all flex items-center gap-1 shadow-md active:scale-95"
+              >
+                <Plus className="h-3.5 w-3.5" />
+                <span>Add Stamp (+1)</span>
+              </button>
             </div>
 
           </div>
         )}
 
-        {/* TAB 2: REFERRAL POINTS CONTENT (MATCHING IMAGE 2 EXACTLY) */}
+        {/* TAB 2: REFERRAL POINTS CONTENT */}
         {activeTab === 'referrals' && (
           <div className="flex flex-col gap-4 animate-fade-in">
             
@@ -310,14 +319,14 @@ export const Rewards: React.FC = () => {
 
                 <button
                   onClick={() => setIsHowItWorksOpen(true)}
-                  className="px-2.5 py-1 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-extrabold flex items-center gap-1 border border-emerald-500/20 shrink-0"
+                  className="px-2.5 py-1 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-extrabold flex items-center gap-1 border border-emerald-500/20 shrink-0 cursor-pointer"
                 >
                   <span>How it works?</span>
                   <HelpCircle className="h-3 w-3" />
                 </button>
               </div>
 
-              {/* POINTS & INVITE CONTAINER (MATCHING IMAGE 2) */}
+              {/* POINTS & INVITE CONTAINER (MATCHING SCREENSHOT) */}
               <div className="p-4 rounded-2xl bg-emerald-50/50 dark:bg-zinc-950 border border-emerald-200/60 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4">
                 
                 {/* Left: Referral Points Count */}
@@ -382,24 +391,45 @@ export const Rewards: React.FC = () => {
                 </button>
               </div>
 
-              {/* SIMULATE REFERRAL INVITATION */}
-              <div className="pt-2 border-t border-gray-100 dark:border-zinc-800 flex items-center justify-between">
-                <span className="text-[10px] font-extrabold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
-                  Test Referral Rewards:
-                </span>
-                <button
-                  onClick={() => addReferralPoints(100)}
-                  className="px-3 py-1.5 rounded-xl bg-emerald-600 text-white text-xs font-extrabold cursor-pointer hover:bg-emerald-700 transition-all flex items-center gap-1 shadow-md active:scale-95"
-                >
-                  <Plus className="h-3.5 w-3.5" />
-                  <span>Simulate +100 Pts</span>
-                </button>
-              </div>
-
             </div>
 
           </div>
         )}
+
+        {/* 3. REDEEM POINTS CATALOG SECTION (MATCHING SCREENSHOT EXACTLY) */}
+        <div className="flex flex-col gap-3 pt-2">
+          <div className="flex items-center justify-between">
+            <h3 className="font-display font-extrabold text-sm text-gray-900 dark:text-white">
+              Redeem Points
+            </h3>
+            <button className="text-xs font-extrabold text-emerald-600 dark:text-emerald-400 flex items-center gap-0.5 hover:underline cursor-pointer">
+              <span>View All</span>
+              <ChevronRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
+
+          {/* 4 REDEEM OFFER CARDS */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {redeemItems.map((item) => (
+              <div
+                key={item.id}
+                className="p-3 rounded-2xl bg-white dark:bg-zinc-900 border border-gray-200/80 dark:border-zinc-800 flex flex-col items-center text-center gap-2 shadow-xs hover:border-emerald-500 transition-all cursor-pointer group"
+              >
+                <div className="text-2xl p-2 rounded-2xl bg-gray-50 dark:bg-zinc-950 group-hover:scale-110 transition-transform">
+                  {item.icon}
+                </div>
+                <div>
+                  <span className="text-xs font-extrabold text-gray-900 dark:text-white block">
+                    {item.title}
+                  </span>
+                  <span className="text-[10px] font-extrabold text-emerald-600 dark:text-emerald-400 block mt-0.5">
+                    {item.points} Points
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
 
       </div>
 
@@ -438,6 +468,31 @@ export const Rewards: React.FC = () => {
               <p className="font-extrabold text-gray-900 dark:text-white">Refer Friends & Earn Points</p>
               <p className="text-gray-500 dark:text-zinc-400 mt-0.5">Share your referral code. Earn +100 points for every friend who joins CutWala!</p>
             </div>
+          </div>
+        </div>
+      </DrawerModal>
+
+      {/* STAMP HISTORY MODAL */}
+      <DrawerModal
+        isOpen={isHistoryOpen}
+        onClose={() => setIsHistoryOpen(false)}
+        title="Stamp History"
+      >
+        <div className="flex flex-col gap-3 pt-2 text-xs">
+          <div className="p-3 rounded-xl bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 flex items-center justify-between">
+            <div>
+              <span className="font-bold text-gray-900 dark:text-white block">Signature Haircut - CutWala Salon</span>
+              <span className="text-[10px] text-gray-500">22 July 2026 • Completed</span>
+            </div>
+            <span className="font-extrabold text-emerald-600">+1 Stamp 💺</span>
+          </div>
+
+          <div className="p-3 rounded-xl bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 flex items-center justify-between">
+            <div>
+              <span className="font-bold text-gray-900 dark:text-white block">Beard Styling - CutWala Studio</span>
+              <span className="text-[10px] text-gray-500">15 July 2026 • Completed</span>
+            </div>
+            <span className="font-extrabold text-emerald-600">+1 Stamp 💺</span>
           </div>
         </div>
       </DrawerModal>
