@@ -120,7 +120,7 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
           <div class="relative group cursor-pointer flex flex-col items-center select-none ${isSelected ? 'scale-110 z-50' : 'hover:scale-105 z-10'}" style="transform: translate(-50%, -100%);">
             
             <!-- Salon Name Label Above Pin (Compact & Clean) -->
-            <span class="text-[9.5px] font-extrabold text-gray-900 dark:text-white bg-white/95 dark:bg-zinc-900/95 px-2 py-0.5 rounded-full shadow-sm border border-gray-200/80 dark:border-zinc-800 mb-0.5 whitespace-nowrap leading-tight">
+            <span class="text-[9px] font-extrabold text-gray-900 dark:text-white bg-white/95 dark:bg-zinc-900/95 px-2 py-0.5 rounded-full shadow-sm border border-gray-200/80 dark:border-zinc-800 mb-0.5 whitespace-nowrap leading-tight">
               ${shop.name}
             </span>
 
@@ -147,10 +147,10 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
                     />
                   </svg>
 
-                  <!-- Content Inside White Window of Teardrop Pin (Center Dome) -->
-                  <div class="absolute top-[4px] left-[5px] w-[26px] h-[26px] rounded-full flex flex-col items-center justify-center z-10 overflow-hidden">
-                    <img src="${chairImg}" alt="Chair Status" class="h-5 w-5 object-contain" />
-                    <span class="text-[5.5px] font-black tracking-tighter leading-none mt-0.5" style="color: ${badgeBg};">
+                  <!-- Content Inside White Window of Teardrop Pin (Perfectly Centered 28px Window) -->
+                  <div class="absolute top-[3px] left-1/2 -translate-x-1/2 w-[28px] h-[28px] rounded-full bg-white flex flex-col items-center justify-center z-10 overflow-hidden">
+                    <img src="${encodeURI(chairImg)}" alt="Chair Status" class="h-5 w-5 object-contain shrink-0" />
+                    <span class="text-[5.5px] font-black tracking-tighter leading-none text-orange-600 mt-0.5">
                       CutWala
                     </span>
                   </div>
@@ -248,59 +248,33 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
       fetch(osrmUrl)
         .then(res => res.json())
         .then(data => {
-          if (data && data.routes && data.routes[0] && data.routes[0].geometry) {
-            const rawCoords = data.routes[0].geometry.coordinates; // [lng, lat]
-            const routeLatLngs: [number, number][] = rawCoords.map(([lng, lat]: [number, number]) => [lat, lng]);
+          if (data && data.routes && data.routes[0]) {
+            const coordinates = data.routes[0].geometry.coordinates;
+            const latLngs = coordinates.map((coord: number[]) => [coord[1], coord[0]] as [number, number]);
 
-            if (routePolylineRef.current) {
-              routePolylineRef.current.remove();
-            }
-
-            // Real Google Maps-style Blue Navigation Polyline following real roads
-            const polyline = L.polyline(routeLatLngs, {
-              color: '#3b82f6', // Electric Google Maps Blue
-              weight: 6,
+            const polyline = L.polyline(latLngs, {
+              color: '#f97316', // CutWala Vibrant Orange Route Line
+              weight: 5,
               opacity: 0.9,
               lineCap: 'round',
               lineJoin: 'round'
             }).addTo(map);
 
             routePolylineRef.current = polyline;
-
-            // Smoothly fit bounds to show full real street route
-            map.fitBounds(L.latLngBounds(routeLatLngs), { padding: [70, 70], maxZoom: 16 });
-          } else {
-            drawFallbackRoadRoute(startLat, startLng, endLat, endLng, map);
+            map.fitBounds(polyline.getBounds(), { padding: [80, 80] });
           }
         })
         .catch(() => {
-          drawFallbackRoadRoute(startLat, startLng, endLat, endLng, map);
+          // Fallback straight line if OSRM fails
+          const polyline = L.polyline([[startLat, startLng], [endLat, endLng]], {
+            color: '#f97316',
+            weight: 5,
+            dashArray: '8, 8'
+          }).addTo(map);
+          routePolylineRef.current = polyline;
         });
     }
-  }, [selectedShop, userLocation]);
-
-  const drawFallbackRoadRoute = (startLat: number, startLng: number, endLat: number, endLng: number, map: L.Map) => {
-    // Generate right-angle street grid waypoints (Manhattan street grid path)
-    const midLat = startLat;
-    const midLng = endLng;
-
-    const gridWaypoints: [number, number][] = [
-      [startLat, startLng],
-      [midLat, midLng],
-      [endLat, endLng]
-    ];
-
-    const polyline = L.polyline(gridWaypoints, {
-      color: '#3b82f6',
-      weight: 6,
-      opacity: 0.9,
-      lineCap: 'round',
-      lineJoin: 'round'
-    }).addTo(map);
-
-    routePolylineRef.current = polyline;
-    map.fitBounds(L.latLngBounds(gridWaypoints), { padding: [70, 70], maxZoom: 16 });
-  };
+  }, [selectedShop]);
 
   // Handle Search Query filtering
   useEffect(() => {
@@ -343,32 +317,32 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
         className="h-full w-full z-0" 
       />
 
-      {/* Floating Map Controls */}
-      <div className="absolute top-20 right-4 z-20 flex flex-col gap-2 md:top-6">
+      {/* Floating Map Controls (Positioned Below Filter Pills to Prevent Overlap) */}
+      <div className="absolute top-32 right-3 z-20 flex flex-col gap-2 md:top-28 md:right-4">
         {/* Recenter GPS Button */}
         <button 
           onClick={handleRecenter}
-          className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white dark:bg-zinc-900 text-gray-700 dark:text-gray-200 shadow-xl border border-gray-200 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-800 active:scale-95 transition-all cursor-pointer group"
+          className="flex h-10 w-10 md:h-11 md:w-11 items-center justify-center rounded-2xl bg-white dark:bg-zinc-900 text-gray-700 dark:text-gray-200 shadow-xl border border-gray-200 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-800 active:scale-95 transition-all cursor-pointer group"
           title="Recenter Real GPS Location"
         >
-          <Navigation className="h-5 w-5 text-orange-500 group-hover:scale-110 transition-transform" />
+          <Navigation className="h-4.5 w-4.5 md:h-5 md:w-5 text-orange-500 group-hover:scale-110 transition-transform" />
         </button>
 
         {/* Zoom Controls */}
         <div className="flex flex-col rounded-2xl bg-white dark:bg-zinc-900 shadow-xl border border-gray-200 dark:border-zinc-800 overflow-hidden">
           <button 
             onClick={handleZoomIn}
-            className="flex h-11 w-11 items-center justify-center text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-800 active:scale-95 transition-all border-b border-gray-100 dark:border-zinc-800 cursor-pointer"
+            className="flex h-10 w-10 md:h-11 md:w-11 items-center justify-center text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-800 active:scale-95 transition-all border-b border-gray-100 dark:border-zinc-800 cursor-pointer"
             title="Zoom in"
           >
-            <Plus className="h-5 w-5" />
+            <Plus className="h-4.5 w-4.5 md:h-5 md:w-5" />
           </button>
           <button 
             onClick={handleZoomOut}
-            className="flex h-11 w-11 items-center justify-center text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-800 active:scale-95 transition-all cursor-pointer"
+            className="flex h-10 w-10 md:h-11 md:w-11 items-center justify-center text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-800 active:scale-95 transition-all cursor-pointer"
             title="Zoom out"
           >
-            <Minus className="h-5 w-5" />
+            <Minus className="h-4.5 w-4.5 md:h-5 md:w-5" />
           </button>
         </div>
       </div>

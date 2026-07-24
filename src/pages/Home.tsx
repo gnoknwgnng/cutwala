@@ -53,18 +53,18 @@ export const Home: React.FC = () => {
       </div>
 
       {/* TOP MAP HEADER BAR & DISTANCE RADIUS FILTERS (CLEAN NON-OVERLAPPING LAYOUT) */}
-      <div className="absolute top-3 left-3 right-3 z-10 flex flex-col gap-2 max-w-xl mx-auto pointer-events-auto">
+      <div className="absolute top-3 left-3 right-3 z-10 flex flex-col gap-2 max-w-lg mx-auto pointer-events-auto pr-12 md:pr-16">
         
         {/* Header Bar */}
-        <div className="bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-2xl p-2.5 px-3.5 shadow-lg border border-gray-200/80 dark:border-zinc-800 flex items-center justify-between gap-3">
+        <div className="bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-2xl p-2 px-3 shadow-lg border border-gray-200/80 dark:border-zinc-800 flex items-center justify-between gap-2">
           <div className="flex flex-col min-w-0">
             <div className="flex items-center gap-1.5">
-              <h2 className="font-display font-extrabold text-sm md:text-base text-gray-900 dark:text-white leading-tight">
+              <h2 className="font-display font-extrabold text-xs md:text-sm text-gray-900 dark:text-white leading-tight">
                 Nearby Salons
               </h2>
               <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
             </div>
-            <span className="text-[10px] md:text-[11px] font-bold text-gray-500 dark:text-zinc-400 truncate">
+            <span className="text-[9.5px] font-bold text-gray-500 dark:text-zinc-400 truncate">
               Live Available Chairs
             </span>
           </div>
@@ -77,13 +77,13 @@ export const Home: React.FC = () => {
           </div>
         </div>
 
-        {/* Distance Range Filter Pills (Matching reference image: 0.5 Km Closest, 1 Km, 2 Km, 3 Km, 5 Km, Custom) */}
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+        {/* Distance Range Filter Pills */}
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 pr-2">
           {[0.5, 1, 2, 3, 5, 10].map((dist) => (
             <button
               key={dist}
               onClick={() => setFilters({ maxDistance: dist })}
-              className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer whitespace-nowrap shadow-sm border ${
+              className={`px-2.5 py-1 rounded-xl text-[11px] font-extrabold transition-all cursor-pointer whitespace-nowrap shadow-sm border ${
                 maxDistance === dist
                   ? 'bg-orange-500 text-white border-orange-500 shadow-orange-500/30 scale-105'
                   : 'bg-white/95 dark:bg-zinc-900/95 text-gray-700 dark:text-zinc-300 border-gray-200/80 dark:border-zinc-800 hover:bg-white'
