@@ -123,42 +123,42 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
             <!-- Pin Marker Container -->
             <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
               
-              <!-- Pin Teardrop Body (Compact 30x36 Size) -->
-              <div style="position: relative; width: 30px; height: 36px; display: flex; align-items: center; justify-content: center;">
+              <!-- Pin Teardrop Body with Badge All-In-One SVG -->
+              <div style="position: relative; width: 36px; height: 44px; display: flex; align-items: center; justify-content: center;">
                 
-                <svg width="30" height="36" viewBox="0 0 30 36" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block;">
+                <svg width="36" height="44" viewBox="0 0 36 44" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block; overflow: visible;">
                   <defs>
-                    <!-- Clip Path matching inner teardrop pin boundary -->
                     <clipPath id="teardrop-clip-${shop.shop_id}">
-                      <path d="M15 3C9.2 3 4.5 7.7 4.5 13.5C4.5 20.5 15 32.5 15 32.5C15 32.5 25.5 20.5 25.5 13.5C25.5 7.7 20.8 3 15 3Z" />
+                      <path d="M18 4C11.4 4 6 9.4 6 16C6 23.5 18 38 18 38C18 38 30 23.5 30 16C30 9.4 24.6 4 18 4Z" />
                     </clipPath>
                   </defs>
 
-                  <!-- White Interior Teardrop Pin Path with Occupancy Colored Border -->
+                  <!-- White Teardrop Pin with Occupancy Colored Border -->
                   <path 
-                    d="M15 1.5C8.373 1.5 3 6.873 3 13.5C3 21.5 15 34.5 15 34.5C15 34.5 27 21.5 27 13.5C27 6.873 21.627 1.5 15 1.5Z" 
+                    d="M18 2C10.3 2 4 8.3 4 16C4 25 18 42 18 42C18 42 32 25 32 16C32 8.3 25.7 2 18 2Z" 
                     fill="#ffffff" 
                     stroke="${badgeBg}" 
-                    stroke-width="2.5" 
+                    stroke-width="3" 
                     stroke-linejoin="round"
                   />
                   
-                  <!-- Clipped Native SVG Chair Status Image Centered in Dome Window -->
+                  <!-- Clipped Chair Image -->
                   <g clip-path="url(#teardrop-clip-${shop.shop_id})">
-                    <image href="${chairImg}" x="6.5" y="4.5" width="17" height="17" preserveAspectRatio="xMidYMid meet" />
+                    <image href="${chairImg}" x="7" y="5" width="22" height="22" preserveAspectRatio="xMidYMid meet" />
                   </g>
                   
-                  <!-- Native SVG CutWala Subtext -->
-                  <text x="15" y="24" text-anchor="middle" font-size="4.2" font-weight="900" fill="${badgeBg}" font-family="sans-serif">
-                    CutWala
-                  </text>
+                  <!-- CutWala label -->
+                  <text x="18" y="30" text-anchor="middle" font-size="5" font-weight="900" fill="${badgeBg}" font-family="sans-serif">CutWala</text>
+
+                  <!-- Occupancy Badge INSIDE SVG (never covered by other markers' HTML) -->
+                  <!-- Badge pill background rect -->
+                  <rect x="8" y="-8" width="20" height="10" rx="5" ry="5" fill="${badgeBg}" />
+                  <!-- Badge white border -->
+                  <rect x="7" y="-9" width="22" height="12" rx="6" ry="6" fill="none" stroke="#ffffff" stroke-width="1.5" />
+                  <!-- Badge text -->
+                  <text x="18" y="-1.5" text-anchor="middle" font-size="7" font-weight="900" fill="#ffffff" font-family="sans-serif">${taken}/${total}</text>
                 </svg>
 
-              </div>
-
-              <!-- Occupancy Badge Centered on Top of Pin Dome (100% Front & Visible) -->
-              <div style="position: absolute; top: -6px; left: 50%; transform: translateX(-50%); z-index: 100; padding: 1px 6px; border-radius: 9999px; font-size: 8.5px; font-weight: 900; color: #ffffff; background-color: ${badgeBg}; border: 1.5px solid #ffffff; box-shadow: 0 2px 5px rgba(0,0,0,0.3); min-width: 22px; text-align: center; line-height: 1; white-space: nowrap;">
-                ${taken}/${total}
               </div>
 
               <!-- Concentric Ground Target Ripples Below Pin Tip -->
