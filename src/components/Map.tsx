@@ -120,7 +120,7 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
           <div style="position: relative; cursor: pointer; display: flex; flex-direction: column; align-items: center; user-select: none; ${isSelected ? 'transform: translate(-50%, -100%) scale(1.1); z-index: 1000;' : 'transform: translate(-50%, -100%); z-index: 10;'}">
             
             <!-- Salon Name Label Above Pin -->
-            <div style="font-size: 9.5px; font-weight: 800; color: #111827; background-color: rgba(255, 255, 255, 0.95); padding: 1px 7px; border-radius: 9999px; box-shadow: 0 2px 4px rgba(0,0,0,0.12); border: 1px solid #e5e7eb; margin-bottom: 2px; white-space: nowrap; line-height: 1.2;">
+            <div style="font-size: 8.5px; font-weight: 800; color: #111827; background-color: rgba(255, 255, 255, 0.95); padding: 1px 6px; border-radius: 9999px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); border: 1px solid #e5e7eb; margin-bottom: 1px; white-space: nowrap; line-height: 1.2;">
               ${shop.name}
             </div>
 
@@ -128,37 +128,37 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
             <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
               
               <!-- Top Right Occupancy Badge (e.g. 2/6, 0/4, 3/4) -->
-              <div style="position: absolute; top: -4px; right: -6px; z-index: 30; padding: 1px 5px; border-radius: 9999px; font-size: 8.5px; font-weight: 900; color: #ffffff; background-color: ${badgeBg}; border: 1.5px solid ${badgeBorder}; box-shadow: 0 2px 4px rgba(0,0,0,0.2); min-width: 22px; text-align: center;">
+              <div style="position: absolute; top: -3px; right: -5px; z-index: 30; padding: 0.5px 4px; border-radius: 9999px; font-size: 7.5px; font-weight: 900; color: #ffffff; background-color: ${badgeBg}; border: 1.2px solid ${badgeBorder}; box-shadow: 0 1px 3px rgba(0,0,0,0.2); min-width: 18px; text-align: center;">
                 ${taken}/${total}
               </div>
 
-              <!-- Pin Teardrop Body with Native SVG Embedded Image & Text -->
-              <div style="position: relative; width: 42px; height: 52px; display: flex; align-items: center; justify-content: center;">
+              <!-- Pin Teardrop Body (Compact 30x36 Size) -->
+              <div style="position: relative; width: 30px; height: 36px; display: flex; align-items: center; justify-content: center;">
                 
-                <svg width="42" height="52" viewBox="0 0 42 52" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block;">
+                <svg width="30" height="36" viewBox="0 0 30 36" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block;">
                   <defs>
-                    <!-- Clip Path matching inner teardrop pin boundary so image NEVER spills out of top curve -->
+                    <!-- Clip Path matching inner teardrop pin boundary -->
                     <clipPath id="teardrop-clip-${shop.shop_id}">
-                      <path d="M21 4C12 4 4 12 4 21C4 31 21 47 21 47C21 47 38 31 38 21C38 12 30 4 21 4Z" />
+                      <path d="M15 3C9.2 3 4.5 7.7 4.5 13.5C4.5 20.5 15 32.5 15 32.5C15 32.5 25.5 20.5 25.5 13.5C25.5 7.7 20.8 3 15 3Z" />
                     </clipPath>
                   </defs>
 
                   <!-- White Interior Teardrop Pin Path with Occupancy Colored Border -->
                   <path 
-                    d="M21 2C10.5 2 2 10.5 2 21C2 33 21 50 21 50C21 50 40 33 40 21C40 10.5 31.5 2 21 2Z" 
+                    d="M15 1.5C8.373 1.5 3 6.873 3 13.5C3 21.5 15 34.5 15 34.5C15 34.5 27 21.5 27 13.5C27 6.873 21.627 1.5 15 1.5Z" 
                     fill="#ffffff" 
                     stroke="${badgeBg}" 
-                    stroke-width="3.5" 
+                    stroke-width="2.5" 
                     stroke-linejoin="round"
                   />
                   
                   <!-- Clipped Native SVG Chair Status Image Centered in Dome Window -->
                   <g clip-path="url(#teardrop-clip-${shop.shop_id})">
-                    <image href="${chairImg}" x="10" y="7" width="22" height="22" preserveAspectRatio="xMidYMid meet" />
+                    <image href="${chairImg}" x="6.5" y="4.5" width="17" height="17" preserveAspectRatio="xMidYMid meet" />
                   </g>
                   
                   <!-- Native SVG CutWala Subtext -->
-                  <text x="21" y="34" text-anchor="middle" font-size="5.5" font-weight="900" fill="${badgeBg}" font-family="sans-serif">
+                  <text x="15" y="24" text-anchor="middle" font-size="4.2" font-weight="900" fill="${badgeBg}" font-family="sans-serif">
                     CutWala
                   </text>
                 </svg>
@@ -166,17 +166,17 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
               </div>
 
               <!-- Concentric Ground Target Ripples Below Pin Tip -->
-              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: -2px;">
-                <svg width="26" height="8" viewBox="0 0 26 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <ellipse cx="13" cy="4" rx="11" ry="3" stroke="${badgeBg}" stroke-width="1.3" fill="none" opacity="0.85" />
-                  <ellipse cx="13" cy="4" rx="5.5" ry="1.6" fill="${badgeBg}" opacity="0.8" />
+              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: -1px;">
+                <svg width="20" height="6" viewBox="0 0 20 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <ellipse cx="10" cy="3" rx="8.5" ry="2.2" stroke="${badgeBg}" stroke-width="1" fill="none" opacity="0.85" />
+                  <ellipse cx="10" cy="3" rx="4" ry="1.1" fill="${badgeBg}" opacity="0.8" />
                 </svg>
               </div>
 
             </div>
 
             <!-- Distance Pill Below Pin -->
-            <div style="margin-top: 1px; background-color: rgba(255, 255, 255, 0.95); padding: 1px 7px; border-radius: 9999px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); font-size: 8.5px; font-weight: 800; color: #1f2937; border: 1px solid #e5e7eb;">
+            <div style="margin-top: 1px; background-color: rgba(255, 255, 255, 0.95); padding: 0.5px 5.5px; border-radius: 9999px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); font-size: 8px; font-weight: 800; color: #1f2937; border: 1px solid #e5e7eb;">
               ${distanceDisplay}
             </div>
 
