@@ -123,11 +123,6 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
             <!-- Pin Marker Container -->
             <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
               
-              <!-- Top Right Occupancy Badge (e.g. 2/6, 0/4, 3/4 - Bold & Clear) -->
-              <div style="position: absolute; top: -3px; right: -8px; z-index: 50; padding: 1px 5px; border-radius: 9999px; font-size: 8.5px; font-weight: 900; color: #ffffff; background-color: ${badgeBg}; border: 1.5px solid #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.25); min-width: 22px; text-align: center; line-height: 1;">
-                ${taken}/${total}
-              </div>
-
               <!-- Pin Teardrop Body (Compact 30x36 Size) -->
               <div style="position: relative; width: 30px; height: 36px; display: flex; align-items: center; justify-content: center;">
                 
@@ -159,6 +154,11 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
                   </text>
                 </svg>
 
+              </div>
+
+              <!-- Top Right Occupancy Badge (Rendered IN FRONT of Pin Body in DOM Order) -->
+              <div style="position: absolute; top: -4px; right: -8px; z-index: 100; padding: 1px 5px; border-radius: 9999px; font-size: 8.5px; font-weight: 900; color: #ffffff; background-color: ${badgeBg}; border: 1.8px solid #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.3); min-width: 22px; text-align: center; line-height: 1;">
+                ${taken}/${total}
               </div>
 
               <!-- Concentric Ground Target Ripples Below Pin Tip -->
