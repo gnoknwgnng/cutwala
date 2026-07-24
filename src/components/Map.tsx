@@ -43,8 +43,9 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
 
   const openShops = shops.filter(shop => shop.status === 'OPEN');
 
-  // Trigger real browser location request on mount if not available
+  // Reset map panning state and trigger real browser location request on mount
   useEffect(() => {
+    setMapPanning(false);
     if (!userLocation) {
       requestRealLocation();
     }
@@ -97,8 +98,7 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
       });
     }
 
-    // Ensure header/nav are visible on mount/reload
-    setMapPanning(false);
+
 
     const map = mapInstanceRef.current;
 
