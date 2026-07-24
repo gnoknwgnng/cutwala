@@ -42,7 +42,7 @@ interface State {
   genderFilter: 'men' | 'women' | 'all';
   theme: 'light' | 'dark';
   toast: { message: string; type: 'success' | 'error' | 'info'; id: number } | null;
-  mapScrolledUp: boolean;
+  mapPanning: boolean;
   
   stampsCount: number;
   cycleNumber: number;
@@ -60,8 +60,8 @@ interface State {
   setFilters: (filters: { maxDistance?: number; genderFilter?: 'men' | 'women' | 'all' }) => void;
   setFavorite: (shopId: string) => void;
   toggleTheme: () => void;
+  setMapPanning: (panning: boolean) => void;
   showToast: (message: string, type?: 'success' | 'error' | 'info') => void;
-  setMapScrolledUp: (value: boolean) => void;
   hideToast: () => void;
   logout: () => void;
   addStamp: () => void;
@@ -107,7 +107,7 @@ export const useStore = create<State>((set, get) => ({
   favoriteShops: ['shop1'], // Default favorite
   theme: 'light', // default theme is white/light mode
   toast: null,
-  mapScrolledUp: false,
+  mapPanning: false,
   searchQuery: '',
   maxDistance: 10,
   genderFilter: 'men',
@@ -285,6 +285,10 @@ export const useStore = create<State>((set, get) => ({
     });
   },
 
+  setMapPanning: (panning: boolean) => {
+    set({ mapPanning: panning });
+  },
+
   toggleTheme: () => {
     set((state) => {
       const nextTheme = state.theme === 'light' ? 'dark' : 'light';
@@ -305,10 +309,6 @@ export const useStore = create<State>((set, get) => ({
 
   hideToast: () => {
     set({ toast: null });
-  },
-
-  setMapScrolledUp: (value: boolean) => {
-    set({ mapScrolledUp: value });
   },
 
   logout: () => {
