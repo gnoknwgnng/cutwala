@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { MapPin, Star, ArrowRight, Heart, Clock, ChevronDown } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { MapPin, Star, ArrowRight, Heart, Clock, ChevronDown, X } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { Map } from '../components/Map';
 import type { BarberShop } from '../mock/mockData';
 
 export const Home: React.FC = () => {
   const navigate = useNavigate();
-  const { shops, maxDistance, setFilters, setBookingShop, setFavorite } = useStore();
+  const { shops, maxDistance, setFilters, setBookingShop, setFavorite, mapPanning } = useStore();
   const [selectedShop, setSelectedShop] = useState<BarberShop | null>(null);
 
-  // 3 Snap Positions for Floating Bottom Sheet: 'collapsed' (~180px) | 'half' (~50vh) | 'full' (~82vh)
+  // Card dismiss/close state
+  const [isCardClosed, setIsCardClosed] = useState<boolean>(false);
+
+  // 3 Snap Positions for Floating Bottom Sheet: 'collapsed' (~185px) | 'half' (~52vh) | 'full' (~82vh)
   const [snapState, setSnapState] = useState<'collapsed' | 'half' | 'full'>('collapsed');
 
   // Filter mode inside bottom sheet list: 'all' | 'favourites'
@@ -71,6 +74,7 @@ export const Home: React.FC = () => {
 
   const handleSelectShop = (shop: BarberShop) => {
     setSelectedShop(shop);
+    setIsCardClosed(false); // Re-open card if user clicks a map pin
   };
 
   const handleOpenDetails = (shopId: string) => {
@@ -97,6 +101,7 @@ export const Home: React.FC = () => {
 
   // Calculate dynamic height style for bottom sheet snap positions
   const getSheetHeight = () => {
+    if (isCardClosed) return '0px';
     if (snapState === 'collapsed') return '185px';
     if (snapState === 'half') return '52vh';
     return '82vh';
@@ -158,20 +163,51 @@ export const Home: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. FLOATING BOTTOM PREVIEW CARD / SHEET (Uber / Google Maps Style) */}
-      {/* Positioned above mobile bottom navigation bar (bottom-[74px]) with 12-16px side margins */}
+      {/* Floating Re-open Button when card is closed */}
+      <AnimatePresence>
+        {isCardClosed && !mapPanning && (
+          <motion.button
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            onClick={() => setIsCardClosed(false)}
+            className="absolute bottom-20 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl shadow-xl border border-gray-200 dark:border-zinc-700 text-gray-900 dark:text-white font-extrabold text-xs cursor-pointer hover:scale-105 active:scale-95 transition-all"
+          >
+            <span>💈 Show Salons</span>
+          </motion.button>
+        )}
+      </AnimatePresence>
+
+      {/* 2. FLOATING BOTTOM PREVIEW CARD / SHEET */}
+      {/* Positioned directly flush above bottom nav (bottom-16) with ZERO gap. Slides TOTALLY to bottom on map scroll (y: mapPanning ? 350 : 0) */}
       <motion.div
-        animate={{ height: getSheetHeight() }}
-        transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-        className="absolute bottom-[74px] left-3 right-3 md:left-4 md:right-4 z-30 max-w-lg mx-auto w-[calc(100%-1.5rem)] rounded-3xl bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl shadow-2xl border border-gray-200/90 dark:border-zinc-800/90 flex flex-col overflow-hidden pointer-events-auto"
+        animate={{ 
+          height: getSheetHeight(),
+          y: mapPanning || isCardClosed ? 350 : 0,
+          opacity: mapPanning || isCardClosed ? 0 : 1
+        }}
+        transition={{ type: 'spring', damping: 30, stiffness: 400 }}
+        className="absolute bottom-16 left-3 right-3 md:left-4 md:right-4 z-30 max-w-lg mx-auto w-[calc(100%-1.5rem)] rounded-3xl bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl shadow-2xl border border-gray-200/90 dark:border-zinc-800/90 flex flex-col overflow-hidden pointer-events-auto"
       >
-        {/* DRAG HANDLE BAR (Top Center Drag Indicator) */}
+        {/* DRAG HANDLE BAR (Top Center Drag Indicator + Close Button) */}
         <div 
           onClick={cycleSnapState}
-          className="w-full flex flex-col items-center pt-2.5 pb-1.5 cursor-grab active:cursor-grabbing hover:bg-gray-50/50 dark:hover:bg-zinc-800/50 transition-colors shrink-0 touch-none"
+          className="w-full flex flex-col items-center pt-2.5 pb-1.5 cursor-grab active:cursor-grabbing hover:bg-gray-50/50 dark:hover:bg-zinc-800/50 transition-colors shrink-0 touch-none relative"
         >
           {/* Light gray drag handle pill: 44px x 5px */}
           <div className="w-11 h-1.5 rounded-full bg-gray-300 dark:bg-zinc-600 shadow-xs" />
+          
+          {/* Dismiss / Close Button on top right of handle bar */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsCardClosed(true);
+            }}
+            className="absolute top-2 right-3 h-6 w-6 rounded-full bg-gray-100 dark:bg-zinc-800 flex items-center justify-center text-gray-400 hover:text-gray-700 dark:hover:text-zinc-200 transition-colors cursor-pointer"
+            title="Close Card"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
           
           {/* Header controls visible in Half / Full states */}
           {snapState !== 'collapsed' && (
