@@ -103,36 +103,11 @@ export const Rewards: React.FC = () => {
           </button>
         </div>
 
-        {/* TAB 1: LOYALTY STAMPS CONTENT */}
+        {/* TAB 1: LOYALTY STAMPS CONTENT (MATCHING USER'S HANDWRITTEN SKETCH EXACTLY) */}
         {activeTab === 'stamps' && (
-          <div className="flex flex-col gap-3 animate-fade-in">
+          <div className="flex flex-col gap-3.5 animate-fade-in">
             
-            {/* DIGITAL LOYALTY STAMP CARD HEADER */}
-            <div className="flex items-start justify-between px-1">
-              <div className="flex items-center gap-2.5">
-                <div className="h-9 w-9 rounded-xl bg-orange-500/10 text-orange-500 flex items-center justify-center shrink-0 border border-orange-500/20">
-                  <Gift className="h-5 w-5" />
-                </div>
-                <div>
-                  <h3 className="font-display font-extrabold text-xs md:text-sm text-gray-900 dark:text-white">
-                    Digital Loyalty Stamp Card
-                  </h3>
-                  <p className="text-[11px] text-gray-500 dark:text-zinc-400 font-medium">
-                    Book at <span className="font-bold text-orange-500">CutWala</span> 10 times and get your <span className="font-bold text-orange-500">11th haircut FREE!</span>
-                  </p>
-                </div>
-              </div>
-
-              <button
-                onClick={() => setIsHowItWorksOpen(true)}
-                className="px-2.5 py-1 rounded-xl bg-gray-100 dark:bg-zinc-800 text-orange-600 dark:text-orange-400 text-[10px] font-extrabold flex items-center gap-1 border border-gray-200 dark:border-zinc-700 shrink-0 cursor-pointer"
-              >
-                <span>How it works?</span>
-                <HelpCircle className="h-3 w-3" />
-              </button>
-            </div>
-
-            {/* PHYSICAL TEXTURED PARCHMENT LOYALTY CARD (EXACT MATCH FOR COLOR #f3ebe1) */}
+            {/* PHYSICAL TEXTURED PARCHMENT LOYALTY CARD (COLOR #f3ebe1) */}
             <div className="relative rounded-3xl bg-[#f3ebe1] dark:bg-[#18181b] border-2 border-[#e2d6c6] dark:border-zinc-800 p-4 md:p-5 shadow-lg shadow-amber-900/5 flex flex-col gap-4 overflow-hidden">
               
               {/* Ticket Cutout Notch on Right Edge */}
@@ -149,9 +124,9 @@ export const Rewards: React.FC = () => {
                   </span>
                 </div>
 
-                {/* Ribbon Tag: CYCLE 2 Started */}
+                {/* Ribbon Tag: CYCLE 1 Started */}
                 <div className="px-3.5 py-1.5 rounded-bl-xl rounded-tr-xl bg-[#422b1d] text-[#f4eae0] text-[10px] font-extrabold tracking-wide uppercase shadow-sm">
-                  CYCLE 2 <span className="font-normal opacity-80">Started</span>
+                  CYCLE 1 <span className="font-normal opacity-80">Started</span>
                 </div>
               </div>
 
@@ -204,7 +179,7 @@ export const Rewards: React.FC = () => {
               {/* Dotted Divider Line */}
               <div className="border-t border-dashed border-[#e2d6c3] dark:border-zinc-800 my-1" />
 
-              {/* BOTTOM STATS INSIDE CARD (MATCHING SCREENSHOT) */}
+              {/* BOTTOM STATS INSIDE CARD */}
               <div className="grid grid-cols-2 gap-4 items-center">
                 
                 {/* Left Stat Box: Stamps Collected */}
@@ -240,7 +215,7 @@ export const Rewards: React.FC = () => {
                       Next FREE Haircut
                     </span>
                     <span className="text-xs font-extrabold text-emerald-600 dark:text-emerald-400 block leading-tight">
-                      {stampsCount >= 10 ? '11th FREE Haircut' : '22nd Booking'}
+                      {stampsCount >= 10 ? '11th FREE Haircut' : '11th Booking'}
                     </span>
 
                     {/* 10 Dots Progress Bar */}
@@ -263,23 +238,44 @@ export const Rewards: React.FC = () => {
 
             </div>
 
-            {/* CARD FOOTER SUB-BAR (MATCHING SCREENSHOT) */}
-            <div className="flex items-center justify-between px-2 pt-1 text-xs">
-              <span className="text-[11px] font-bold text-orange-600 dark:text-orange-400 flex items-center gap-1">
-                ✦ Every completed booking = <span className="font-extrabold">1 Stamp</span>
-              </span>
+            {/* UNDERNEATH THE CARD (EXACT MATCH FOR USER'S HANDWRITTEN SKETCH) */}
+            <div className="flex flex-col gap-2.5 px-1 pt-1">
+              
+              {/* Offer Text Underneath Card */}
+              <div className="p-3 rounded-2xl bg-orange-500/10 border border-orange-500/20 text-center">
+                <p className="text-xs font-black text-gray-900 dark:text-white">
+                  Book at <span className="text-orange-600 dark:text-orange-400 font-extrabold">CutWala App</span> 10 times & Get Your <span className="text-orange-600 dark:text-orange-400 font-extrabold">11th Haircut FREE!</span>
+                </p>
+              </div>
 
+              {/* Sub-info Line: Stamp terms on left, History on right */}
+              <div className="flex items-center justify-between text-xs px-1">
+                <span className="text-[11px] font-bold text-orange-600 dark:text-orange-400 flex items-center gap-1">
+                  ✦ Every Completed Booking = <span className="font-extrabold">1 Stamp</span>
+                </span>
+
+                <button
+                  onClick={() => setIsHistoryOpen(true)}
+                  className="text-[11px] font-extrabold text-orange-600 dark:text-orange-400 hover:underline flex items-center gap-0.5 cursor-pointer"
+                >
+                  <span>History</span>
+                  <ChevronRight className="h-3.5 w-3.5" />
+                </button>
+              </div>
+
+              {/* How It Works Button Box at Bottom (Matching Sketch) */}
               <button
-                onClick={() => setIsHistoryOpen(true)}
-                className="text-[11px] font-extrabold text-orange-600 dark:text-orange-400 hover:underline flex items-center gap-0.5 cursor-pointer"
+                onClick={() => setIsHowItWorksOpen(true)}
+                className="w-full py-2.5 rounded-2xl bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 text-gray-700 dark:text-zinc-200 text-xs font-extrabold cursor-pointer hover:border-orange-500 transition-all flex items-center justify-center gap-1.5 shadow-xs"
               >
-                <span>History</span>
-                <ChevronRight className="h-3.5 w-3.5" />
+                <HelpCircle className="h-4 w-4 text-orange-500" />
+                <span>How it works?</span>
               </button>
+
             </div>
 
             {/* DEMO STAMP ADDITION TEST BUTTON */}
-            <div className="p-3 rounded-2xl bg-white dark:bg-zinc-900 border border-gray-200/80 dark:border-zinc-800 flex items-center justify-between shadow-xs">
+            <div className="p-3 rounded-2xl bg-white dark:bg-zinc-900 border border-gray-200/80 dark:border-zinc-800 flex items-center justify-between shadow-xs mt-1">
               <span className="text-[10px] font-extrabold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
                 Test Stamp Addition Animation:
               </span>
