@@ -96,20 +96,20 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
       // 1. Green: when 0 seats are taken
       // 2. Yellow: 1 to (total - 2) seats taken
       // 3. Red: when seats taken >= (total - 1)
-      let chairImg = '/green chair.jpg';
+      let chairImg = '/green-chair.jpg';
       let badgeBg = '#10b981'; // Green
       let badgeBorder = '#059669';
 
       if (taken === 0) {
-        chairImg = '/green chair.jpg';
+        chairImg = '/green-chair.jpg';
         badgeBg = '#10b981';
         badgeBorder = '#059669';
       } else if (taken >= 1 && taken <= (total - 2)) {
-        chairImg = '/yellow chair.jpg';
+        chairImg = '/yellow-chair.jpg';
         badgeBg = '#f59e0b';
         badgeBorder = '#d97706';
       } else if (taken >= (total - 1)) {
-        chairImg = '/red chair.jpg';
+        chairImg = '/red-chair.jpg';
         badgeBg = '#ef4444';
         badgeBorder = '#dc2626';
       }
@@ -132,25 +132,27 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
                 ${taken}/${total}
               </div>
 
-              <!-- Pin Teardrop Body -->
-              <div style="position: relative; width: 40px; height: 50px; display: flex; align-items: center; justify-content: center;">
+              <!-- Pin Teardrop Body with Native SVG Embedded Image & Text -->
+              <div style="position: relative; width: 42px; height: 52px; display: flex; align-items: center; justify-content: center;">
                 
-                <!-- SVG Teardrop Pin Outline -->
-                <svg width="40" height="50" viewBox="0 0 40 50" fill="none" xmlns="http://www.w3.org/2000/svg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
+                <svg width="42" height="52" viewBox="0 0 42 52" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block;">
+                  <!-- White Interior Teardrop Pin Path with Occupancy Colored Border -->
                   <path 
-                    d="M20 2C10.059 2 2 10.059 2 20C2 31.5 20 48 20 48C20 48 38 31.5 38 20C38 10.059 29.941 2 20 2Z" 
+                    d="M21 2C10.5 2 2 10.5 2 21C2 33 21 50 21 50C21 50 40 33 40 21C40 10.5 31.5 2 21 2Z" 
                     fill="#ffffff" 
                     stroke="${badgeBg}" 
-                    stroke-width="3" 
+                    stroke-width="3.5" 
                     stroke-linejoin="round"
                   />
+                  
+                  <!-- Native SVG Chair Status Image Centered in Dome Window -->
+                  <image href="${chairImg}" x="9" y="5" width="24" height="24" preserveAspectRatio="xMidYMid meet" />
+                  
+                  <!-- Native SVG CutWala Subtext -->
+                  <text x="21" y="33" text-anchor="middle" font-size="5.5" font-weight="900" fill="${badgeBg}" font-family="sans-serif">
+                    CutWala
+                  </text>
                 </svg>
-
-                <!-- Center White Window Image Wrapper (100% Centered & Visible) -->
-                <div style="position: absolute; top: 4px; left: 5px; width: 30px; height: 30px; border-radius: 50%; background-color: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 20; box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);">
-                  <img src="${encodeURI(chairImg)}" alt="Chair Status" style="width: 20px; height: 20px; object-fit: contain; display: block;" />
-                  <span style="font-size: 5.5px; font-weight: 900; color: ${badgeBg}; line-height: 1; margin-top: 1px;">CutWala</span>
-                </div>
 
               </div>
 
