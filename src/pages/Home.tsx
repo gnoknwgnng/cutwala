@@ -52,29 +52,28 @@ export const Home: React.FC = () => {
         />
       </div>
 
-      {/* TOP MAP HEADER BAR & DISTANCE RADIUS FILTERS (MATCHING REFERENCE IMAGE EXACTLY) */}
+      {/* TOP MAP HEADER BAR & DISTANCE RADIUS FILTERS (CLEAN NON-OVERLAPPING LAYOUT) */}
       <div className="absolute top-3 left-3 right-3 z-10 flex flex-col gap-2 max-w-xl mx-auto pointer-events-auto">
         
         {/* Header Bar */}
-        <div className="bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-2xl p-2.5 px-3.5 shadow-lg border border-gray-200/80 dark:border-zinc-800 flex items-center justify-between gap-2">
+        <div className="bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-2xl p-2.5 px-3.5 shadow-lg border border-gray-200/80 dark:border-zinc-800 flex items-center justify-between gap-3">
           <div className="flex flex-col min-w-0">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <h2 className="font-display font-extrabold text-sm md:text-base text-gray-900 dark:text-white leading-tight">
                 Nearby Salons
               </h2>
-              <div className="flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-[10px] md:text-[11px] font-bold text-gray-500 dark:text-zinc-400 truncate">
-                  Showing live available chairs
-                </span>
-              </div>
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
             </div>
+            <span className="text-[10px] md:text-[11px] font-bold text-gray-500 dark:text-zinc-400 truncate">
+              Live Available Chairs
+            </span>
           </div>
 
           {/* Seat Count Pill replacing Live (Total Available Seats in Radius) */}
-          <div className="px-3 py-1 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-xs font-black shrink-0 flex items-center gap-1.5 shadow-xs">
+          <div className="px-2.5 py-1 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-xs font-black shrink-0 flex items-center gap-1 shadow-xs">
             <span>💺</span>
-            <span>{totalAvailableSeats} Seats ({maxDistance} Km)</span>
+            <span>{totalAvailableSeats} Seats</span>
+            <span className="text-[10px] font-bold text-emerald-700/80 dark:text-emerald-300/80">({maxDistance}km)</span>
           </div>
         </div>
 

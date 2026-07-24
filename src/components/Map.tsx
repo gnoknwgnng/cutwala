@@ -119,50 +119,48 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
         html: `
           <div class="relative group cursor-pointer flex flex-col items-center select-none ${isSelected ? 'scale-110 z-50' : 'hover:scale-105 z-10'}" style="transform: translate(-50%, -100%);">
             
-            <!-- Salon Name Label Above Pin -->
-            <span class="text-[10.5px] font-black text-gray-900 dark:text-white bg-white/95 dark:bg-zinc-900/95 px-2.5 py-0.5 rounded-full shadow-md border border-gray-200/80 dark:border-zinc-800 mb-1 whitespace-nowrap leading-tight">
+            <!-- Salon Name Label Above Pin (Compact & Clean) -->
+            <span class="text-[9.5px] font-extrabold text-gray-900 dark:text-white bg-white/95 dark:bg-zinc-900/95 px-2 py-0.5 rounded-full shadow-sm border border-gray-200/80 dark:border-zinc-800 mb-0.5 whitespace-nowrap leading-tight">
               ${shop.name}
             </span>
 
-            <!-- Pin Marker Container (Seamless Classic Teardrop Pin) -->
+            <!-- Pin Marker Container (Compact & Non-Overlapping) -->
             <div class="relative flex flex-col items-center">
               
               <!-- Top Right Occupancy Pill Badge (e.g. 2/6, 0/4, 3/4) -->
-              <div class="absolute -top-1 -right-2 z-30 px-2 py-0.5 rounded-full text-[9.5px] font-black text-white shadow-md border ring-2 ring-white dark:ring-zinc-900 flex items-center justify-center min-w-[28px]" style="background-color: ${badgeBg}; border-color: ${badgeBorder};">
+              <div class="absolute -top-1 -right-2 z-30 px-1.5 py-0.2 rounded-full text-[8.5px] font-black text-white shadow-sm border ring-1.5 ring-white dark:ring-zinc-900 flex items-center justify-center min-w-[22px]" style="background-color: ${badgeBg}; border-color: ${badgeBorder};">
                 ${taken}/${total}
               </div>
 
-              <!-- SEAMLESS CLASSIC TEARDROP LOCATION PIN WITH WHITE INTERIOR & COLORED STROKE -->
+              <!-- SEAMLESS CLASSIC COMPACT TEARDROP LOCATION PIN -->
               <div class="relative flex flex-col items-center">
                 
                 <!-- SVG Teardrop Location Pin Path -->
-                <div class="relative w-[54px] h-[66px] flex items-center justify-center drop-shadow-md">
-                  <svg width="54" height="66" viewBox="0 0 60 75" fill="none" xmlns="http://www.w3.org/2000/svg" class="absolute inset-0">
+                <div class="relative w-[38px] h-[48px] flex items-center justify-center drop-shadow-sm">
+                  <svg width="38" height="48" viewBox="0 0 36 46" fill="none" xmlns="http://www.w3.org/2000/svg" class="absolute inset-0">
                     <path 
-                      d="M30 2C15.088 2 3 14.088 3 29C3 46 30 73 30 73C30 73 57 46 57 29C57 14.088 44.912 2 30 2Z" 
+                      d="M18 2C9.163 2 2 9.163 2 18C2 28.5 18 44 18 44C18 44 34 28.5 34 18C34 9.163 26.837 2 18 2Z" 
                       fill="white" 
                       stroke="${badgeBg}" 
-                      stroke-width="4.5" 
+                      stroke-width="3" 
                       stroke-linejoin="round"
                     />
                   </svg>
 
-                  <!-- Content Inside White Window of Teardrop Pin -->
-                  <div class="relative z-10 flex flex-col items-center justify-center -mt-3.5 px-1">
-                    <img src="${chairImg}" alt="Chair Status" class="h-7 w-7 object-contain" />
-                    <span class="text-[7px] font-extrabold tracking-tighter leading-none mt-0.5" style="color: ${badgeBg};">
+                  <!-- Content Inside White Window of Teardrop Pin (Center Dome) -->
+                  <div class="absolute top-[4px] left-[5px] w-[26px] h-[26px] rounded-full flex flex-col items-center justify-center z-10 overflow-hidden">
+                    <img src="${chairImg}" alt="Chair Status" class="h-5 w-5 object-contain" />
+                    <span class="text-[5.5px] font-black tracking-tighter leading-none mt-0.5" style="color: ${badgeBg};">
                       CutWala
                     </span>
                   </div>
                 </div>
 
-                <!-- Concentric Target Ripple Rings on Map Ground Below Pin Tip -->
-                <div class="flex flex-col items-center justify-center -mt-1">
-                  <svg width="34" height="12" viewBox="0 0 34 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Outer Ripple Ellipse -->
-                    <ellipse cx="17" cy="6" rx="14" ry="4.2" stroke="${badgeBg}" stroke-width="1.8" fill="none" opacity="0.9" />
-                    <!-- Inner Target Ellipse -->
-                    <ellipse cx="17" cy="6" rx="7.5" ry="2" fill="${badgeBg}" opacity="0.8" />
+                <!-- Compact Concentric Target Ripple Rings on Map Ground Below Pin Tip -->
+                <div class="flex flex-col items-center justify-center -mt-0.5">
+                  <svg width="24" height="8" viewBox="0 0 24 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <ellipse cx="12" cy="4" rx="10" ry="3" stroke="${badgeBg}" stroke-width="1.2" fill="none" opacity="0.85" />
+                    <ellipse cx="12" cy="4" rx="5" ry="1.5" fill="${badgeBg}" opacity="0.8" />
                   </svg>
                 </div>
 
@@ -171,7 +169,7 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
             </div>
 
             <!-- Distance Pill Below Pin -->
-            <div class="mt-1 bg-white/95 dark:bg-zinc-900/95 px-2.5 py-0.5 rounded-full shadow-md text-[9.5px] font-extrabold text-gray-800 dark:text-zinc-200 border border-gray-200/80 dark:border-zinc-800">
+            <div class="mt-0.5 bg-white/95 dark:bg-zinc-900/95 px-2 py-0.2 rounded-full shadow-sm text-[8.5px] font-extrabold text-gray-800 dark:text-zinc-200 border border-gray-200/80 dark:border-zinc-800">
               ${distanceDisplay}
             </div>
 
