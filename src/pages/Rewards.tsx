@@ -131,8 +131,8 @@ export const Rewards: React.FC = () => {
                 className="w-full relative"
                 style={{ transformStyle: 'preserve-3d' }}
               >
-                {/* ---------------- CARD FRONT FACE ---------------- */}
-                <div className={`rounded-3xl bg-[#f3ebe1] dark:bg-[#18181b] border-2 border-[#e2d6c6] dark:border-zinc-800 p-4 md:p-5 shadow-lg shadow-amber-900/5 flex flex-col gap-4 overflow-hidden ${
+                {/* ---------------- CARD FRONT FACE (MATCHING REFERENCE IMAGE STYLING EXACTLY) ---------------- */}
+                <div className={`rounded-3xl bg-[#f6f0e6] dark:bg-[#18181b] border-2 border-[#e2d6c6] dark:border-zinc-800 p-4 md:p-5 shadow-xl shadow-amber-950/10 flex flex-col gap-3.5 overflow-hidden ${
                   isFlipped ? 'hidden' : 'block'
                 }`}>
                   
@@ -142,22 +142,27 @@ export const Rewards: React.FC = () => {
                   {/* CARD TOP BRANDING BAR */}
                   <div className="flex items-center justify-between">
                     <div>
-                      <h2 className="font-serif italic font-extrabold text-xl text-[#3c2a21] dark:text-amber-100 tracking-tight leading-none">
+                      <h2 className="font-serif italic font-extrabold text-2xl text-[#3d2719] dark:text-amber-100 tracking-tight leading-none">
                         CutWala
                       </h2>
-                      <span className="text-[9px] font-black uppercase tracking-widest text-[#8c7a6b] dark:text-zinc-400 block mt-0.5">
+                      <span className="text-[9px] font-extrabold uppercase tracking-[0.2em] text-[#8c7462] dark:text-zinc-400 block mt-1">
                         LOYALTY CARD
                       </span>
                     </div>
 
-                    {/* Ribbon Tag: ONLY CYCLE NUMBER (Matching sketch ①) */}
-                    <div className="h-8 w-8 rounded-full bg-[#422b1d] text-[#f4eae0] font-mono font-black text-sm flex items-center justify-center shadow-md border border-[#62422f]">
-                      {cycleNumber}
+                    {/* Ribbon Tag: CYCLE 2 / Started (Matching reference image ribbon styling) */}
+                    <div className="px-4 py-2 rounded-b-2xl rounded-tr-2xl bg-[#4a3220] text-[#f5ede2] shadow-md flex flex-col items-center justify-center leading-tight">
+                      <span className="font-extrabold text-xs tracking-wider uppercase">
+                        CYCLE {cycleNumber}
+                      </span>
+                      <span className="text-[9px] font-medium text-[#d4c5b3] tracking-wide">
+                        Started
+                      </span>
                     </div>
                   </div>
 
                   {/* 10 STAMPS GRID (2 ROWS OF 5, CONTINUOUS NUMBERING: 1-10, 11-20, 21-30) */}
-                  <div className="grid grid-cols-5 gap-y-4 gap-x-2 py-2 justify-items-center">
+                  <div className="grid grid-cols-5 gap-y-3.5 gap-x-2 py-1 justify-items-center">
                     {Array.from({ length: 10 }).map((_, idx) => {
                       const slotLocalNum = idx + 1;
                       const globalStampNum = (cycleNumber - 1) * 10 + slotLocalNum;
@@ -171,11 +176,11 @@ export const Rewards: React.FC = () => {
                             transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                             className="relative"
                           >
-                            {/* Stamp Circle Container (Pure White Inside) */}
+                            {/* Stamp Circle Container */}
                             <div className={`h-12 w-12 sm:h-14 sm:w-14 rounded-full flex items-center justify-center transition-all overflow-hidden p-0.5 bg-white dark:bg-zinc-900 ${
                               isCollected
-                                ? 'border-2 border-emerald-600 shadow-md'
-                                : 'border border-gray-300 dark:border-zinc-700 shadow-xs'
+                                ? 'border-2 border-[#15803d] shadow-md'
+                                : 'border border-[#cbbaa8] dark:border-zinc-700 shadow-xs'
                             }`}>
                               <img
                                 src={isCollected ? "/stamped.jpg" : "/unstamped.jpg"}
@@ -186,15 +191,15 @@ export const Rewards: React.FC = () => {
 
                             {/* Green Checkmark Badge OUTSIDE on top-right */}
                             {isCollected && (
-                              <div className="absolute -top-1 -right-1 h-4.5 w-4.5 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow-md z-20 ring-2 ring-white dark:ring-zinc-900">
+                              <div className="absolute -top-1 -right-1 h-4.5 w-4.5 rounded-full bg-[#15803d] text-white flex items-center justify-center shadow-md z-20 ring-2 ring-white dark:ring-zinc-900">
                                 <CheckCircle className="h-3.5 w-3.5 stroke-[3]" />
                               </div>
                             )}
                           </motion.div>
 
-                          {/* Stamp Continuous Number: 1..10 in Cycle 1, 11..20 in Cycle 2, 21..30 in Cycle 3 */}
+                          {/* Stamp Continuous Number */}
                           <span className={`text-[11px] font-extrabold ${
-                            isCollected ? 'text-emerald-700 dark:text-emerald-400' : 'text-gray-500 dark:text-zinc-500'
+                            isCollected ? 'text-[#15803d] dark:text-emerald-400' : 'text-[#6b5849] dark:text-zinc-500'
                           }`}>
                             {globalStampNum}
                           </span>
@@ -204,56 +209,56 @@ export const Rewards: React.FC = () => {
                   </div>
 
                   {/* Dotted Divider Line */}
-                  <div className="border-t border-dashed border-[#e2d6c3] dark:border-zinc-800 my-1" />
+                  <div className="border-t border-dashed border-[#d8c8b6] dark:border-zinc-800 my-1" />
 
-                  {/* BOTTOM STATS INSIDE CARD */}
-                  <div className="grid grid-cols-2 gap-4 items-center">
+                  {/* BOTTOM STATS INSIDE CARD (2 COLUMNS SEPARATED BY VERTICAL LINE) */}
+                  <div className="grid grid-cols-2 gap-3 items-center divide-x divide-[#d8c8b6]/80 dark:divide-zinc-800">
                     
-                    {/* Left Stat Box: Stamps Collected */}
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-500/20">
-                        <Award className="h-5 w-5" />
+                    {/* Left Column: Stamps Collected */}
+                    <div className="flex items-center gap-3 pr-2">
+                      <div className="h-11 w-11 rounded-full bg-[#15803d]/10 text-[#15803d] flex items-center justify-center shrink-0 border border-[#15803d]/20">
+                        <Award className="h-6 w-6 stroke-[2.2]" />
                       </div>
                       <div>
                         <div className="flex items-baseline gap-1">
-                          <span className="font-display font-extrabold text-base text-gray-900 dark:text-white leading-none">
+                          <span className="font-display font-extrabold text-xl text-[#1f1610] dark:text-white leading-none">
                             {stampsCount}
                           </span>
                           <span className="text-xs font-bold text-gray-400 dark:text-zinc-500">
                             / 10
                           </span>
                         </div>
-                        <span className="text-[10px] font-bold text-gray-600 dark:text-zinc-400 block">
+                        <span className="text-[11px] font-semibold text-[#5c4a3d] dark:text-zinc-400 block mt-0.5">
                           Stamps Collected
                         </span>
-                        <span className="text-[10px] font-extrabold text-emerald-600 dark:text-emerald-400 block mt-0.5">
+                        <span className="text-[11px] font-extrabold text-[#15803d] dark:text-emerald-400 block">
                           {stampsCount >= 10 ? 'Reward Ready! 🎉' : 'Keep going!'}
                         </span>
                       </div>
                     </div>
 
-                    {/* Right Stat Box: Next FREE Haircut */}
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-500/20">
-                        <Gift className="h-5 w-5" />
+                    {/* Right Column: Next FREE Haircut */}
+                    <div className="flex items-center gap-3 pl-3">
+                      <div className="h-11 w-11 rounded-full bg-[#15803d]/10 text-[#15803d] flex items-center justify-center shrink-0 border border-[#15803d]/20">
+                        <Gift className="h-6 w-6 stroke-[2.2]" />
                       </div>
                       <div>
-                        <span className="text-[10px] font-bold text-gray-500 dark:text-zinc-400 block">
+                        <span className="text-[11px] font-semibold text-[#5c4a3d] dark:text-zinc-400 block">
                           Next FREE Haircut
                         </span>
-                        <span className="text-xs font-extrabold text-emerald-600 dark:text-emerald-400 block leading-tight">
-                          {(cycleNumber - 1) * 10 + 11}th FREE Haircut!
+                        <span className="text-base font-extrabold text-[#15803d] dark:text-emerald-400 block leading-tight">
+                          {(cycleNumber - 1) * 10 + 11}th Booking
                         </span>
 
                         {/* 10 Dots Progress Bar */}
-                        <div className="flex items-center gap-1 mt-1.5">
+                        <div className="flex items-center gap-1.5 mt-2">
                           {Array.from({ length: 10 }).map((_, i) => (
                             <div
                               key={i}
-                              className={`h-2 w-2 rounded-full transition-all ${
+                              className={`h-2.5 w-2.5 rounded-full transition-all ${
                                 i < stampsCount
-                                  ? 'bg-emerald-600 scale-110'
-                                  : 'bg-gray-300 dark:bg-zinc-700'
+                                  ? 'bg-[#15803d] scale-105'
+                                  : 'bg-[#ab9b8c]/50 dark:bg-zinc-700'
                               }`}
                             />
                           ))}
