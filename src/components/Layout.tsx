@@ -228,14 +228,26 @@ export const Layout: React.FC = () => {
       )}
 
       {/* 3. MAIN CONTENT CONTAINER */}
-      <main className={`flex-1 min-h-screen relative flex flex-col ${isMainTab ? 'md:pl-64 pb-18 md:pb-0' : 'pb-0'}`}>
+      <motion.main
+        className={`flex-1 min-h-screen relative flex flex-col ${isMainTab ? 'md:pl-64' : 'pb-0'}`}
+        animate={{ paddingBottom: mapPanning ? 0 : (isMainTab ? 72 : 0) }}
+        transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+      >
         
-        {/* TOP HEADER: Logo with Address + Gender Toggle + Full Search Bar + Notification Bell */}
+        {/* TOP HEADER — wrapped in overflow-hidden collapsing div so map physically expands */}
         {isMainTab && (
+          <div
+            style={{
+              overflow: 'hidden',
+              maxHeight: mapPanning ? 0 : 200,
+              transition: 'max-height 0.38s cubic-bezier(0.4,0,0.2,1)',
+              flexShrink: 0,
+            }}
+          >
           <motion.header
             className="flex flex-col bg-white/95 dark:bg-zinc-900/95 border-b border-gray-100 dark:border-zinc-800 shrink-0 sticky top-0 z-35 backdrop-blur-md px-3 md:px-6 py-2.5 gap-2.5 shadow-sm"
-            animate={{ y: mapPanning ? -120 : 0, opacity: mapPanning ? 0 : 1 }}
-            transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+            animate={{ opacity: mapPanning ? 0 : 1 }}
+            transition={{ duration: 0.25 }}
           >
             
             {/* ROW 1: Logo & Address (Left) | Gender Toggle (Center) | Notification Bell (Right) */}
@@ -393,13 +405,14 @@ export const Layout: React.FC = () => {
             </div>
 
           </motion.header>
+          </div>
         )}
 
         {/* Page view outlet */}
         <div className="flex-1 flex flex-col min-h-0">
           <Outlet />
         </div>
-      </main>
+      </motion.main>
 
       {/* 4. SIDE FILTER DRAWER MODAL */}
       <DrawerModal
