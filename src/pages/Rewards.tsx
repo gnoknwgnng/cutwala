@@ -150,21 +150,21 @@ export const Rewards: React.FC = () => {
                       </span>
                     </div>
 
-                    {/* Ribbon Tag: CYCLE 1 STARTED */}
-                    <div className="px-3.5 py-1.5 rounded-bl-xl rounded-tr-xl bg-[#422b1d] text-[#f4eae0] text-[10px] font-extrabold tracking-wide uppercase shadow-sm flex items-center gap-1">
-                      <span>CYCLE {cycleNumber}</span>
-                      <span className="font-normal opacity-80">STARTED</span>
+                    {/* Ribbon Tag: ONLY CYCLE NUMBER (Matching sketch ①) */}
+                    <div className="h-8 w-8 rounded-full bg-[#422b1d] text-[#f4eae0] font-mono font-black text-sm flex items-center justify-center shadow-md border border-[#62422f]">
+                      {cycleNumber}
                     </div>
                   </div>
 
-                  {/* 10 STAMPS GRID (2 ROWS OF 5) */}
+                  {/* 10 STAMPS GRID (2 ROWS OF 5, CONTINUOUS NUMBERING: 1-10, 11-20, 21-30) */}
                   <div className="grid grid-cols-5 gap-y-4 gap-x-2 py-2 justify-items-center">
                     {Array.from({ length: 10 }).map((_, idx) => {
-                      const stampNum = idx + 1;
-                      const isCollected = stampNum <= stampsCount;
+                      const slotLocalNum = idx + 1;
+                      const globalStampNum = (cycleNumber - 1) * 10 + slotLocalNum;
+                      const isCollected = slotLocalNum <= stampsCount;
 
                       return (
-                        <div key={stampNum} className="flex flex-col items-center gap-1">
+                        <div key={slotLocalNum} className="flex flex-col items-center gap-1">
                           <motion.div
                             initial={false}
                             animate={isCollected ? { scale: [1, 1.15, 1] } : {}}
@@ -192,11 +192,11 @@ export const Rewards: React.FC = () => {
                             )}
                           </motion.div>
 
-                          {/* Stamp Number */}
+                          {/* Stamp Continuous Number: 1..10 in Cycle 1, 11..20 in Cycle 2, 21..30 in Cycle 3 */}
                           <span className={`text-[11px] font-extrabold ${
                             isCollected ? 'text-emerald-700 dark:text-emerald-400' : 'text-gray-500 dark:text-zinc-500'
                           }`}>
-                            {stampNum}
+                            {globalStampNum}
                           </span>
                         </div>
                       );
@@ -242,7 +242,7 @@ export const Rewards: React.FC = () => {
                           Next FREE Haircut
                         </span>
                         <span className="text-xs font-extrabold text-emerald-600 dark:text-emerald-400 block leading-tight">
-                          {stampsCount >= 10 ? '11th FREE Haircut!' : '11th Booking'}
+                          {(cycleNumber - 1) * 10 + 11}th FREE Haircut!
                         </span>
 
                         {/* 10 Dots Progress Bar */}
@@ -265,7 +265,7 @@ export const Rewards: React.FC = () => {
 
                 </div>
 
-                {/* ---------------- CARD BACK FACE (FLIPPED REWARD CELEBRATION VIEW FOR 11TH HAIRCUT) ---------------- */}
+                {/* ---------------- CARD BACK FACE (FLIPPED REWARD CELEBRATION VIEW FOR FREE HAIRCUT) ---------------- */}
                 <div className={`rounded-3xl bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-900 border-2 border-emerald-400 p-5 shadow-2xl text-white flex flex-col gap-4 overflow-hidden [transform:rotateY(180deg)] ${
                   !isFlipped ? 'hidden' : 'block'
                 }`}>
@@ -284,9 +284,9 @@ export const Rewards: React.FC = () => {
                       </span>
                     </div>
 
-                    {/* Ribbon Tag: 11TH FREE HAIRCUT */}
+                    {/* Ribbon Tag: FREE HAIRCUT NUMBER */}
                     <div className="px-3.5 py-1.5 rounded-bl-xl rounded-tr-xl bg-amber-400 text-gray-900 text-[10px] font-black tracking-wide uppercase shadow-md">
-                      11th FREE HAIRCUT
+                      {(cycleNumber - 1) * 10 + 11}th FREE HAIRCUT
                     </div>
                   </div>
 
@@ -298,10 +298,10 @@ export const Rewards: React.FC = () => {
 
                     <div>
                       <h3 className="font-display font-extrabold text-xl text-white drop-shadow-md">
-                        11th Haircut is 100% FREE! 🎉
+                        {(cycleNumber - 1) * 10 + 11}th Haircut is 100% FREE! 🎉
                       </h3>
                       <p className="text-xs text-emerald-100 font-medium max-w-xs mx-auto mt-1 leading-relaxed">
-                        Congratulations! You completed all 10 stamps in <span className="font-bold text-amber-300">CYCLE {cycleNumber}</span>. Claim your free 11th haircut now!
+                        Congratulations! You completed all 10 stamps in <span className="font-bold text-amber-300">Cycle {cycleNumber}</span>. Claim your free {(cycleNumber - 1) * 10 + 11}th haircut now!
                       </p>
                     </div>
 
@@ -311,10 +311,10 @@ export const Rewards: React.FC = () => {
                       onClick={handleClaimReward}
                       className="w-full max-w-xs h-12 text-xs font-black bg-amber-400 hover:bg-amber-300 text-gray-900 rounded-2xl cursor-pointer shadow-xl flex items-center justify-center gap-2 border-none active:scale-95 mt-1"
                     >
-                      <span>Claim FREE 11th Haircut →</span>
+                      <span>Claim FREE {(cycleNumber - 1) * 10 + 11}th Haircut →</span>
                     </Button>
                     <span className="text-[10px] text-emerald-200 font-bold">
-                      Claiming will unlock CYCLE {cycleNumber + 1}!
+                      Claiming will unlock Cycle {cycleNumber + 1}!
                     </span>
                   </div>
 
@@ -329,7 +329,7 @@ export const Rewards: React.FC = () => {
               {/* Offer Text Underneath Card */}
               <div className="p-3 rounded-2xl bg-orange-500/10 border border-orange-500/20 text-center">
                 <p className="text-xs font-black text-gray-900 dark:text-white">
-                  Book at <span className="text-orange-600 dark:text-orange-400 font-extrabold">CutWala App</span> 10 times & Get Your <span className="text-orange-600 dark:text-orange-400 font-extrabold">11th Haircut FREE!</span>
+                  Book at <span className="text-orange-600 dark:text-orange-400 font-extrabold">CutWala App</span> 10 times & Get Your <span className="text-orange-600 dark:text-orange-400 font-extrabold">{(cycleNumber - 1) * 10 + 11}th Haircut FREE!</span>
                 </p>
               </div>
 
