@@ -125,8 +125,8 @@ export const useStore = create<State>((set, get) => ({
 
   claimFreeHaircut: () => {
     const nextCycle = get().cycleNumber + 1;
-    set({ stampsCount: 0, cycleNumber: nextCycle });
-    get().showToast(`🎉 Congratulations! FREE Haircut claimed! Started CYCLE ${nextCycle}.`, 'success');
+    set({ stampsCount: 1, cycleNumber: nextCycle });
+    get().showToast(`🎉 Congratulations! FREE Haircut claimed! Started Cycle ${nextCycle}.`, 'success');
   },
 
   addReferralPoints: (pts: number) => {
