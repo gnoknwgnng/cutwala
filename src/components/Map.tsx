@@ -99,19 +99,27 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
       let chairImg = '/green chair.jpg';
       let badgeBg = '#10b981'; // Green
       let badgeBorder = '#059669';
+      let pinGradient = 'from-emerald-500 to-emerald-600';
+      let pinTipColor = '#059669';
 
       if (taken === 0) {
         chairImg = '/green chair.jpg';
         badgeBg = '#10b981';
         badgeBorder = '#059669';
+        pinGradient = 'from-emerald-500 to-emerald-600';
+        pinTipColor = '#059669';
       } else if (taken >= 1 && taken <= (total - 2)) {
         chairImg = '/yellow chair.jpg';
         badgeBg = '#f59e0b';
         badgeBorder = '#d97706';
+        pinGradient = 'from-amber-400 to-amber-500';
+        pinTipColor = '#f59e0b';
       } else if (taken >= (total - 1)) {
         chairImg = '/red chair.jpg';
         badgeBg = '#ef4444';
         badgeBorder = '#dc2626';
+        pinGradient = 'from-rose-500 to-red-600';
+        pinTipColor = '#dc2626';
       }
 
       const customIcon = L.divIcon({
@@ -132,20 +140,20 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
                 ${taken}/${total}
               </div>
 
-              <!-- Teardrop Pin Body -->
-              <div class="h-13 w-13 rounded-full bg-gradient-to-b from-amber-500 to-orange-600 p-0.5 flex flex-col items-center justify-center shadow-xl relative border-2 border-white dark:border-zinc-900">
+              <!-- Teardrop Pin Body (Color Matches Occupancy: Green / Yellow / Red) -->
+              <div class="h-13 w-13 rounded-full bg-gradient-to-b ${pinGradient} p-0.5 flex flex-col items-center justify-center shadow-xl relative border-2 border-white dark:border-zinc-900">
                 
                 <!-- Inner White Circle Window for Chair Image -->
                 <div class="h-full w-full rounded-full bg-white dark:bg-zinc-900 flex flex-col items-center justify-center p-0.5 overflow-hidden shadow-inner">
                   <img src="${chairImg}" alt="Chair Status" class="h-7 w-7 object-contain" />
-                  <span class="text-[6.5px] font-extrabold text-orange-600 dark:text-orange-400 tracking-tighter leading-none -mt-0.5">
+                  <span class="text-[6.5px] font-extrabold tracking-tighter leading-none -mt-0.5" style="color: ${pinTipColor};">
                     CutWala
                   </span>
                 </div>
               </div>
 
-              <!-- Pointer Pin Tip -->
-              <div class="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] border-t-orange-600 -mt-1 drop-shadow-xs"></div>
+              <!-- Pointer Pin Tip (Color Matches Occupancy) -->
+              <div class="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] -mt-1 drop-shadow-xs" style="border-t-color: ${pinTipColor};"></div>
 
               <!-- Shadow Ellipse -->
               <div class="h-2 w-6 rounded-full bg-black/20 blur-[1px] -mt-0.5"></div>
