@@ -117,59 +117,55 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
       const customIcon = L.divIcon({
         className: 'custom-shop-pin-marker',
         html: `
-          <div class="relative group cursor-pointer flex flex-col items-center select-none ${isSelected ? 'scale-110 z-50' : 'hover:scale-105 z-10'}" style="transform: translate(-50%, -100%);">
+          <div style="position: relative; cursor: pointer; display: flex; flex-direction: column; align-items: center; user-select: none; ${isSelected ? 'transform: translate(-50%, -100%) scale(1.1); z-index: 1000;' : 'transform: translate(-50%, -100%); z-index: 10;'}">
             
-            <!-- Salon Name Label Above Pin (Compact & Clean) -->
-            <span class="text-[9px] font-extrabold text-gray-900 dark:text-white bg-white/95 dark:bg-zinc-900/95 px-2 py-0.5 rounded-full shadow-sm border border-gray-200/80 dark:border-zinc-800 mb-0.5 whitespace-nowrap leading-tight">
+            <!-- Salon Name Label Above Pin -->
+            <div style="font-size: 9.5px; font-weight: 800; color: #111827; background-color: rgba(255, 255, 255, 0.95); padding: 1px 7px; border-radius: 9999px; box-shadow: 0 2px 4px rgba(0,0,0,0.12); border: 1px solid #e5e7eb; margin-bottom: 2px; white-space: nowrap; line-height: 1.2;">
               ${shop.name}
-            </span>
+            </div>
 
-            <!-- Pin Marker Container (Compact & Non-Overlapping) -->
-            <div class="relative flex flex-col items-center">
+            <!-- Pin Marker Container -->
+            <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
               
-              <!-- Top Right Occupancy Pill Badge (e.g. 2/6, 0/4, 3/4) -->
-              <div class="absolute -top-1 -right-2 z-30 px-1.5 py-0.2 rounded-full text-[8.5px] font-black text-white shadow-sm border ring-1.5 ring-white dark:ring-zinc-900 flex items-center justify-center min-w-[22px]" style="background-color: ${badgeBg}; border-color: ${badgeBorder};">
+              <!-- Top Right Occupancy Badge (e.g. 2/6, 0/4, 3/4) -->
+              <div style="position: absolute; top: -4px; right: -6px; z-index: 30; padding: 1px 5px; border-radius: 9999px; font-size: 8.5px; font-weight: 900; color: #ffffff; background-color: ${badgeBg}; border: 1.5px solid ${badgeBorder}; box-shadow: 0 2px 4px rgba(0,0,0,0.2); min-width: 22px; text-align: center;">
                 ${taken}/${total}
               </div>
 
-              <!-- SEAMLESS CLASSIC COMPACT TEARDROP LOCATION PIN -->
-              <div class="relative flex flex-col items-center">
+              <!-- Pin Teardrop Body -->
+              <div style="position: relative; width: 40px; height: 50px; display: flex; align-items: center; justify-content: center;">
                 
-                <!-- SVG Teardrop Location Pin Path -->
-                <div class="relative w-[38px] h-[48px] flex items-center justify-center drop-shadow-sm">
-                  <svg width="38" height="48" viewBox="0 0 36 46" fill="none" xmlns="http://www.w3.org/2000/svg" class="absolute inset-0">
-                    <path 
-                      d="M18 2C9.163 2 2 9.163 2 18C2 28.5 18 44 18 44C18 44 34 28.5 34 18C34 9.163 26.837 2 18 2Z" 
-                      fill="white" 
-                      stroke="${badgeBg}" 
-                      stroke-width="3" 
-                      stroke-linejoin="round"
-                    />
-                  </svg>
+                <!-- SVG Teardrop Pin Outline -->
+                <svg width="40" height="50" viewBox="0 0 40 50" fill="none" xmlns="http://www.w3.org/2000/svg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
+                  <path 
+                    d="M20 2C10.059 2 2 10.059 2 20C2 31.5 20 48 20 48C20 48 38 31.5 38 20C38 10.059 29.941 2 20 2Z" 
+                    fill="#ffffff" 
+                    stroke="${badgeBg}" 
+                    stroke-width="3" 
+                    stroke-linejoin="round"
+                  />
+                </svg>
 
-                  <!-- Content Inside White Window of Teardrop Pin (Perfectly Centered 28px Window) -->
-                  <div class="absolute top-[3px] left-1/2 -translate-x-1/2 w-[28px] h-[28px] rounded-full bg-white flex flex-col items-center justify-center z-10 overflow-hidden">
-                    <img src="${encodeURI(chairImg)}" alt="Chair Status" class="h-5 w-5 object-contain shrink-0" />
-                    <span class="text-[5.5px] font-black tracking-tighter leading-none text-orange-600 mt-0.5">
-                      CutWala
-                    </span>
-                  </div>
+                <!-- Center White Window Image Wrapper (100% Centered & Visible) -->
+                <div style="position: absolute; top: 4px; left: 5px; width: 30px; height: 30px; border-radius: 50%; background-color: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 20; box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);">
+                  <img src="${encodeURI(chairImg)}" alt="Chair Status" style="width: 20px; height: 20px; object-fit: contain; display: block;" />
+                  <span style="font-size: 5.5px; font-weight: 900; color: ${badgeBg}; line-height: 1; margin-top: 1px;">CutWala</span>
                 </div>
 
-                <!-- Compact Concentric Target Ripple Rings on Map Ground Below Pin Tip -->
-                <div class="flex flex-col items-center justify-center -mt-0.5">
-                  <svg width="24" height="8" viewBox="0 0 24 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <ellipse cx="12" cy="4" rx="10" ry="3" stroke="${badgeBg}" stroke-width="1.2" fill="none" opacity="0.85" />
-                    <ellipse cx="12" cy="4" rx="5" ry="1.5" fill="${badgeBg}" opacity="0.8" />
-                  </svg>
-                </div>
+              </div>
 
+              <!-- Concentric Ground Target Ripples Below Pin Tip -->
+              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: -2px;">
+                <svg width="26" height="8" viewBox="0 0 26 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <ellipse cx="13" cy="4" rx="11" ry="3" stroke="${badgeBg}" stroke-width="1.3" fill="none" opacity="0.85" />
+                  <ellipse cx="13" cy="4" rx="5.5" ry="1.6" fill="${badgeBg}" opacity="0.8" />
+                </svg>
               </div>
 
             </div>
 
             <!-- Distance Pill Below Pin -->
-            <div class="mt-0.5 bg-white/95 dark:bg-zinc-900/95 px-2 py-0.2 rounded-full shadow-sm text-[8.5px] font-extrabold text-gray-800 dark:text-zinc-200 border border-gray-200/80 dark:border-zinc-800">
+            <div style="margin-top: 1px; background-color: rgba(255, 255, 255, 0.95); padding: 1px 7px; border-radius: 9999px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); font-size: 8.5px; font-weight: 800; color: #1f2937; border: 1px solid #e5e7eb;">
               ${distanceDisplay}
             </div>
 
