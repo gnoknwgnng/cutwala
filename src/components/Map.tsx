@@ -74,12 +74,21 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
 
       mapInstanceRef.current = map;
 
-      // Detect map pan/zoom to hide top header + bottom nav
+      // Detect map pan/zoom to hide top header + bottom nav ONLY when user physically drags/gestures on map
       let panningTimer: ReturnType<typeof setTimeout> | null = null;
-      map.on('movestart zoomstart', () => {
+
+      map.on('dragstart', () => {
         setMapPanning(true);
         if (panningTimer) clearTimeout(panningTimer);
       });
+
+      map.on('zoomstart', (e: L.LeafletEvent) => {
+        if ((e as unknown as { originalEvent?: Event }).originalEvent) {
+          setMapPanning(true);
+          if (panningTimer) clearTimeout(panningTimer);
+        }
+      });
+
       map.on('moveend zoomend', () => {
         if (panningTimer) clearTimeout(panningTimer);
         panningTimer = setTimeout(() => {
@@ -87,6 +96,9 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
         }, 600); // restore quickly after 0.6s idle
       });
     }
+
+    // Ensure header/nav are visible on mount/reload
+    setMapPanning(false);
 
     const map = mapInstanceRef.current;
 
