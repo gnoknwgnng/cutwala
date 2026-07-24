@@ -121,7 +121,6 @@ export const useStore = create<State>((set, get) => ({
     }
     const nextCount = current + 1;
     set({ stampsCount: nextCount, lastStampAnimationTime: Date.now() });
-    get().showToast(`✨ Stamp Added! 💺 (${current}/10 → ${nextCount}/10 Loyalty Stamps)`, 'success');
   },
 
   claimFreeHaircut: () => {
@@ -401,8 +400,6 @@ export const useStore = create<State>((set, get) => ({
       stampsCount: nextStamps,
       lastStampAnimationTime: Date.now()
     });
-
-    get().showToast(`✨ Stamp Added! 💺 (${stampsCount}/10 → ${nextStamps}/10 Loyalty Stamps)`, 'success');
 
     return newBooking;
   },
