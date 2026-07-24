@@ -266,7 +266,7 @@ export const Rewards: React.FC = () => {
                 </div>
 
                 {/* ---------------- CARD BACK FACE (FLIPPED REWARD CELEBRATION VIEW FOR 11TH HAIRCUT) ---------------- */}
-                <div className={`rounded-3xl bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-900 border-2 border-emerald-400 p-5 shadow-2xl text-white flex flex-col gap-4 overflow-hidden ${
+                <div className={`rounded-3xl bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-900 border-2 border-emerald-400 p-5 shadow-2xl text-white flex flex-col gap-4 overflow-hidden [transform:rotateY(180deg)] ${
                   !isFlipped ? 'hidden' : 'block'
                 }`}>
                   
