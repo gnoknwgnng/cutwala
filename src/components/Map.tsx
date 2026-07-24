@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Navigation, Plus, Minus } from 'lucide-react';
@@ -17,6 +17,29 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<{ [key: string]: L.Marker }>({});
   const userMarkerRef = useRef<L.Marker | null>(null);
+
+  // Favourite shops state — persisted in localStorage
+  const [favourites, setFavourites] = useState<Set<string>>(() => {
+    try {
+      const stored = localStorage.getItem('cutwala_favourites');
+      return stored ? new Set(JSON.parse(stored)) : new Set();
+    } catch {
+      return new Set();
+    }
+  });
+
+  const toggleFavourite = (shopId: string) => {
+    setFavourites(prev => {
+      const next = new Set(prev);
+      if (next.has(shopId)) {
+        next.delete(shopId);
+      } else {
+        next.add(shopId);
+      }
+      localStorage.setItem('cutwala_favourites', JSON.stringify([...next]));
+      return next;
+    });
+  };
 
   const openShops = shops.filter(shop => shop.status === 'OPEN');
 
@@ -82,6 +105,7 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
     openShops.forEach((shop) => {
       const isSelected = selectedShop?.shop_id === shop.shop_id;
       const distanceDisplay = getDistanceStr(shop.latitude, shop.longitude, shop.shop_id);
+      const isFav = favourites.has(shop.shop_id);
 
       // Chair occupancy calculation
       const shopChairs = chairs.filter(c => c.shop_id === shop.shop_id);
@@ -109,6 +133,10 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
         chairImg = '/red-chair.jpg';
         badgeBg = '#ef4444';
       }
+
+      // Heart SVG path (filled pink if fav, outline if not)
+      const heartFill = isFav ? '#ec4899' : '#ffffff';
+      const heartStroke = isFav ? '#ec4899' : '#ec4899';
 
       const customIcon = L.divIcon({
         className: 'custom-shop-pin-marker',
@@ -150,13 +178,18 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
                   <!-- CutWala label -->
                   <text x="18" y="30" text-anchor="middle" font-size="5" font-weight="900" fill="${badgeBg}" font-family="sans-serif">CutWala</text>
 
-                  <!-- Occupancy Badge on RIGHT SIDE of pin (never behind name label above) -->
-                  <!-- Badge pill background rect -->
+                  <!-- Occupancy Badge on RIGHT SIDE of pin -->
                   <rect x="30" y="6" width="20" height="11" rx="5.5" ry="5.5" fill="${badgeBg}" />
-                  <!-- Badge white border -->
                   <rect x="29" y="5" width="22" height="13" rx="6.5" ry="6.5" fill="none" stroke="#ffffff" stroke-width="1.5" />
-                  <!-- Badge text -->
                   <text x="40" y="13.5" text-anchor="middle" font-size="7" font-weight="900" fill="#ffffff" font-family="sans-serif">${taken}/${total}</text>
+
+                  <!-- Pink Heart Favourite Button on LEFT SIDE of pin (clickable) -->
+                  <g id="heart-btn-${shop.shop_id}" style="cursor: pointer;" transform="translate(-16, 5)">
+                    <!-- Heart circle background -->
+                    <circle cx="10" cy="6" r="8" fill="#ffffff" stroke="#f9a8d4" stroke-width="1.5" />
+                    <!-- Heart shape -->
+                    <path d="M10 9.5C10 9.5 6 6.8 6 4.5C6 3.1 7.1 2 8.5 2C9.2 2 9.8 2.3 10 2.7C10.2 2.3 10.8 2 11.5 2C12.9 2 14 3.1 14 4.5C14 6.8 10 9.5 10 9.5Z" fill="${heartFill}" stroke="${heartStroke}" stroke-width="0.8" stroke-linejoin="round" />
+                  </g>
                 </svg>
 
               </div>
@@ -187,14 +220,22 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
         zIndexOffset: isSelected ? 1000 : 10
       }).addTo(map);
 
-      marker.on('click', () => {
+      marker.on('click', (e) => {
+        // Check if the heart button was clicked via DOM target
+        const target = e.originalEvent?.target as HTMLElement | SVGElement | null;
+        const isHeartClick = target?.closest?.(`#heart-btn-${shop.shop_id}`) != null;
+        if (isHeartClick) {
+          toggleFavourite(shop.shop_id);
+          e.originalEvent?.stopPropagation();
+          return;
+        }
         onSelectShop(shop);
       });
 
       markersRef.current[shop.shop_id] = marker;
     });
 
-  }, [shops, openShops, chairs, userLocation, selectedShop]);
+  }, [shops, openShops, chairs, userLocation, selectedShop, favourites]);
 
   // Handle Real User Location Pulsing Marker (Always on Top Layer)
   useEffect(() => {
