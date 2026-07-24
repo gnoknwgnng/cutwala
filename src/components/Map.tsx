@@ -134,9 +134,9 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
         badgeBg = '#ef4444';
       }
 
-      // Heart SVG path (filled pink if fav, outline if not)
-      const heartFill = isFav ? '#ec4899' : '#ffffff';
-      const heartStroke = isFav ? '#ec4899' : '#ec4899';
+      // Heart SVG path — always solid pink filled, brighter pink when favourited
+      const heartFill = '#ec4899';
+      const heartStroke = isFav ? '#be185d' : '#ec4899';
 
       const customIcon = L.divIcon({
         className: 'custom-shop-pin-marker',
