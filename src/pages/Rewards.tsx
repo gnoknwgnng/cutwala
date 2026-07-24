@@ -17,14 +17,29 @@ import { Button, DrawerModal } from '../components/UI';
 export const Rewards: React.FC = () => {
   const { 
     stampsCount, 
+    cycleNumber,
     referralPoints, 
     addStamp, 
+    claimFreeHaircut,
     showToast 
   } = useStore();
 
   const [activeTab, setActiveTab] = useState<'stamps' | 'referrals'>('stamps');
   const [isHowItWorksOpen, setIsHowItWorksOpen] = useState<boolean>(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState<boolean>(false);
+  const [isFlipped, setIsFlipped] = useState<boolean>(false);
+
+  // Auto flip card when stamps reach 10
+  React.useEffect(() => {
+    if (stampsCount >= 10) {
+      setIsFlipped(true);
+    }
+  }, [stampsCount]);
+
+  const handleClaimReward = () => {
+    claimFreeHaircut();
+    setIsFlipped(false);
+  };
 
   const referralCode = 'CUTWALA100';
 
@@ -103,139 +118,209 @@ export const Rewards: React.FC = () => {
           </button>
         </div>
 
-        {/* TAB 1: LOYALTY STAMPS CONTENT (MATCHING USER'S HANDWRITTEN SKETCH EXACTLY) */}
+        {/* TAB 1: LOYALTY STAMPS CONTENT */}
         {activeTab === 'stamps' && (
           <div className="flex flex-col gap-3.5 animate-fade-in">
             
-            {/* PHYSICAL TEXTURED PARCHMENT LOYALTY CARD (COLOR #f3ebe1) */}
-            <div className="relative rounded-3xl bg-[#f3ebe1] dark:bg-[#18181b] border-2 border-[#e2d6c6] dark:border-zinc-800 p-4 md:p-5 shadow-lg shadow-amber-900/5 flex flex-col gap-4 overflow-hidden">
-              
-              {/* Ticket Cutout Notch on Right Edge */}
-              <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-8 bg-[#faf8f5] dark:bg-[#0b0b0c] rounded-l-full border-l-2 border-y-2 border-[#e2d6c6] dark:border-zinc-800" />
+            {/* 3D FLIPPABLE LOYALTY CARD CONTAINER */}
+            <div className="w-full relative">
+              <motion.div
+                initial={false}
+                animate={{ rotateY: isFlipped ? 180 : 0 }}
+                transition={{ duration: 0.8, type: 'spring', stiffness: 160, damping: 20 }}
+                className="w-full relative"
+                style={{ transformStyle: 'preserve-3d' }}
+              >
+                {/* ---------------- CARD FRONT FACE ---------------- */}
+                <div className={`rounded-3xl bg-[#f3ebe1] dark:bg-[#18181b] border-2 border-[#e2d6c6] dark:border-zinc-800 p-4 md:p-5 shadow-lg shadow-amber-900/5 flex flex-col gap-4 overflow-hidden ${
+                  isFlipped ? 'hidden' : 'block'
+                }`}>
+                  
+                  {/* Ticket Cutout Notch on Right Edge */}
+                  <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-8 bg-[#faf8f5] dark:bg-[#0b0b0c] rounded-l-full border-l-2 border-y-2 border-[#e2d6c6] dark:border-zinc-800" />
 
-              {/* CARD TOP BRANDING BAR */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="font-serif italic font-extrabold text-xl text-[#3c2a21] dark:text-amber-100 tracking-tight leading-none">
-                    CutWala
-                  </h2>
-                  <span className="text-[9px] font-black uppercase tracking-widest text-[#8c7a6b] dark:text-zinc-400 block mt-0.5">
-                    LOYALTY CARD
-                  </span>
-                </div>
+                  {/* CARD TOP BRANDING BAR */}
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="font-serif italic font-extrabold text-xl text-[#3c2a21] dark:text-amber-100 tracking-tight leading-none">
+                        CutWala
+                      </h2>
+                      <span className="text-[9px] font-black uppercase tracking-widest text-[#8c7a6b] dark:text-zinc-400 block mt-0.5">
+                        LOYALTY CARD
+                      </span>
+                    </div>
 
-                {/* Ribbon Tag: CYCLE 1 Started */}
-                <div className="px-3.5 py-1.5 rounded-bl-xl rounded-tr-xl bg-[#422b1d] text-[#f4eae0] text-[10px] font-extrabold tracking-wide uppercase shadow-sm">
-                  CYCLE 1 <span className="font-normal opacity-80">Started</span>
-                </div>
-              </div>
+                    {/* Ribbon Tag: CYCLE 1 STARTED */}
+                    <div className="px-3.5 py-1.5 rounded-bl-xl rounded-tr-xl bg-[#422b1d] text-[#f4eae0] text-[10px] font-extrabold tracking-wide uppercase shadow-sm flex items-center gap-1">
+                      <span>CYCLE {cycleNumber}</span>
+                      <span className="font-normal opacity-80">STARTED</span>
+                    </div>
+                  </div>
 
-              {/* 10 STAMPS GRID (2 ROWS OF 5) */}
-              <div className="grid grid-cols-5 gap-y-4 gap-x-2 py-2 justify-items-center">
-                {Array.from({ length: 10 }).map((_, idx) => {
-                  const stampNum = idx + 1;
-                  const isCollected = stampNum <= stampsCount;
+                  {/* 10 STAMPS GRID (2 ROWS OF 5) */}
+                  <div className="grid grid-cols-5 gap-y-4 gap-x-2 py-2 justify-items-center">
+                    {Array.from({ length: 10 }).map((_, idx) => {
+                      const stampNum = idx + 1;
+                      const isCollected = stampNum <= stampsCount;
 
-                  return (
-                    <div key={stampNum} className="flex flex-col items-center gap-1">
-                      <motion.div
-                        initial={false}
-                        animate={isCollected ? { scale: [1, 1.15, 1] } : {}}
-                        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                        className="relative"
-                      >
-                        {/* Stamp Circle Container (Pure White Inside) */}
-                        <div className={`h-12 w-12 sm:h-14 sm:w-14 rounded-full flex items-center justify-center transition-all overflow-hidden p-0.5 bg-white dark:bg-zinc-900 ${
-                          isCollected
-                            ? 'border-2 border-emerald-600 shadow-md'
-                            : 'border border-gray-300 dark:border-zinc-700 shadow-xs'
-                        }`}>
-                          <img
-                            src={isCollected ? "/stamped.jpg" : "/unstamped.jpg"}
-                            alt={isCollected ? "Stamped" : "Unstamped"}
-                            className="h-full w-full object-contain rounded-full bg-white dark:bg-zinc-900"
-                          />
+                      return (
+                        <div key={stampNum} className="flex flex-col items-center gap-1">
+                          <motion.div
+                            initial={false}
+                            animate={isCollected ? { scale: [1, 1.15, 1] } : {}}
+                            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                            className="relative"
+                          >
+                            {/* Stamp Circle Container (Pure White Inside) */}
+                            <div className={`h-12 w-12 sm:h-14 sm:w-14 rounded-full flex items-center justify-center transition-all overflow-hidden p-0.5 bg-white dark:bg-zinc-900 ${
+                              isCollected
+                                ? 'border-2 border-emerald-600 shadow-md'
+                                : 'border border-gray-300 dark:border-zinc-700 shadow-xs'
+                            }`}>
+                              <img
+                                src={isCollected ? "/stamped.jpg" : "/unstamped.jpg"}
+                                alt={isCollected ? "Stamped" : "Unstamped"}
+                                className="h-full w-full object-contain rounded-full bg-white dark:bg-zinc-900"
+                              />
+                            </div>
+
+                            {/* Green Checkmark Badge OUTSIDE on top-right */}
+                            {isCollected && (
+                              <div className="absolute -top-1 -right-1 h-4.5 w-4.5 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow-md z-20 ring-2 ring-white dark:ring-zinc-900">
+                                <CheckCircle className="h-3.5 w-3.5 stroke-[3]" />
+                              </div>
+                            )}
+                          </motion.div>
+
+                          {/* Stamp Number */}
+                          <span className={`text-[11px] font-extrabold ${
+                            isCollected ? 'text-emerald-700 dark:text-emerald-400' : 'text-gray-500 dark:text-zinc-500'
+                          }`}>
+                            {stampNum}
+                          </span>
                         </div>
-
-                        {/* Green Checkmark Badge OUTSIDE on top-right */}
-                        {isCollected && (
-                          <div className="absolute -top-1 -right-1 h-4.5 w-4.5 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow-md z-20 ring-2 ring-white dark:ring-zinc-900">
-                            <CheckCircle className="h-3.5 w-3.5 stroke-[3]" />
-                          </div>
-                        )}
-                      </motion.div>
-
-                      {/* Stamp Number */}
-                      <span className={`text-[11px] font-extrabold ${
-                        isCollected ? 'text-emerald-700 dark:text-emerald-400' : 'text-gray-500 dark:text-zinc-500'
-                      }`}>
-                        {stampNum}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Dotted Divider Line */}
-              <div className="border-t border-dashed border-[#e2d6c3] dark:border-zinc-800 my-1" />
-
-              {/* BOTTOM STATS INSIDE CARD */}
-              <div className="grid grid-cols-2 gap-4 items-center">
-                
-                {/* Left Stat Box: Stamps Collected */}
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-500/20">
-                    <Award className="h-5 w-5" />
+                      );
+                    })}
                   </div>
-                  <div>
-                    <div className="flex items-baseline gap-1">
-                      <span className="font-display font-extrabold text-base text-gray-900 dark:text-white leading-none">
-                        {stampsCount}
-                      </span>
-                      <span className="text-xs font-bold text-gray-400 dark:text-zinc-500">
-                        / 10
-                      </span>
+
+                  {/* Dotted Divider Line */}
+                  <div className="border-t border-dashed border-[#e2d6c3] dark:border-zinc-800 my-1" />
+
+                  {/* BOTTOM STATS INSIDE CARD */}
+                  <div className="grid grid-cols-2 gap-4 items-center">
+                    
+                    {/* Left Stat Box: Stamps Collected */}
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-500/20">
+                        <Award className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <div className="flex items-baseline gap-1">
+                          <span className="font-display font-extrabold text-base text-gray-900 dark:text-white leading-none">
+                            {stampsCount}
+                          </span>
+                          <span className="text-xs font-bold text-gray-400 dark:text-zinc-500">
+                            / 10
+                          </span>
+                        </div>
+                        <span className="text-[10px] font-bold text-gray-600 dark:text-zinc-400 block">
+                          Stamps Collected
+                        </span>
+                        <span className="text-[10px] font-extrabold text-emerald-600 dark:text-emerald-400 block mt-0.5">
+                          {stampsCount >= 10 ? 'Reward Ready! 🎉' : 'Keep going!'}
+                        </span>
+                      </div>
                     </div>
-                    <span className="text-[10px] font-bold text-gray-600 dark:text-zinc-400 block">
-                      Stamps Collected
-                    </span>
-                    <span className="text-[10px] font-extrabold text-emerald-600 dark:text-emerald-400 block mt-0.5">
-                      {stampsCount >= 10 ? 'Reward Ready! 🎉' : 'Keep going!'}
-                    </span>
+
+                    {/* Right Stat Box: Next FREE Haircut */}
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-500/20">
+                        <Gift className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-bold text-gray-500 dark:text-zinc-400 block">
+                          Next FREE Haircut
+                        </span>
+                        <span className="text-xs font-extrabold text-emerald-600 dark:text-emerald-400 block leading-tight">
+                          {stampsCount >= 10 ? '11th FREE Haircut!' : '11th Booking'}
+                        </span>
+
+                        {/* 10 Dots Progress Bar */}
+                        <div className="flex items-center gap-1 mt-1.5">
+                          {Array.from({ length: 10 }).map((_, i) => (
+                            <div
+                              key={i}
+                              className={`h-2 w-2 rounded-full transition-all ${
+                                i < stampsCount
+                                  ? 'bg-emerald-600 scale-110'
+                                  : 'bg-gray-300 dark:bg-zinc-700'
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
                   </div>
+
                 </div>
 
-                {/* Right Stat Box: Next FREE Haircut */}
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-500/20">
-                    <Gift className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-bold text-gray-500 dark:text-zinc-400 block">
-                      Next FREE Haircut
-                    </span>
-                    <span className="text-xs font-extrabold text-emerald-600 dark:text-emerald-400 block leading-tight">
-                      {stampsCount >= 10 ? '11th FREE Haircut' : '11th Booking'}
-                    </span>
+                {/* ---------------- CARD BACK FACE (FLIPPED REWARD CELEBRATION VIEW FOR 11TH HAIRCUT) ---------------- */}
+                <div className={`rounded-3xl bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-900 border-2 border-emerald-400 p-5 shadow-2xl text-white flex flex-col gap-4 overflow-hidden ${
+                  !isFlipped ? 'hidden' : 'block'
+                }`}>
+                  
+                  {/* Ticket Cutout Notch on Right Edge */}
+                  <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-8 bg-[#faf8f5] dark:bg-[#0b0b0c] rounded-l-full border-l-2 border-y-2 border-emerald-400" />
 
-                    {/* 10 Dots Progress Bar */}
-                    <div className="flex items-center gap-1 mt-1.5">
-                      {Array.from({ length: 10 }).map((_, i) => (
-                        <div
-                          key={i}
-                          className={`h-2 w-2 rounded-full transition-all ${
-                            i < stampsCount
-                              ? 'bg-emerald-600 scale-110'
-                              : 'bg-gray-300 dark:bg-zinc-700'
-                          }`}
-                        />
-                      ))}
+                  {/* CARD BACK HEADER */}
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="font-serif italic font-extrabold text-xl text-amber-300 tracking-tight leading-none">
+                        CutWala
+                      </h2>
+                      <span className="text-[9px] font-black uppercase tracking-widest text-emerald-200 block mt-0.5">
+                        FREE HAIRCUT VOUCHER
+                      </span>
+                    </div>
+
+                    {/* Ribbon Tag: 11TH FREE HAIRCUT */}
+                    <div className="px-3.5 py-1.5 rounded-bl-xl rounded-tr-xl bg-amber-400 text-gray-900 text-[10px] font-black tracking-wide uppercase shadow-md">
+                      11th FREE HAIRCUT
                     </div>
                   </div>
+
+                  {/* FLIPPED REWARD CONTENT */}
+                  <div className="flex flex-col items-center text-center gap-3 py-4 my-1">
+                    <div className="h-16 w-16 rounded-full bg-white/20 backdrop-blur-md text-amber-300 flex items-center justify-center border-2 border-amber-300/40 shadow-lg text-3xl animate-bounce">
+                      🎁
+                    </div>
+
+                    <div>
+                      <h3 className="font-display font-extrabold text-xl text-white drop-shadow-md">
+                        11th Haircut is 100% FREE! 🎉
+                      </h3>
+                      <p className="text-xs text-emerald-100 font-medium max-w-xs mx-auto mt-1 leading-relaxed">
+                        Congratulations! You completed all 10 stamps in <span className="font-bold text-amber-300">CYCLE {cycleNumber}</span>. Claim your free 11th haircut now!
+                      </p>
+                    </div>
+
+                    {/* CLAIM FREE HAIRCUT BUTTON */}
+                    <Button
+                      variant="primary"
+                      onClick={handleClaimReward}
+                      className="w-full max-w-xs h-12 text-xs font-black bg-amber-400 hover:bg-amber-300 text-gray-900 rounded-2xl cursor-pointer shadow-xl flex items-center justify-center gap-2 border-none active:scale-95 mt-1"
+                    >
+                      <span>Claim FREE 11th Haircut →</span>
+                    </Button>
+                    <span className="text-[10px] text-emerald-200 font-bold">
+                      Claiming will unlock CYCLE {cycleNumber + 1}!
+                    </span>
+                  </div>
+
                 </div>
 
-              </div>
-
+              </motion.div>
             </div>
 
             {/* UNDERNEATH THE CARD (EXACT MATCH FOR USER'S HANDWRITTEN SKETCH) */}

@@ -44,6 +44,7 @@ interface State {
   toast: { message: string; type: 'success' | 'error' | 'info'; id: number } | null;
   
   stampsCount: number;
+  cycleNumber: number;
   referralPoints: number;
   lastStampAnimationTime: number;
   
@@ -108,13 +109,14 @@ export const useStore = create<State>((set, get) => ({
   maxDistance: 10,
   genderFilter: 'men',
   stampsCount: 5, // Default 5/10 stamps collected
+  cycleNumber: 1, // Default Cycle 1
   referralPoints: 450, // Default 450 referral points
   lastStampAnimationTime: 0,
 
   addStamp: () => {
     const current = get().stampsCount;
     if (current >= 10) {
-      get().showToast('🎉 You already unlocked 10/10 stamps! Claim your FREE haircut now.', 'success');
+      get().showToast('🎉 You already unlocked 10/10 stamps! Claim your FREE 11th haircut now.', 'success');
       return;
     }
     const nextCount = current + 1;
@@ -123,8 +125,9 @@ export const useStore = create<State>((set, get) => ({
   },
 
   claimFreeHaircut: () => {
-    set({ stampsCount: 0 });
-    get().showToast('🎉 Congratulations! FREE Haircut voucher claimed successfully.', 'success');
+    const nextCycle = get().cycleNumber + 1;
+    set({ stampsCount: 0, cycleNumber: nextCycle });
+    get().showToast(`🎉 Congratulations! FREE Haircut claimed! Started CYCLE ${nextCycle}.`, 'success');
   },
 
   addReferralPoints: (pts: number) => {
