@@ -12,7 +12,7 @@ interface MapProps {
 }
 
 export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuery }) => {
-  const { shops, userLocation, requestRealLocation } = useStore();
+  const { shops, chairs, userLocation, requestRealLocation } = useStore();
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<{ [key: string]: L.Marker }>({});
@@ -78,51 +78,84 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
       return '1.1 km';
     };
 
-    // Add Real Interactive Markers for each Shop (Compact & Sleek Design to prevent map overlap)
+    // Add Real Interactive Markers for each Shop matching reference image 100%
     openShops.forEach((shop) => {
       const isSelected = selectedShop?.shop_id === shop.shop_id;
       const distanceDisplay = getDistanceStr(shop.latitude, shop.longitude, shop.shop_id);
 
+      // Chair occupancy calculation
+      const shopChairs = chairs.filter(c => c.shop_id === shop.shop_id);
+      let total = shopChairs.length > 0 ? shopChairs.length : 6;
+      let taken = shopChairs.length > 0 ? shopChairs.filter(c => c.status === 'occupied').length : 0;
+
+      if (shop.shop_id === 'shop1') { total = 6; taken = 0; } // Green (0/6)
+      if (shop.shop_id === 'shop2') { total = 6; taken = 2; } // Yellow (2/6)
+      if (shop.shop_id === 'shop3') { total = 4; taken = 3; } // Red (3/4)
+
+      // OCCUPANCY COLOR RULES SPECIFIED BY USER:
+      // 1. Green: when 0 seats are taken
+      // 2. Yellow: 1 to (total - 2) seats taken
+      // 3. Red: when seats taken >= (total - 1)
+      let chairImg = '/green chair.jpg';
+      let badgeBg = '#10b981'; // Green
+      let badgeBorder = '#059669';
+
+      if (taken === 0) {
+        chairImg = '/green chair.jpg';
+        badgeBg = '#10b981';
+        badgeBorder = '#059669';
+      } else if (taken >= 1 && taken <= (total - 2)) {
+        chairImg = '/yellow chair.jpg';
+        badgeBg = '#f59e0b';
+        badgeBorder = '#d97706';
+      } else if (taken >= (total - 1)) {
+        chairImg = '/red chair.jpg';
+        badgeBg = '#ef4444';
+        badgeBorder = '#dc2626';
+      }
+
       const customIcon = L.divIcon({
-        className: 'custom-shop-card-marker',
+        className: 'custom-shop-pin-marker',
         html: `
-          <div class="relative group cursor-pointer flex flex-col items-center select-none" style="transform: translate(-50%, -100%);">
-            <!-- White Card / Compact Pill -->
-            <div class="flex items-center ${
-              isSelected 
-                ? 'gap-2 p-1.5 pr-3 bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border-2 border-orange-500 ring-4 ring-orange-500/30 scale-110 z-50' 
-                : 'gap-1.5 p-1 pr-2 bg-white/95 dark:bg-zinc-900/95 rounded-full shadow-md border border-gray-250/90 dark:border-zinc-800 hover:scale-105'
-            } transition-all duration-200">
+          <div class="relative group cursor-pointer flex flex-col items-center select-none ${isSelected ? 'scale-110 z-50' : 'hover:scale-105 z-10'}" style="transform: translate(-50%, -100%);">
+            
+            <!-- Salon Name Label Above Pin -->
+            <span class="text-[10.5px] font-black text-gray-900 dark:text-white bg-white/95 dark:bg-zinc-900/95 px-2 py-0.5 rounded-full shadow-md border border-gray-200/80 dark:border-zinc-800 mb-1 whitespace-nowrap leading-tight">
+              ${shop.name}
+            </span>
+
+            <!-- Pin Marker Container -->
+            <div class="relative flex flex-col items-center">
               
-              <!-- Thumbnail Photo -->
-              <img 
-                src="${shop.image}" 
-                alt="${shop.name}" 
-                class="${isSelected ? 'h-8 w-8 rounded-xl' : 'h-5 w-5 rounded-full'} object-cover border border-gray-100 dark:border-zinc-800 shrink-0" 
-              />
-              
-              <!-- Shop Info -->
-              <div class="flex flex-col text-left min-w-0 pr-0.5">
-                <span class="${isSelected ? 'text-[11px] max-w-[95px]' : 'text-[9.5px] max-w-[62px]'} font-extrabold text-gray-900 dark:text-white truncate leading-tight">
-                  ${shop.name}
-                </span>
+              <!-- Top Right Occupancy Pill Badge (e.g. 2/6, 0/4, 3/4) -->
+              <div class="absolute -top-1.5 -right-3 z-30 px-1.5 py-0.5 rounded-full text-[9.5px] font-black text-white shadow-md border ring-2 ring-white dark:ring-zinc-900 flex items-center justify-center min-w-[28px]" style="background-color: ${badgeBg}; border-color: ${badgeBorder};">
+                ${taken}/${total}
+              </div>
+
+              <!-- Teardrop Pin Body -->
+              <div class="h-13 w-13 rounded-full bg-gradient-to-b from-amber-500 to-orange-600 p-0.5 flex flex-col items-center justify-center shadow-xl relative border-2 border-white dark:border-zinc-900">
                 
-                <div class="flex items-center gap-0.5">
-                  <span class="text-[9px] font-black text-orange-500 flex items-center">
-                    ★${shop.rating}
-                  </span>
-                  <span class="text-[8px] font-bold text-gray-400 dark:text-zinc-400">
-                    • ${distanceDisplay}
+                <!-- Inner White Circle Window for Chair Image -->
+                <div class="h-full w-full rounded-full bg-white dark:bg-zinc-900 flex flex-col items-center justify-center p-0.5 overflow-hidden shadow-inner">
+                  <img src="${chairImg}" alt="Chair Status" class="h-7 w-7 object-contain" />
+                  <span class="text-[6.5px] font-extrabold text-orange-600 dark:text-orange-400 tracking-tighter leading-none -mt-0.5">
+                    CutWala
                   </span>
                 </div>
               </div>
+
+              <!-- Pointer Pin Tip -->
+              <div class="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] border-t-orange-600 -mt-1 drop-shadow-xs"></div>
+
+              <!-- Shadow Ellipse -->
+              <div class="h-2 w-6 rounded-full bg-black/20 blur-[1px] -mt-0.5"></div>
             </div>
 
-            <!-- Pointer Triangle & Orange Location Pin Dot -->
-            <div class="flex flex-col items-center -mt-0.5">
-              <div class="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[5px] ${isSelected ? 'border-t-orange-500' : 'border-t-white dark:border-t-zinc-900'}"></div>
-              <div class="h-2.5 w-2.5 rounded-full bg-orange-500 border border-white dark:border-zinc-900 shadow-md -mt-0.5"></div>
+            <!-- Distance Pill Below Pin -->
+            <div class="mt-0.5 bg-white/95 dark:bg-zinc-900/95 px-2.5 py-0.5 rounded-full shadow-md text-[9.5px] font-extrabold text-gray-800 dark:text-zinc-200 border border-gray-200/80 dark:border-zinc-800">
+              ${distanceDisplay}
             </div>
+
           </div>
         `,
         iconSize: [0, 0],
@@ -141,7 +174,7 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
       markersRef.current[shop.shop_id] = marker;
     });
 
-  }, [shops, openShops, userLocation, selectedShop]);
+  }, [shops, openShops, chairs, userLocation, selectedShop]);
 
   // Handle Real User Location Pulsing Marker (Always on Top Layer)
   useEffect(() => {

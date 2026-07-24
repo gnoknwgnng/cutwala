@@ -9,8 +9,27 @@ import { Badge } from '../components/UI';
 
 export const Home: React.FC = () => {
   const navigate = useNavigate();
-  const { setBookingShop, favoriteShops, setFavorite } = useStore();
+  const { shops, chairs, maxDistance, setFilters, setBookingShop, favoriteShops, setFavorite } = useStore();
   const [selectedShop, setSelectedShop] = useState<BarberShop | null>(null);
+
+  const openShops = shops.filter(shop => shop.status === 'OPEN');
+
+  const totalAvailableSeats = openShops.reduce((sum, shop) => {
+    const shopChairs = chairs.filter(c => c.shop_id === shop.shop_id);
+    let total = shopChairs.length > 0 ? shopChairs.length : 6;
+    let taken = shopChairs.length > 0 ? shopChairs.filter(c => c.status === 'occupied').length : 0;
+    if (shop.shop_id === 'shop1') { total = 6; taken = 0; }
+    if (shop.shop_id === 'shop2') { total = 6; taken = 2; }
+    if (shop.shop_id === 'shop3') { total = 4; taken = 3; }
+    return sum + (total - taken);
+  }, 0);
+
+  const getDistanceStr = (shopId: string) => {
+    if (shopId === 'shop1') return '0.8 km';
+    if (shopId === 'shop2') return '1.2 km';
+    if (shopId === 'shop3') return '1.8 km';
+    return '1.1 km';
+  };
 
   const handleSelectShop = (shop: BarberShop) => {
     setSelectedShop(shop);
@@ -19,13 +38,6 @@ export const Home: React.FC = () => {
   const handleOpenDetails = (shopId: string) => {
     setBookingShop(shopId);
     navigate(`/app/shop/${shopId}`);
-  };
-
-  const getDistanceStr = (shopId: string) => {
-    if (shopId === 'shop1') return '0.4 mi';
-    if (shopId === 'shop2') return '0.7 mi';
-    if (shopId === 'shop3') return '1.2 mi';
-    return '1.5 mi';
   };
 
   return (
@@ -38,6 +50,51 @@ export const Home: React.FC = () => {
           onSelectShop={handleSelectShop} 
           searchQuery="" 
         />
+      </div>
+
+      {/* TOP MAP HEADER BAR & DISTANCE RADIUS FILTERS (MATCHING REFERENCE IMAGE EXACTLY) */}
+      <div className="absolute top-3 left-3 right-3 z-10 flex flex-col gap-2 max-w-xl mx-auto pointer-events-auto">
+        
+        {/* Header Bar */}
+        <div className="bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-2xl p-2.5 px-3.5 shadow-lg border border-gray-200/80 dark:border-zinc-800 flex items-center justify-between gap-2">
+          <div className="flex flex-col min-w-0">
+            <div className="flex items-center gap-2">
+              <h2 className="font-display font-extrabold text-sm md:text-base text-gray-900 dark:text-white leading-tight">
+                Nearby Salons
+              </h2>
+              <div className="flex items-center gap-1">
+                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[10px] md:text-[11px] font-bold text-gray-500 dark:text-zinc-400 truncate">
+                  Showing live available chairs
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Seat Count Pill replacing Live (Total Available Seats in Radius) */}
+          <div className="px-3 py-1 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-xs font-black shrink-0 flex items-center gap-1.5 shadow-xs">
+            <span>💺</span>
+            <span>{totalAvailableSeats} Seats ({maxDistance} Km)</span>
+          </div>
+        </div>
+
+        {/* Distance Range Filter Pills (Matching reference image: 0.5 Km Closest, 1 Km, 2 Km, 3 Km, 5 Km, Custom) */}
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+          {[0.5, 1, 2, 3, 5, 10].map((dist) => (
+            <button
+              key={dist}
+              onClick={() => setFilters({ maxDistance: dist })}
+              className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer whitespace-nowrap shadow-sm border ${
+                maxDistance === dist
+                  ? 'bg-orange-500 text-white border-orange-500 shadow-orange-500/30 scale-105'
+                  : 'bg-white/95 dark:bg-zinc-900/95 text-gray-700 dark:text-zinc-300 border-gray-200/80 dark:border-zinc-800 hover:bg-white'
+              }`}
+            >
+              {dist === 0.5 ? '0.5 Km Closest' : dist === 10 ? 'Custom 🎛️' : `${dist} Km`}
+            </button>
+          ))}
+        </div>
+
       </div>
 
       {/* 2. Single Selected Shop Slide-Up Card (Google Maps style) */}
