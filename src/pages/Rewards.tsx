@@ -131,24 +131,18 @@ export const Rewards: React.FC = () => {
                 className="w-full relative"
                 style={{ transformStyle: 'preserve-3d' }}
               >
-                {/* ---------------- CARD FRONT FACE (REALISTIC PAPER CARDSTOCK TICKET STYLING) ---------------- */}
-                <div className={`relative rounded-[28px] bg-gradient-to-b from-[#f9f5ed] via-[#f5ede2] to-[#eee4d4] dark:bg-[#18181b] border-[2.5px] border-[#dfd2c0] dark:border-zinc-800 p-4 md:p-5.5 shadow-[0_14px_36px_-6px_rgba(74,53,37,0.2),0_4px_12px_-2px_rgba(74,53,37,0.12)] flex flex-col gap-3.5 overflow-hidden ${
+                {/* ---------------- CARD FRONT FACE (CLEAN SMOOTH PAPER CARDSTOCK TEXTURE - NO DOTS) ---------------- */}
+                <div className={`relative rounded-[28px] bg-[#f5ede2] dark:bg-[#18181b] border-2 border-[#dfd2c0] dark:border-zinc-800 p-4 md:p-5.5 shadow-[0_12px_28px_rgba(70,45,25,0.14)] flex flex-col gap-3.5 overflow-hidden ${
                   isFlipped ? 'hidden' : 'block'
                 }`}>
-                  
-                  {/* Subtle Paper Fiber Grain Texture Overlay */}
-                  <div className="absolute inset-0 bg-[radial-gradient(#cbbaa8_0.8px,transparent_0.8px)] [background-size:10px_10px] opacity-40 pointer-events-none" />
-
-                  {/* Stitched Inner Paper Border Outline */}
-                  <div className="absolute inset-1.5 rounded-[22px] border border-dashed border-[#d2c2b0]/70 dark:border-zinc-700/50 pointer-events-none" />
 
                   {/* Ticket Cutout Notch on Right Edge */}
-                  <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-8 bg-[#faf8f5] dark:bg-[#0b0b0c] rounded-l-full border-l-[2.5px] border-y-[2.5px] border-[#dfd2c0] dark:border-zinc-800 z-10" />
+                  <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-8 bg-[#faf8f5] dark:bg-[#0b0b0c] rounded-l-full border-l-2 border-y-2 border-[#dfd2c0] dark:border-zinc-800 z-10" />
 
                   {/* CARD TOP BRANDING BAR */}
                   <div className="flex items-center justify-between relative z-10">
                     <div>
-                      <h2 className="font-serif italic font-extrabold text-2xl text-[#3d2719] dark:text-amber-100 tracking-tight leading-none drop-shadow-xs">
+                      <h2 className="font-serif italic font-extrabold text-2xl text-[#3d2719] dark:text-amber-100 tracking-tight leading-none">
                         CutWala
                       </h2>
                       <span className="text-[9px] font-extrabold uppercase tracking-[0.2em] text-[#8c7462] dark:text-zinc-400 block mt-1">
@@ -214,8 +208,8 @@ export const Rewards: React.FC = () => {
                     })}
                   </div>
 
-                  {/* Dotted Divider Line */}
-                  <div className="border-t border-dashed border-[#d8c8b6] dark:border-zinc-800 my-1" />
+                  {/* Solid Divider Line */}
+                  <div className="border-t border-[#d8c8b6] dark:border-zinc-800 my-1" />
 
                   {/* BOTTOM STATS INSIDE CARD (2 COLUMNS SEPARATED BY VERTICAL LINE) */}
                   <div className="grid grid-cols-2 gap-3 items-center divide-x divide-[#d8c8b6]/80 dark:divide-zinc-800">
@@ -252,23 +246,9 @@ export const Rewards: React.FC = () => {
                         <span className="text-[11px] font-semibold text-[#5c4a3d] dark:text-zinc-400 block">
                           Next FREE Haircut
                         </span>
-                        <span className="text-base font-extrabold text-[#15803d] dark:text-emerald-400 block leading-tight">
+                        <span className="text-base font-extrabold text-[#15803d] dark:text-emerald-400 block leading-tight mt-0.5">
                           {(cycleNumber - 1) * 10 + 11}th Booking
                         </span>
-
-                        {/* 10 Dots Progress Bar */}
-                        <div className="flex items-center gap-1.5 mt-2">
-                          {Array.from({ length: 10 }).map((_, i) => (
-                            <div
-                              key={i}
-                              className={`h-2.5 w-2.5 rounded-full transition-all ${
-                                i < stampsCount
-                                  ? 'bg-[#15803d] scale-105'
-                                  : 'bg-[#ab9b8c]/50 dark:bg-zinc-700'
-                              }`}
-                            />
-                          ))}
-                        </div>
                       </div>
                     </div>
 
