@@ -54,7 +54,7 @@ export const Rewards: React.FC = () => {
   ];
 
   return (
-    <div className="flex-1 flex flex-col bg-[#fbf9f5] dark:bg-[#0b0b0c] pb-24 relative overflow-y-auto no-scrollbar select-none">
+    <div className="flex-1 flex flex-col bg-[#faf8f5] dark:bg-[#0b0b0c] pb-24 relative overflow-y-auto no-scrollbar select-none">
       
       {/* 1. TOP HEADER (MATCHING SCREENSHOT) */}
       <header className="sticky top-0 z-30 flex h-14 items-center justify-between px-4 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md border-b border-gray-100 dark:border-zinc-800">
@@ -132,11 +132,11 @@ export const Rewards: React.FC = () => {
               </button>
             </div>
 
-            {/* PHYSICAL TEXTURED LOYALTY CARD (MATCHING USER'S REFERENCE SCREENSHOT EXACTLY) */}
-            <div className="relative rounded-3xl bg-[#fdfbf7] dark:bg-[#18181b] border-2 border-[#e7ded0] dark:border-zinc-800 p-4 md:p-5 shadow-md flex flex-col gap-4 overflow-hidden">
+            {/* PHYSICAL TEXTURED PARCHMENT LOYALTY CARD (EXACT MATCH FOR COLOR #f3ebe1) */}
+            <div className="relative rounded-3xl bg-[#f3ebe1] dark:bg-[#18181b] border-2 border-[#e2d6c6] dark:border-zinc-800 p-4 md:p-5 shadow-lg shadow-amber-900/5 flex flex-col gap-4 overflow-hidden">
               
               {/* Ticket Cutout Notch on Right Edge */}
-              <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-8 bg-[#fbf9f5] dark:bg-[#0b0b0c] rounded-l-full border-l-2 border-y-2 border-[#e7ded0] dark:border-zinc-800" />
+              <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-8 bg-[#faf8f5] dark:bg-[#0b0b0c] rounded-l-full border-l-2 border-y-2 border-[#e2d6c6] dark:border-zinc-800" />
 
               {/* CARD TOP BRANDING BAR */}
               <div className="flex items-center justify-between">
@@ -150,7 +150,7 @@ export const Rewards: React.FC = () => {
                 </div>
 
                 {/* Ribbon Tag: CYCLE 2 Started */}
-                <div className="px-3 py-1 rounded-l-xl bg-[#3d271d] text-[#f4ece1] text-[10px] font-extrabold tracking-wide uppercase shadow-sm">
+                <div className="px-3.5 py-1.5 rounded-bl-xl rounded-tr-xl bg-[#422b1d] text-[#f4eae0] text-[10px] font-extrabold tracking-wide uppercase shadow-sm">
                   CYCLE 2 <span className="font-normal opacity-80">Started</span>
                 </div>
               </div>
