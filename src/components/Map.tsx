@@ -136,6 +136,13 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
               <div style="position: relative; width: 42px; height: 52px; display: flex; align-items: center; justify-content: center;">
                 
                 <svg width="42" height="52" viewBox="0 0 42 52" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block;">
+                  <defs>
+                    <!-- Clip Path matching inner teardrop pin boundary so image NEVER spills out of top curve -->
+                    <clipPath id="teardrop-clip-${shop.shop_id}">
+                      <path d="M21 4C12 4 4 12 4 21C4 31 21 47 21 47C21 47 38 31 38 21C38 12 30 4 21 4Z" />
+                    </clipPath>
+                  </defs>
+
                   <!-- White Interior Teardrop Pin Path with Occupancy Colored Border -->
                   <path 
                     d="M21 2C10.5 2 2 10.5 2 21C2 33 21 50 21 50C21 50 40 33 40 21C40 10.5 31.5 2 21 2Z" 
@@ -145,11 +152,13 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
                     stroke-linejoin="round"
                   />
                   
-                  <!-- Native SVG Chair Status Image Centered in Dome Window -->
-                  <image href="${chairImg}" x="9" y="5" width="24" height="24" preserveAspectRatio="xMidYMid meet" />
+                  <!-- Clipped Native SVG Chair Status Image Centered in Dome Window -->
+                  <g clip-path="url(#teardrop-clip-${shop.shop_id})">
+                    <image href="${chairImg}" x="10" y="7" width="22" height="22" preserveAspectRatio="xMidYMid meet" />
+                  </g>
                   
                   <!-- Native SVG CutWala Subtext -->
-                  <text x="21" y="33" text-anchor="middle" font-size="5.5" font-weight="900" fill="${badgeBg}" font-family="sans-serif">
+                  <text x="21" y="34" text-anchor="middle" font-size="5.5" font-weight="900" fill="${badgeBg}" font-family="sans-serif">
                     CutWala
                   </text>
                 </svg>
