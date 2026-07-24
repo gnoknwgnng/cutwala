@@ -188,7 +188,7 @@ export const Layout: React.FC = () => {
         <motion.nav
           className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl border-t border-gray-100 dark:border-zinc-800 flex h-16 items-center justify-around px-2 shadow-2xl"
           animate={{ y: mapPanning ? 80 : 0 }}
-          transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+          transition={{ type: 'spring', damping: 30, stiffness: 400 }}
         >
           {mainNavItems.map((item) => {
             const Icon = item.icon;
@@ -231,7 +231,7 @@ export const Layout: React.FC = () => {
       <motion.main
         className={`flex-1 min-h-screen relative flex flex-col ${isMainTab ? 'md:pl-64' : 'pb-0'}`}
         animate={{ paddingBottom: mapPanning ? 0 : (isMainTab ? 72 : 0) }}
-        transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+        transition={{ type: 'spring', damping: 30, stiffness: 400 }}
       >
         
         {/* TOP HEADER — wrapped in overflow-hidden collapsing div so map physically expands */}
@@ -240,14 +240,14 @@ export const Layout: React.FC = () => {
             style={{
               overflow: 'hidden',
               maxHeight: mapPanning ? 0 : 200,
-              transition: 'max-height 0.38s cubic-bezier(0.4,0,0.2,1)',
+              transition: 'max-height 0.22s cubic-bezier(0.4,0,0.2,1)',
               flexShrink: 0,
             }}
           >
           <motion.header
             className="flex flex-col bg-white/95 dark:bg-zinc-900/95 border-b border-gray-100 dark:border-zinc-800 shrink-0 sticky top-0 z-35 backdrop-blur-md px-3 md:px-6 py-2.5 gap-2.5 shadow-sm"
             animate={{ opacity: mapPanning ? 0 : 1 }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: 0.15 }}
           >
             
             {/* ROW 1: Logo & Address (Left) | Gender Toggle (Center) | Notification Bell (Right) */}

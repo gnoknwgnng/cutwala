@@ -84,7 +84,7 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
         if (panningTimer) clearTimeout(panningTimer);
         panningTimer = setTimeout(() => {
           setMapPanning(false);
-        }, 1800); // restore after 1.8s idle
+        }, 600); // restore quickly after 0.6s idle
       });
     }
 
