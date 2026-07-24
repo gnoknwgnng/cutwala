@@ -98,20 +98,16 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
       // 3. Red: when seats taken >= (total - 1)
       let chairImg = '/green-chair.jpg';
       let badgeBg = '#10b981'; // Green
-      let badgeBorder = '#059669';
 
       if (taken === 0) {
         chairImg = '/green-chair.jpg';
         badgeBg = '#10b981';
-        badgeBorder = '#059669';
       } else if (taken >= 1 && taken <= (total - 2)) {
         chairImg = '/yellow-chair.jpg';
         badgeBg = '#f59e0b';
-        badgeBorder = '#d97706';
       } else if (taken >= (total - 1)) {
         chairImg = '/red-chair.jpg';
         badgeBg = '#ef4444';
-        badgeBorder = '#dc2626';
       }
 
       const customIcon = L.divIcon({
@@ -120,15 +116,15 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
           <div style="position: relative; cursor: pointer; display: flex; flex-direction: column; align-items: center; user-select: none; ${isSelected ? 'transform: translate(-50%, -100%) scale(1.1); z-index: 1000;' : 'transform: translate(-50%, -100%); z-index: 10;'}">
             
             <!-- Salon Name Label Above Pin -->
-            <div style="font-size: 8.5px; font-weight: 800; color: #111827; background-color: rgba(255, 255, 255, 0.95); padding: 1px 6px; border-radius: 9999px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); border: 1px solid #e5e7eb; margin-bottom: 1px; white-space: nowrap; line-height: 1.2;">
+            <div style="font-size: 8.5px; font-weight: 800; color: #111827; background-color: rgba(255, 255, 255, 0.95); padding: 1px 6px; border-radius: 9999px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); border: 1px solid #e5e7eb; margin-bottom: 3px; white-space: nowrap; line-height: 1.2;">
               ${shop.name}
             </div>
 
             <!-- Pin Marker Container -->
             <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
               
-              <!-- Top Right Occupancy Badge (e.g. 2/6, 0/4, 3/4) -->
-              <div style="position: absolute; top: -3px; right: -5px; z-index: 30; padding: 0.5px 4px; border-radius: 9999px; font-size: 7.5px; font-weight: 900; color: #ffffff; background-color: ${badgeBg}; border: 1.2px solid ${badgeBorder}; box-shadow: 0 1px 3px rgba(0,0,0,0.2); min-width: 18px; text-align: center;">
+              <!-- Top Right Occupancy Badge (e.g. 2/6, 0/4, 3/4 - Bold & Clear) -->
+              <div style="position: absolute; top: -3px; right: -8px; z-index: 50; padding: 1px 5px; border-radius: 9999px; font-size: 8.5px; font-weight: 900; color: #ffffff; background-color: ${badgeBg}; border: 1.5px solid #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.25); min-width: 22px; text-align: center; line-height: 1;">
                 ${taken}/${total}
               </div>
 
