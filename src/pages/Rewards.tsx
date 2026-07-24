@@ -169,16 +169,16 @@ export const Rewards: React.FC = () => {
                         transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                         className="relative"
                       >
-                        {/* Stamp Circle Container */}
-                        <div className={`h-12 w-12 sm:h-14 sm:w-14 rounded-full flex items-center justify-center transition-all overflow-hidden p-0.5 ${
+                        {/* Stamp Circle Container (Pure White Inside) */}
+                        <div className={`h-12 w-12 sm:h-14 sm:w-14 rounded-full flex items-center justify-center transition-all overflow-hidden p-0.5 bg-white dark:bg-zinc-900 ${
                           isCollected
-                            ? 'border-2 border-emerald-600 bg-white dark:bg-zinc-900 shadow-md'
-                            : 'border border-gray-300 dark:border-zinc-700 bg-[#f7f3ec]/60 dark:bg-zinc-900/60'
+                            ? 'border-2 border-emerald-600 shadow-md'
+                            : 'border border-gray-300 dark:border-zinc-700 shadow-xs'
                         }`}>
                           <img
                             src={isCollected ? "/stamped.jpg" : "/unstamped.jpg"}
                             alt={isCollected ? "Stamped" : "Unstamped"}
-                            className="h-full w-full object-contain rounded-full"
+                            className="h-full w-full object-contain rounded-full bg-white dark:bg-zinc-900"
                           />
                         </div>
 
