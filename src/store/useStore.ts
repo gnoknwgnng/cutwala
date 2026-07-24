@@ -42,6 +42,7 @@ interface State {
   genderFilter: 'men' | 'women' | 'all';
   theme: 'light' | 'dark';
   toast: { message: string; type: 'success' | 'error' | 'info'; id: number } | null;
+  mapScrolledUp: boolean;
   
   stampsCount: number;
   cycleNumber: number;
@@ -60,6 +61,7 @@ interface State {
   setFavorite: (shopId: string) => void;
   toggleTheme: () => void;
   showToast: (message: string, type?: 'success' | 'error' | 'info') => void;
+  setMapScrolledUp: (value: boolean) => void;
   hideToast: () => void;
   logout: () => void;
   addStamp: () => void;
@@ -105,6 +107,7 @@ export const useStore = create<State>((set, get) => ({
   favoriteShops: ['shop1'], // Default favorite
   theme: 'light', // default theme is white/light mode
   toast: null,
+  mapScrolledUp: false,
   searchQuery: '',
   maxDistance: 10,
   genderFilter: 'men',
@@ -302,6 +305,10 @@ export const useStore = create<State>((set, get) => ({
 
   hideToast: () => {
     set({ toast: null });
+  },
+
+  setMapScrolledUp: (value: boolean) => {
+    set({ mapScrolledUp: value });
   },
 
   logout: () => {

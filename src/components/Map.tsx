@@ -12,7 +12,7 @@ interface MapProps {
 }
 
 export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuery }) => {
-  const { shops, chairs, userLocation, requestRealLocation } = useStore();
+  const { shops, chairs, userLocation, requestRealLocation, setMapScrolledUp } = useStore();
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<{ [key: string]: L.Marker }>({});
@@ -72,10 +72,45 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
         subdomains: 'abcd',
       }).addTo(map);
 
-      mapInstanceRef.current = map;
+    mapInstanceRef.current = map;
     }
 
     const map = mapInstanceRef.current;
+
+    // ── Pan direction detection: hide header + bottom nav on upward pan ──
+    let panStartLat = map.getCenter().lat;
+    let hideTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const onMoveStart = () => {
+      panStartLat = map.getCenter().lat;
+    };
+    const onMove = () => {
+      const currentLat = map.getCenter().lat;
+      const isPanningUp = currentLat > panStartLat + 0.00005; // panning north = map scrolled up
+      if (isPanningUp) {
+        setMapScrolledUp(true);
+        if (hideTimer) clearTimeout(hideTimer);
+      } else if (currentLat < panStartLat - 0.00005) {
+        setMapScrolledUp(false);
+        if (hideTimer) clearTimeout(hideTimer);
+      }
+    };
+    const onMoveEnd = () => {
+      // Auto-show UI after 2.5s of no panning
+      if (hideTimer) clearTimeout(hideTimer);
+      hideTimer = setTimeout(() => setMapScrolledUp(false), 2500);
+    };
+
+    map.on('movestart', onMoveStart);
+    map.on('move', onMove);
+    map.on('moveend', onMoveEnd);
+    // Cleanup pan listeners when effect reruns
+    return () => {
+      map.off('movestart', onMoveStart);
+      map.off('move', onMove);
+      map.off('moveend', onMoveEnd);
+      if (hideTimer) clearTimeout(hideTimer);
+    };
 
     // Clear previous shop markers
     Object.values(markersRef.current).forEach(marker => marker.remove());

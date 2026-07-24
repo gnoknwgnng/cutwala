@@ -18,7 +18,8 @@ export const Layout: React.FC = () => {
     maxDistance, 
     genderFilter, 
     setFilters,
-    showToast 
+    showToast,
+    mapScrolledUp
   } = useStore();
 
   // Saved locations state for header dropdown
@@ -68,6 +69,8 @@ export const Layout: React.FC = () => {
 
   // Bottom nav and sidebar only render on main tab routes
   const isMainTab = ['/app/home', '/app/favorites', '/app/rewards', '/app/bookings', '/app/history', '/app/profile'].includes(location.pathname);
+  // Scroll-to-hide only applies on the map/home page
+  const isHomePage = location.pathname === '/app/home';
 
   const handleNavClick = (item: typeof mainNavItems[0], e: React.MouseEvent) => {
     if (item.isAction) {
@@ -182,9 +185,16 @@ export const Layout: React.FC = () => {
         </aside>
       )}
 
-      {/* 2. MOBILE BOTTOM NAVIGATION BAR (Featuring AI Hairstyle on far right) */}
+      {/* 2. MOBILE BOTTOM NAVIGATION BAR */}
       {isMainTab && (
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl border-t border-gray-100 dark:border-zinc-800 flex h-16 items-center justify-around px-2 shadow-2xl">
+        <motion.nav
+          animate={{
+            y: isHomePage && mapScrolledUp ? 80 : 0,
+            opacity: isHomePage && mapScrolledUp ? 0 : 1,
+          }}
+          transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+          className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl border-t border-gray-100 dark:border-zinc-800 flex h-16 items-center justify-around px-2 shadow-2xl"
+        >
           {mainNavItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path;
@@ -219,7 +229,7 @@ export const Layout: React.FC = () => {
               </Link>
             );
           })}
-        </nav>
+        </motion.nav>
       )}
 
       {/* 3. MAIN CONTENT CONTAINER */}
@@ -227,7 +237,14 @@ export const Layout: React.FC = () => {
         
         {/* TOP HEADER: Logo with Address + Gender Toggle + Full Search Bar + Notification Bell */}
         {isMainTab && (
-          <header className="flex flex-col bg-white/95 dark:bg-zinc-900/95 border-b border-gray-100 dark:border-zinc-800 shrink-0 sticky top-0 z-35 backdrop-blur-md px-3 md:px-6 py-2.5 gap-2.5 shadow-sm">
+          <motion.header
+            animate={{
+              y: isHomePage && mapScrolledUp ? -120 : 0,
+              opacity: isHomePage && mapScrolledUp ? 0 : 1,
+            }}
+            transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+            className="flex flex-col bg-white/95 dark:bg-zinc-900/95 border-b border-gray-100 dark:border-zinc-800 shrink-0 sticky top-0 z-35 backdrop-blur-md px-3 md:px-6 py-2.5 gap-2.5 shadow-sm"
+          >
             
             {/* ROW 1: Logo & Address (Left) | Gender Toggle (Center) | Notification Bell (Right) */}
             <div className="flex items-center justify-between gap-2 w-full">
@@ -383,7 +400,7 @@ export const Layout: React.FC = () => {
               </div>
             </div>
 
-          </header>
+          </motion.header>
         )}
 
         {/* Page view outlet */}
