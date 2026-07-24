@@ -119,69 +119,44 @@ export const FavoritesBottomSheet: React.FC<FavoritesBottomSheetProps> = ({ onSe
   if (favouriteList.length === 0) return null;
 
   return (
-    <>
-      {/* FLOATING FAVOURITES TAB BUTTON (Shown when card is dismissed so user can re-open) */}
-      <AnimatePresence>
-        {isDismissed && !mapPanning && (
-          <motion.button
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            transition={{ type: 'spring', damping: 20, stiffness: 300 }}
-            onClick={() => { setIsDismissed(false); setSnapState(0); }}
-            className="fixed bottom-[76px] left-3 z-30 flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-white/97 dark:bg-zinc-900/97 backdrop-blur-xl shadow-xl border border-pink-200 dark:border-pink-800/60 cursor-pointer hover:scale-105 active:scale-95 transition-transform"
+    <AnimatePresence>
+      {!isDismissed && (
+        <motion.div
+          animate={controls}
+          initial={{ height: '175px', y: 0 }}
+          exit={{ height: 0, opacity: 0, y: 200 }}
+          transition={{ type: 'spring', damping: 26, stiffness: 280 }}
+          drag="y"
+          dragConstraints={{ top: 0, bottom: 0 }}
+          dragElastic={0.1}
+          onDragEnd={handleDragEnd}
+          className="fixed bottom-[68px] left-3 right-3 md:left-auto md:right-6 md:w-96 z-30 bg-white/98 dark:bg-zinc-900/98 backdrop-blur-xl rounded-[24px] shadow-2xl shadow-black/20 border border-gray-200/80 dark:border-zinc-800/80 flex flex-col overflow-hidden select-none pointer-events-auto"
+        >
+          {/* DRAG HANDLE & HEADER BAR */}
+          <div 
+            className="w-full flex items-center justify-between px-3 pt-2.5 pb-1 bg-white/95 dark:bg-zinc-900/95 shrink-0 relative"
           >
-            <Heart className="h-4 w-4 fill-pink-500 text-pink-500" />
-            <span className="font-extrabold text-xs text-pink-600 dark:text-pink-400">Favourites</span>
-            <span className="bg-pink-500 text-white rounded-full h-5 min-w-[20px] px-1 flex items-center justify-center text-[10px] font-black">
-              {favouriteList.length}
-            </span>
-          </motion.button>
-        )}
-      </AnimatePresence>
+            {/* Left placeholder for balance */}
+            <div className="w-6" />
 
-      {/* FLOATING BOTTOM FAVORITES PREVIEW SHEET */}
-      <AnimatePresence>
-        {!isDismissed && (
-          <motion.div
-            animate={controls}
-            initial={{ height: '175px', y: 0 }}
-            exit={{ height: 0, opacity: 0, y: 200 }}
-            transition={{ type: 'spring', damping: 26, stiffness: 280 }}
-            drag="y"
-            dragConstraints={{ top: 0, bottom: 0 }}
-            dragElastic={0.1}
-            onDragEnd={handleDragEnd}
-            className="fixed bottom-[68px] left-3 right-3 md:left-auto md:right-6 md:w-96 z-30 bg-white/98 dark:bg-zinc-900/98 backdrop-blur-xl rounded-[24px] shadow-2xl shadow-black/20 border border-gray-200/80 dark:border-zinc-800/80 flex flex-col overflow-hidden select-none pointer-events-auto"
-          >
-            {/* DRAG HANDLE & HEADER BAR */}
-            <div 
-              className="w-full flex items-center justify-between px-3 pt-2.5 pb-2 bg-white/95 dark:bg-zinc-900/95 shrink-0 relative"
+            {/* CENTER DRAG HANDLE PILL */}
+            <div
+              onClick={handleHandleTap}
+              className="py-1 px-4 cursor-pointer touch-none flex items-center justify-center"
+              title="Drag or tap handle"
             >
-              {/* Left placeholder for balance */}
-              <div className="w-6" />
-
-              {/* CENTER DRAG HANDLE PILL — Tap to Close / Collapse */}
-              <button
-                onClick={handleHandleTap}
-                className="group flex flex-col items-center py-1 px-4 cursor-pointer touch-none"
-                title="Tap handle to close"
-              >
-                <div className="w-11 h-1.5 rounded-full bg-gray-300 dark:bg-zinc-600 group-hover:bg-pink-500 transition-colors" />
-                <span className="text-[8px] font-extrabold text-gray-400 dark:text-zinc-500 group-hover:text-pink-500 transition-colors mt-0.5">
-                  {snapState > 0 ? 'Tap to collapse' : 'Tap to close'}
-                </span>
-              </button>
-
-              {/* RIGHT CLOSE 'X' BUTTON — Dismisses Favourite Window */}
-              <button
-                onClick={(e) => { e.stopPropagation(); setIsDismissed(true); }}
-                className="h-6 w-6 rounded-full bg-gray-100 dark:bg-zinc-800 flex items-center justify-center text-gray-400 hover:text-gray-700 dark:hover:text-zinc-200 transition-colors cursor-pointer"
-                title="Close Favourites Window"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
+              <div className="w-11 h-1.5 rounded-full bg-gray-300 dark:bg-zinc-600 hover:bg-gray-400 dark:hover:bg-zinc-500 transition-colors" />
             </div>
+
+            {/* RIGHT CLOSE 'X' BUTTON — Direct Close */}
+            <button
+              onClick={(e) => { e.stopPropagation(); setIsDismissed(true); }}
+              className="h-6 w-6 rounded-full bg-gray-100 dark:bg-zinc-800 flex items-center justify-center text-gray-400 hover:text-gray-700 dark:hover:text-zinc-200 transition-colors cursor-pointer"
+              title="Close Favourites Window"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </div>
 
             {/* CARDS CONTAINER */}
             <div 
@@ -357,6 +332,5 @@ export const FavoritesBottomSheet: React.FC<FavoritesBottomSheetProps> = ({ onSe
           </motion.div>
         )}
       </AnimatePresence>
-    </>
   );
 };
