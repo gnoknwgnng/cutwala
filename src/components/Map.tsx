@@ -99,27 +99,19 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
       let chairImg = '/green chair.jpg';
       let badgeBg = '#10b981'; // Green
       let badgeBorder = '#059669';
-      let pinGradient = 'from-emerald-500 to-emerald-600';
-      let pinTipColor = '#059669';
 
       if (taken === 0) {
         chairImg = '/green chair.jpg';
         badgeBg = '#10b981';
         badgeBorder = '#059669';
-        pinGradient = 'from-emerald-500 to-emerald-600';
-        pinTipColor = '#059669';
       } else if (taken >= 1 && taken <= (total - 2)) {
         chairImg = '/yellow chair.jpg';
         badgeBg = '#f59e0b';
         badgeBorder = '#d97706';
-        pinGradient = 'from-amber-400 to-amber-500';
-        pinTipColor = '#f59e0b';
       } else if (taken >= (total - 1)) {
         chairImg = '/red chair.jpg';
         badgeBg = '#ef4444';
         badgeBorder = '#dc2626';
-        pinGradient = 'from-rose-500 to-red-600';
-        pinTipColor = '#dc2626';
       }
 
       const customIcon = L.divIcon({
@@ -132,7 +124,7 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
               ${shop.name}
             </span>
 
-            <!-- Pin Marker Container -->
+            <!-- Pin Marker Container (Matching Reference Image 100%) -->
             <div class="relative flex flex-col items-center">
               
               <!-- Top Right Occupancy Pill Badge (e.g. 2/6, 0/4, 3/4) -->
@@ -140,27 +132,33 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
                 ${taken}/${total}
               </div>
 
-              <!-- Teardrop Pin Body (Color Matches Occupancy: Green / Yellow / Red) -->
-              <div class="h-13 w-13 rounded-full bg-gradient-to-b ${pinGradient} p-0.5 flex flex-col items-center justify-center shadow-xl relative border-2 border-white dark:border-zinc-900">
+              <!-- Location Teardrop Ring Outer Pin with White Interior Window -->
+              <div class="relative flex flex-col items-center">
                 
-                <!-- Inner White Circle Window for Chair Image -->
-                <div class="h-full w-full rounded-full bg-white dark:bg-zinc-900 flex flex-col items-center justify-center p-0.5 overflow-hidden shadow-inner">
-                  <img src="${chairImg}" alt="Chair Status" class="h-7 w-7 object-contain" />
-                  <span class="text-[6.5px] font-extrabold tracking-tighter leading-none -mt-0.5" style="color: ${pinTipColor};">
+                <!-- Outer Colored Ring with White Window Inside -->
+                <div class="h-14 w-14 rounded-full bg-white p-1 flex flex-col items-center justify-center shadow-xl border-[3.5px] relative" style="border-color: ${badgeBg};">
+                  <img src="${chairImg}" alt="Chair Status" class="h-8 w-8 object-contain" />
+                  <span class="text-[7px] font-extrabold tracking-tighter leading-none -mt-0.5" style="color: ${badgeBg};">
                     CutWala
                   </span>
                 </div>
+
+                <!-- Teardrop Tip Pointing Down -->
+                <div class="w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[10px] -mt-1 drop-shadow-xs" style="border-t-color: ${badgeBg};"></div>
+                
+                <!-- Concentric Target Ripple Rings on Map Ground -->
+                <div class="flex items-center justify-center -mt-1">
+                  <div class="h-3 w-8 rounded-full border-2 bg-transparent flex items-center justify-center shadow-xs" style="border-color: ${badgeBg};">
+                    <div class="h-1.5 w-4 rounded-full" style="background-color: ${badgeBg}; opacity: 0.7;"></div>
+                  </div>
+                </div>
+
               </div>
 
-              <!-- Pointer Pin Tip (Color Matches Occupancy) -->
-              <div class="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] -mt-1 drop-shadow-xs" style="border-t-color: ${pinTipColor};"></div>
-
-              <!-- Shadow Ellipse -->
-              <div class="h-2 w-6 rounded-full bg-black/20 blur-[1px] -mt-0.5"></div>
             </div>
 
             <!-- Distance Pill Below Pin -->
-            <div class="mt-0.5 bg-white/95 dark:bg-zinc-900/95 px-2.5 py-0.5 rounded-full shadow-md text-[9.5px] font-extrabold text-gray-800 dark:text-zinc-200 border border-gray-200/80 dark:border-zinc-800">
+            <div class="mt-1 bg-white/95 dark:bg-zinc-900/95 px-2.5 py-0.5 rounded-full shadow-md text-[9.5px] font-extrabold text-gray-800 dark:text-zinc-200 border border-gray-200/80 dark:border-zinc-800">
               ${distanceDisplay}
             </div>
 
