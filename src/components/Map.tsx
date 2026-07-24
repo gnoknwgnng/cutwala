@@ -150,13 +150,13 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
                   <!-- CutWala label -->
                   <text x="18" y="30" text-anchor="middle" font-size="5" font-weight="900" fill="${badgeBg}" font-family="sans-serif">CutWala</text>
 
-                  <!-- Occupancy Badge INSIDE SVG (never covered by other markers' HTML) -->
+                  <!-- Occupancy Badge on RIGHT SIDE of pin (never behind name label above) -->
                   <!-- Badge pill background rect -->
-                  <rect x="8" y="-8" width="20" height="10" rx="5" ry="5" fill="${badgeBg}" />
+                  <rect x="30" y="6" width="20" height="11" rx="5.5" ry="5.5" fill="${badgeBg}" />
                   <!-- Badge white border -->
-                  <rect x="7" y="-9" width="22" height="12" rx="6" ry="6" fill="none" stroke="#ffffff" stroke-width="1.5" />
+                  <rect x="29" y="5" width="22" height="13" rx="6.5" ry="6.5" fill="none" stroke="#ffffff" stroke-width="1.5" />
                   <!-- Badge text -->
-                  <text x="18" y="-1.5" text-anchor="middle" font-size="7" font-weight="900" fill="#ffffff" font-family="sans-serif">${taken}/${total}</text>
+                  <text x="40" y="13.5" text-anchor="middle" font-size="7" font-weight="900" fill="#ffffff" font-family="sans-serif">${taken}/${total}</text>
                 </svg>
 
               </div>
