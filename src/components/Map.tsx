@@ -156,8 +156,8 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
 
               </div>
 
-              <!-- Top Right Occupancy Badge (Snug on Top-Right Dome, No Adjacent Pin Overlap) -->
-              <div style="position: absolute; top: -5px; right: -2px; z-index: 100; padding: 1px 4.5px; border-radius: 9999px; font-size: 8px; font-weight: 900; color: #ffffff; background-color: ${badgeBg}; border: 1.5px solid #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.25); min-width: 20px; text-align: center; line-height: 1;">
+              <!-- Occupancy Badge Centered on Top of Pin Dome (100% Front & Visible) -->
+              <div style="position: absolute; top: -6px; left: 50%; transform: translateX(-50%); z-index: 100; padding: 1px 6px; border-radius: 9999px; font-size: 8.5px; font-weight: 900; color: #ffffff; background-color: ${badgeBg}; border: 1.5px solid #ffffff; box-shadow: 0 2px 5px rgba(0,0,0,0.3); min-width: 22px; text-align: center; line-height: 1; white-space: nowrap;">
                 ${taken}/${total}
               </div>
 
