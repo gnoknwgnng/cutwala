@@ -131,18 +131,24 @@ export const Rewards: React.FC = () => {
                 className="w-full relative"
                 style={{ transformStyle: 'preserve-3d' }}
               >
-                {/* ---------------- CARD FRONT FACE (MATCHING REFERENCE IMAGE STYLING EXACTLY) ---------------- */}
-                <div className={`rounded-3xl bg-[#f6f0e6] dark:bg-[#18181b] border-2 border-[#e2d6c6] dark:border-zinc-800 p-4 md:p-5 shadow-xl shadow-amber-950/10 flex flex-col gap-3.5 overflow-hidden ${
+                {/* ---------------- CARD FRONT FACE (REALISTIC PAPER CARDSTOCK TICKET STYLING) ---------------- */}
+                <div className={`relative rounded-[28px] bg-gradient-to-b from-[#f9f5ed] via-[#f5ede2] to-[#eee4d4] dark:bg-[#18181b] border-[2.5px] border-[#dfd2c0] dark:border-zinc-800 p-4 md:p-5.5 shadow-[0_14px_36px_-6px_rgba(74,53,37,0.2),0_4px_12px_-2px_rgba(74,53,37,0.12)] flex flex-col gap-3.5 overflow-hidden ${
                   isFlipped ? 'hidden' : 'block'
                 }`}>
                   
+                  {/* Subtle Paper Fiber Grain Texture Overlay */}
+                  <div className="absolute inset-0 bg-[radial-gradient(#cbbaa8_0.8px,transparent_0.8px)] [background-size:10px_10px] opacity-40 pointer-events-none" />
+
+                  {/* Stitched Inner Paper Border Outline */}
+                  <div className="absolute inset-1.5 rounded-[22px] border border-dashed border-[#d2c2b0]/70 dark:border-zinc-700/50 pointer-events-none" />
+
                   {/* Ticket Cutout Notch on Right Edge */}
-                  <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-8 bg-[#faf8f5] dark:bg-[#0b0b0c] rounded-l-full border-l-2 border-y-2 border-[#e2d6c6] dark:border-zinc-800" />
+                  <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-8 bg-[#faf8f5] dark:bg-[#0b0b0c] rounded-l-full border-l-[2.5px] border-y-[2.5px] border-[#dfd2c0] dark:border-zinc-800 z-10" />
 
                   {/* CARD TOP BRANDING BAR */}
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between relative z-10">
                     <div>
-                      <h2 className="font-serif italic font-extrabold text-2xl text-[#3d2719] dark:text-amber-100 tracking-tight leading-none">
+                      <h2 className="font-serif italic font-extrabold text-2xl text-[#3d2719] dark:text-amber-100 tracking-tight leading-none drop-shadow-xs">
                         CutWala
                       </h2>
                       <span className="text-[9px] font-extrabold uppercase tracking-[0.2em] text-[#8c7462] dark:text-zinc-400 block mt-1">
@@ -150,8 +156,8 @@ export const Rewards: React.FC = () => {
                       </span>
                     </div>
 
-                    {/* Ribbon Tag: CYCLE 2 / Started (Matching reference image ribbon styling) */}
-                    <div className="px-4 py-2 rounded-b-2xl rounded-tr-2xl bg-[#4a3220] text-[#f5ede2] shadow-md flex flex-col items-center justify-center leading-tight">
+                    {/* Ribbon Tag: CYCLE 2 / Started */}
+                    <div className="px-4 py-2 rounded-b-2xl rounded-tr-2xl bg-[#4a3220] text-[#f5ede2] shadow-md flex flex-col items-center justify-center leading-tight border border-[#3b2718]">
                       <span className="font-extrabold text-xs tracking-wider uppercase">
                         CYCLE {cycleNumber}
                       </span>
