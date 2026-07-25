@@ -6,7 +6,7 @@ import { useStore } from '../store/useStore';
 import { Map } from '../components/Map';
 import type { BarberShop } from '../mock/mockData';
 import { Badge } from '../components/UI';
-import { FavoritesBottomSheet } from '../components/FavoritesBottomSheet';
+import { FeatureCarouselCard } from '../components/FeatureCarouselCard';
 
 export const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -189,9 +189,9 @@ export const Home: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* ========== FLOATING BOTTOM FAVORITES PREVIEW SHEET (3 Snap Points, Draggable, Auto-Collapse) ========== */}
+      {/* ========== FLOATING AUTO-SLIDING FEATURE CAROUSEL CARD (5s Duration) ========== */}
       {!selectedShop && (
-        <FavoritesBottomSheet onSelectShop={handleSelectShop} />
+        <FeatureCarouselCard onSelectShop={handleSelectShop} />
       )}
 
     </div>
