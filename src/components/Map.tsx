@@ -126,7 +126,7 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
       return '1.1 km';
     };
 
-    // Add Real Interactive Markers for each Shop matching reference image 100%
+    // Add Real Interactive Markers for each Shop matching reference image (large floating barber/chair figure)
     openShops.forEach((shop) => {
       const isSelected = selectedShop?.shop_id === shop.shop_id;
       const distanceDisplay = getDistanceStr(shop.latitude, shop.longitude, shop.shop_id);
@@ -137,102 +137,158 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
       let total = shopChairs.length > 0 ? shopChairs.length : 6;
       let taken = shopChairs.length > 0 ? shopChairs.filter(c => c.status === 'occupied').length : 0;
 
-      if (shop.shop_id === 'shop1') { total = 6; taken = 0; } // Green (0/6)
-      if (shop.shop_id === 'shop2') { total = 6; taken = 2; } // Yellow (2/6)
-      if (shop.shop_id === 'shop3') { total = 4; taken = 3; } // Red (3/4)
+      if (shop.shop_id === 'shop1') { total = 6; taken = 0; }
+      if (shop.shop_id === 'shop2') { total = 6; taken = 2; }
+      if (shop.shop_id === 'shop3') { total = 4; taken = 3; }
 
-      // OCCUPANCY COLOR RULES SPECIFIED BY USER:
-      // 1. Green: when 0 seats are taken
-      // 2. Yellow: 1 to (total - 2) seats taken
-      // 3. Red: when seats taken >= (total - 1)
-      let chairImg = '/green-chair.jpg';
-      let badgeBg = '#10b981'; // Green
-
+      // Badge color: green = full availability, orange = partial, red = almost full
+      let badgeBg = '#10b981';
       if (taken === 0) {
-        chairImg = '/green-chair.jpg';
         badgeBg = '#10b981';
       } else if (taken >= 1 && taken <= (total - 2)) {
-        chairImg = '/yellow-chair.jpg';
         badgeBg = '#f59e0b';
-      } else if (taken >= (total - 1)) {
-        chairImg = '/red-chair.jpg';
+      } else {
         badgeBg = '#ef4444';
       }
 
-      // Heart SVG path — always solid pink filled, brighter pink when favourited
-      const heartFill = '#ec4899';
-      const heartStroke = isFav ? '#be185d' : '#ec4899';
+      // Barber image for this shop (use shop image as the marker figure)
+      const figureImg = shop.image;
+
+      // Heart fill — always solid pink
+      const heartFill = isFav ? '#be185d' : '#ec4899';
+
+      // Scale up for selected
+      const scale = isSelected ? 1.15 : 1;
 
       const customIcon = L.divIcon({
         className: 'custom-shop-pin-marker',
         html: `
-          <div style="position: relative; cursor: pointer; display: flex; flex-direction: column; align-items: center; user-select: none; ${isSelected ? 'transform: translate(-50%, -100%) scale(1.1); z-index: 1000;' : 'transform: translate(-50%, -100%); z-index: 10;'}">
-            
-            <!-- Salon Name Label Above Pin -->
-            <div style="font-size: 8.5px; font-weight: 800; color: #111827; background-color: rgba(255, 255, 255, 0.95); padding: 1px 6px; border-radius: 9999px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); border: 1px solid #e5e7eb; margin-bottom: 3px; white-space: nowrap; line-height: 1.2;">
-              ${shop.name}
+          <div style="
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            user-select: none;
+            transform: translate(-50%, -100%) scale(${scale});
+            transform-origin: bottom center;
+            z-index: ${isSelected ? 1000 : 10};
+          ">
+
+            <!-- Shop name + star rating row -->
+            <div style="
+              display: flex;
+              align-items: center;
+              gap: 4px;
+              margin-bottom: 4px;
+              white-space: nowrap;
+            ">
+              <span style="
+                font-size: 11px;
+                font-weight: 800;
+                color: #111827;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                text-shadow: 0 1px 3px rgba(255,255,255,0.9), 0 0 6px rgba(255,255,255,0.8);
+              ">${shop.name}</span>
+              <span style="
+                font-size: 10px;
+                font-weight: 700;
+                color: #f59e0b;
+                font-family: sans-serif;
+                text-shadow: 0 1px 3px rgba(255,255,255,0.9);
+              ">⭐ ${shop.rating}</span>
             </div>
 
-            <!-- Pin Marker Container -->
-            <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
-              
-              <!-- Pin Teardrop Body with Badge All-In-One SVG -->
-              <div style="position: relative; width: 36px; height: 44px; display: flex; align-items: center; justify-content: center;">
-                
-                <svg width="36" height="44" viewBox="0 0 36 44" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block; overflow: visible;">
-                  <defs>
-                    <clipPath id="teardrop-clip-${shop.shop_id}">
-                      <path d="M18 4C11.4 4 6 9.4 6 16C6 23.5 18 38 18 38C18 38 30 23.5 30 16C30 9.4 24.6 4 18 4Z" />
-                    </clipPath>
-                  </defs>
+            <!-- Floating figure container -->
+            <div style="position: relative; width: 80px; height: 100px;">
 
-                  <!-- White Teardrop Pin with Occupancy Colored Border -->
-                  <path 
-                    d="M18 2C10.3 2 4 8.3 4 16C4 25 18 42 18 42C18 42 32 25 32 16C32 8.3 25.7 2 18 2Z" 
-                    fill="#ffffff" 
-                    stroke="${badgeBg}" 
-                    stroke-width="3" 
-                    stroke-linejoin="round"
-                  />
-                  
-                  <!-- Clipped Chair Image -->
-                  <g clip-path="url(#teardrop-clip-${shop.shop_id})">
-                    <image href="${chairImg}" x="7" y="5" width="22" height="22" preserveAspectRatio="xMidYMid meet" />
-                  </g>
-                  
-                  <!-- CutWala label -->
-                  <text x="18" y="30" text-anchor="middle" font-size="5" font-weight="900" fill="${badgeBg}" font-family="sans-serif">CutWala</text>
-
-                  <!-- Occupancy Badge on RIGHT SIDE of pin -->
-                  <rect x="30" y="6" width="20" height="11" rx="5.5" ry="5.5" fill="${badgeBg}" />
-                  <rect x="29" y="5" width="22" height="13" rx="6.5" ry="6.5" fill="none" stroke="#ffffff" stroke-width="1.5" />
-                  <text x="40" y="13.5" text-anchor="middle" font-size="7" font-weight="900" fill="#ffffff" font-family="sans-serif">${taken}/${total}</text>
-
-                  <!-- Pink Heart Favourite Button on LEFT SIDE of pin (clickable) -->
-                  <g id="heart-btn-${shop.shop_id}" style="cursor: pointer;" transform="translate(-16, 5)">
-                    <!-- Heart circle background -->
-                    <circle cx="10" cy="6" r="8" fill="#ffffff" stroke="#f9a8d4" stroke-width="1.5" />
-                    <!-- Heart shape -->
-                    <path d="M10 9.5C10 9.5 6 6.8 6 4.5C6 3.1 7.1 2 8.5 2C9.2 2 9.8 2.3 10 2.7C10.2 2.3 10.8 2 11.5 2C12.9 2 14 3.1 14 4.5C14 6.8 10 9.5 10 9.5Z" fill="${heartFill}" stroke="${heartStroke}" stroke-width="0.8" stroke-linejoin="round" />
-                  </g>
-                </svg>
-
+              <!-- Barber/Chair image — circular clipped, floating -->
+              <div style="
+                width: 80px;
+                height: 100px;
+                border-radius: 50% 50% 45% 45%;
+                overflow: hidden;
+                background: transparent;
+                position: relative;
+              ">
+                <img
+                  src="${figureImg}"
+                  style="
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    object-position: center top;
+                    display: block;
+                  "
+                  onerror="this.style.display='none'"
+                />
               </div>
 
-              <!-- Concentric Ground Target Ripples Below Pin Tip -->
-              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: -1px;">
-                <svg width="20" height="6" viewBox="0 0 20 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <ellipse cx="10" cy="3" rx="8.5" ry="2.2" stroke="${badgeBg}" stroke-width="1" fill="none" opacity="0.85" />
-                  <ellipse cx="10" cy="3" rx="4" ry="1.1" fill="${badgeBg}" opacity="0.8" />
+              <!-- Seat availability badge — top right of figure -->
+              <div style="
+                position: absolute;
+                top: 4px;
+                right: -6px;
+                background: ${badgeBg};
+                color: white;
+                font-size: 10px;
+                font-weight: 900;
+                padding: 2px 7px;
+                border-radius: 8px;
+                border: 2px solid white;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                white-space: nowrap;
+              ">${taken}/${total}</div>
+
+              <!-- Heart button — top left of figure -->
+              <div id="heart-btn-${shop.shop_id}" style="
+                position: absolute;
+                top: 4px;
+                left: -6px;
+                width: 22px;
+                height: 22px;
+                background: white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+                border: 1.5px solid #fce7f3;
+                cursor: pointer;
+              ">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="${heartFill}" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                 </svg>
               </div>
 
             </div>
 
-            <!-- Distance Pill Below Pin -->
-            <div style="margin-top: 1px; background-color: rgba(255, 255, 255, 0.95); padding: 0.5px 5.5px; border-radius: 9999px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); font-size: 8px; font-weight: 800; color: #1f2937; border: 1px solid #e5e7eb;">
-              ${distanceDisplay}
-            </div>
+            <!-- Orange downward triangle pin -->
+            <div style="
+              width: 0;
+              height: 0;
+              border-left: 10px solid transparent;
+              border-right: 10px solid transparent;
+              border-top: 14px solid #f97316;
+              margin-top: -2px;
+              filter: drop-shadow(0 2px 4px rgba(249,115,22,0.5));
+            "></div>
+
+            <!-- White distance pill -->
+            <div style="
+              margin-top: 4px;
+              background: white;
+              padding: 2px 8px;
+              border-radius: 9999px;
+              font-size: 10px;
+              font-weight: 800;
+              color: #111827;
+              box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+              border: 1px solid #e5e7eb;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+              white-space: nowrap;
+            ">${distanceDisplay}</div>
 
           </div>
         `,
