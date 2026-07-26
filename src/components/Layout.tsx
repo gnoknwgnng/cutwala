@@ -17,8 +17,13 @@ export const Layout: React.FC = () => {
     genderFilter, 
     setFilters,
     showToast,
-    mapPanning
+    mapPanning,
+    shops,
+    chairs
   } = useStore();
+
+  const openShops = shops.filter(s => s.status === 'OPEN');
+  const availableSeatsCount = chairs.filter(c => c.status === 'available' && openShops.some(s => s.shop_id === c.shop_id)).length;
 
   // Saved locations state for header dropdown
   const savedAddresses = [
@@ -270,26 +275,24 @@ export const Layout: React.FC = () => {
                 {/* Men pill */}
                 <button
                   onClick={() => setFilters({ genderFilter: 'men' })}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                     genderFilter !== 'women'
                       ? 'bg-orange-50 border-orange-400 text-orange-600 dark:bg-orange-500/10 dark:border-orange-500 dark:text-orange-400'
                       : 'bg-white dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 text-gray-600 dark:text-zinc-300 hover:border-gray-300'
                   }`}
                 >
-                  <span>👤</span>
                   <span>Men</span>
                 </button>
 
                 {/* Unisex pill */}
                 <button
                   onClick={() => setFilters({ genderFilter: 'women' })}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                     genderFilter === 'women'
                       ? 'bg-orange-50 border-orange-400 text-orange-600 dark:bg-orange-500/10 dark:border-orange-500 dark:text-orange-400'
                       : 'bg-white dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 text-gray-600 dark:text-zinc-300 hover:border-gray-300'
                   }`}
                 >
-                  <span>🧑‍🤝‍🧑</span>
                   <span>Unisex</span>
                 </button>
               </div>
@@ -307,15 +310,19 @@ export const Layout: React.FC = () => {
                 Showing only live available chairs
               </span>
               <span className="text-gray-300 dark:text-zinc-600 text-xs">|</span>
-              <span className="flex items-center gap-1 text-[11px] font-bold text-blue-500">
-                🏪 <span>{useStore.getState().shops.filter(s => s.status === 'OPEN').length} Saloons</span>
+              <span className="text-[11px] font-bold text-blue-500">
+                {openShops.length} Saloons
               </span>
               <span className="text-gray-300 dark:text-zinc-600 text-xs">|</span>
-              <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-                👑 <span>{useStore.getState().chairs.filter(c => c.status === 'available').length} Seats</span>
+              <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                {availableSeatsCount} Seats
               </span>
-              <span className="ml-auto flex items-center gap-1 px-2.5 py-0.5 rounded-full border border-emerald-500/40 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10">
-                <span className="animate-pulse">📡</span> Live
+              <span className="ml-auto flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border border-emerald-500/40 text-[10px] font-extrabold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                Live
               </span>
             </div>
 
@@ -332,7 +339,7 @@ export const Layout: React.FC = () => {
                   }`}
                 >
                   {dist === 'custom' ? (
-                    <span className="flex items-center gap-1">Custom <span className="text-gray-400">⚙</span></span>
+                    <span>Custom</span>
                   ) : (
                     <span>{dist} Km{maxDistance === dist ? <span className="block text-[9px] font-semibold text-orange-400 leading-none">Closest</span> : null}</span>
                   )}
