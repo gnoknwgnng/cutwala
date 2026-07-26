@@ -189,19 +189,19 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
             <div style="
               display: flex;
               align-items: center;
-              gap: 4px;
-              margin-bottom: 4px;
+              gap: 3px;
+              margin-bottom: 3px;
               white-space: nowrap;
             ">
               <span style="
-                font-size: 11px;
+                font-size: 9px;
                 font-weight: 800;
                 color: #111827;
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
                 text-shadow: 0 1px 3px rgba(255,255,255,0.9), 0 0 6px rgba(255,255,255,0.8);
               ">${shop.name}</span>
               <span style="
-                font-size: 10px;
+                font-size: 8px;
                 font-weight: 700;
                 color: #f59e0b;
                 font-family: sans-serif;
@@ -210,14 +210,14 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
             </div>
 
             <!-- Floating figure container -->
-            <div style="position: relative; width: 80px; height: 100px;">
+            <div style="position: relative; width: 50px; height: 65px;">
 
               <!-- Barber/Chair image — transparent PNG cutout floating on map -->
               <img
                 src="${figureImg}"
                 style="
-                  width: 80px;
-                  height: 100px;
+                  width: 50px;
+                  height: 65px;
                   object-fit: contain;
                   object-position: center bottom;
                   display: block;
@@ -228,38 +228,37 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
               <!-- Seat availability badge — top right of figure -->
               <div style="
                 position: absolute;
-                top: 4px;
-                right: -6px;
+                top: 2px;
+                right: -8px;
                 background: ${badgeBg};
                 color: white;
-                font-size: 10px;
+                font-size: 8px;
                 font-weight: 900;
-                padding: 2px 7px;
-                border-radius: 8px;
-                border: 2px solid white;
-                box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+                padding: 1px 5px;
+                border-radius: 6px;
+                border: 1.5px solid white;
+                box-shadow: 0 1px 4px rgba(0,0,0,0.25);
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
                 white-space: nowrap;
               ">${taken}/${total}</div>
 
-              <!-- Heart button — only shown for favourites -->
               ${isFav ? `
               <div id="heart-btn-${shop.shop_id}" style="
                 position: absolute;
-                top: 4px;
-                left: -6px;
-                width: 22px;
-                height: 22px;
+                top: 2px;
+                left: -8px;
+                width: 16px;
+                height: 16px;
                 background: white;
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-                border: 1.5px solid #fce7f3;
+                box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+                border: 1px solid #fce7f3;
                 cursor: pointer;
               ">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="#be185d" xmlns="http://www.w3.org/2000/svg">
+                <svg width="8" height="8" viewBox="0 0 24 24" fill="#be185d" xmlns="http://www.w3.org/2000/svg">
                   <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                 </svg>
               </div>` : ''}
@@ -270,23 +269,23 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
             <div style="
               width: 0;
               height: 0;
-              border-left: 10px solid transparent;
-              border-right: 10px solid transparent;
-              border-top: 14px solid #f97316;
-              margin-top: -2px;
-              filter: drop-shadow(0 2px 4px rgba(249,115,22,0.5));
+              border-left: 7px solid transparent;
+              border-right: 7px solid transparent;
+              border-top: 10px solid #f97316;
+              margin-top: -1px;
+              filter: drop-shadow(0 2px 3px rgba(249,115,22,0.4));
             "></div>
 
             <!-- White distance pill -->
             <div style="
-              margin-top: 4px;
+              margin-top: 3px;
               background: white;
-              padding: 2px 8px;
+              padding: 1px 6px;
               border-radius: 9999px;
-              font-size: 10px;
+              font-size: 8px;
               font-weight: 800;
               color: #111827;
-              box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+              box-shadow: 0 1px 4px rgba(0,0,0,0.15);
               border: 1px solid #e5e7eb;
               font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
               white-space: nowrap;
