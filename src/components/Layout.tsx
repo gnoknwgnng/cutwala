@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { Compass, Calendar, Sparkles, Sun, Moon, MapPin, ChevronDown, Check, Search, LogOut, Heart, Bell, Gift } from 'lucide-react';
+import { Compass, Calendar, Sparkles, Sun, Moon, MapPin, ChevronDown, Check, LogOut, Heart, Bell, Gift } from 'lucide-react';
 import { useStore } from '../store/useStore';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { DrawerModal, Button } from './UI';
 
 export const Layout: React.FC = () => {
@@ -13,9 +13,7 @@ export const Layout: React.FC = () => {
     theme, 
     toggleTheme, 
     userAddress, 
-    searchQuery, 
-    setSearchQuery, 
-    maxDistance, 
+    maxDistance,
     genderFilter, 
     setFilters,
     showToast,
@@ -32,28 +30,7 @@ export const Layout: React.FC = () => {
   const [activeAddress, setActiveAddress] = useState(savedAddresses[0]);
   const [isAddressModalOpen, setIsAddressModalOpen] = useState<boolean>(false);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState<boolean>(false);
-  const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState<boolean>(false);
-
-  // Flashing rotating recommendation suggestions inside the search bar (descriptive keywords only, NO shop names)
-  const recommendationList = [
-    { text: 'best barber', query: 'Best Barber' },
-    { text: 'best shop', query: 'Best Shop' },
-    { text: 'top rated', query: 'Top Rated' },
-    { text: 'skin fade', query: 'Skin Fade' },
-    { text: 'beard trim', query: 'Beard Trim' },
-    { text: 'haircut', query: 'Haircut' },
-    { text: 'head massage', query: 'Head Massage' },
-  ];
-
-  const [recIndex, setRecIndex] = useState<number>(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setRecIndex((prev) => (prev + 1) % recommendationList.length);
-    }, 2200);
-    return () => clearInterval(interval);
-  }, [recommendationList.length]);
 
   // Filter state inside drawer
   const [tempDistance, setTempDistance] = useState<number>(maxDistance);
@@ -245,163 +222,122 @@ export const Layout: React.FC = () => {
             }}
           >
           <motion.header
-            className="flex flex-col bg-white/95 dark:bg-zinc-900/95 border-b border-gray-100 dark:border-zinc-800 shrink-0 sticky top-0 z-35 backdrop-blur-md px-3 md:px-6 py-2.5 gap-2.5 shadow-sm"
+            className="flex flex-col bg-white dark:bg-zinc-900 border-b border-gray-100 dark:border-zinc-800 shrink-0 sticky top-0 z-35 backdrop-blur-md px-4 md:px-6 pt-3 pb-2 gap-0 shadow-sm"
             animate={{ opacity: mapPanning ? 0 : 1 }}
             transition={{ duration: 0.15 }}
           >
-            
-            {/* ROW 1: Logo & Address (Left) | Gender Toggle (Center) | Notification Bell (Right) */}
-            <div className="flex items-center justify-between gap-2 w-full">
-              
-              {/* Logo & User Address Stacked Directly Below */}
-              <div className="flex flex-col justify-center min-w-0 shrink-0">
-                {/* Logo */}
-                <div className="flex items-center gap-1.5">
-                  <img 
-                    src="/cutwalalogo.jpeg" 
-                    alt="CutWala Logo" 
-                    className="h-7 w-7 object-contain rounded-lg shadow-sm"
+
+            {/* ── ROW 1: Logo + Location (left) | Bell + Men + Unisex (right) ── */}
+            <div className="flex items-start justify-between gap-2 w-full">
+
+              {/* LEFT: CutWala logo + location below */}
+              <div className="flex flex-col gap-0.5 min-w-0">
+                <div className="flex items-center gap-2">
+                  <img
+                    src="/cutwalalogo.jpeg"
+                    alt="CutWala Logo"
+                    className="h-8 w-8 object-contain rounded-xl shadow-sm shrink-0"
                   />
-                  <span className="font-display font-extrabold text-base md:text-lg bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
+                  <span className="font-display font-extrabold text-xl bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent leading-none">
                     CutWala
                   </span>
                 </div>
 
-                {/* USER ADDRESS VISIBLE DIRECTLY BELOW LOGO */}
+                {/* Location row below logo */}
                 <button
                   onClick={() => setIsAddressModalOpen(true)}
-                  className="flex items-center gap-1 text-[10px] font-extrabold text-gray-700 dark:text-zinc-300 hover:text-orange-500 transition-colors cursor-pointer max-w-[130px] sm:max-w-[200px] truncate mt-0.5"
+                  className="flex items-center gap-1 text-[11px] font-bold text-gray-500 dark:text-zinc-400 hover:text-orange-500 transition-colors cursor-pointer ml-0.5 mt-0.5"
                   title="Change Location"
                 >
-                  <MapPin className="h-3 w-3 text-orange-500 shrink-0 fill-orange-500" />
-                  <span className="truncate">{activeAddress.tag} - {activeAddress.address}</span>
+                  <MapPin className="h-3 w-3 text-orange-500 fill-orange-500 shrink-0" />
+                  <span className="truncate max-w-[160px]">{activeAddress.address?.split(',').slice(0,2).join(', ') || activeAddress.tag}</span>
                   <ChevronDown className="h-3 w-3 text-gray-400 shrink-0" />
                 </button>
               </div>
 
-              {/* SLIDING MEN vs WOMEN TOGGLE BAR (NO 'ALL' OPTION, LEFT MEN - RIGHT WOMEN) */}
-              <div className="relative flex items-center p-1 bg-gray-150 dark:bg-zinc-800 rounded-full border border-gray-250 dark:border-zinc-700 shrink-0 shadow-inner">
-                {/* Sliding active orange background pill */}
-                <motion.div
-                  className="absolute top-1 bottom-1 rounded-full bg-orange-500 shadow-md"
-                  initial={false}
-                  animate={{
-                    left: genderFilter === 'women' ? '50%' : '4px',
-                    width: 'calc(50% - 4px)',
-                  }}
-                  transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                />
+              {/* RIGHT: Bell + Men pill + Unisex pill */}
+              <div className="flex items-center gap-2 shrink-0 pt-0.5">
+                {/* Notification Bell */}
+                <button
+                  onClick={() => setIsNotificationModalOpen(true)}
+                  className="relative h-9 w-9 rounded-2xl bg-gray-100 dark:bg-zinc-800 border border-gray-200/60 dark:border-zinc-700 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-zinc-700 active:scale-95 transition-all cursor-pointer"
+                  title="Notifications"
+                >
+                  <Bell className="h-4.5 w-4.5 text-gray-700 dark:text-zinc-200" />
+                  <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-rose-500 ring-1 ring-white dark:ring-zinc-900"></span>
+                </button>
 
-                {/* Left: Men */}
+                {/* Men pill */}
                 <button
                   onClick={() => setFilters({ genderFilter: 'men' })}
-                  className={`relative z-10 px-3.5 py-1 text-xs font-black transition-colors cursor-pointer flex items-center justify-center ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                     genderFilter !== 'women'
-                      ? 'text-white'
-                      : 'text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white'
+                      ? 'bg-orange-50 border-orange-400 text-orange-600 dark:bg-orange-500/10 dark:border-orange-500 dark:text-orange-400'
+                      : 'bg-white dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 text-gray-600 dark:text-zinc-300 hover:border-gray-300'
                   }`}
                 >
+                  <span>👤</span>
                   <span>Men</span>
                 </button>
 
-                {/* Right: Women */}
+                {/* Unisex pill */}
                 <button
                   onClick={() => setFilters({ genderFilter: 'women' })}
-                  className={`relative z-10 px-3.5 py-1 text-xs font-black transition-colors cursor-pointer flex items-center justify-center ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                     genderFilter === 'women'
-                      ? 'text-white'
-                      : 'text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white'
+                      ? 'bg-orange-50 border-orange-400 text-orange-600 dark:bg-orange-500/10 dark:border-orange-500 dark:text-orange-400'
+                      : 'bg-white dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 text-gray-600 dark:text-zinc-300 hover:border-gray-300'
                   }`}
                 >
-                  <span>Women</span>
+                  <span>🧑‍🤝‍🧑</span>
+                  <span>Unisex</span>
                 </button>
               </div>
-
-              {/* NOTIFICATION BELL BUTTON (100% VISIBLE ON FAR RIGHT) */}
-              <button
-                onClick={() => setIsNotificationModalOpen(true)}
-                className="relative h-9 w-9 rounded-2xl bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-700 dark:text-zinc-200 flex items-center justify-center shrink-0 cursor-pointer transition-all active:scale-95 border border-gray-200/50 dark:border-zinc-700/50 ml-1"
-                title="Notifications"
-              >
-                <Bell className="h-4.5 w-4.5 text-orange-500" />
-                {/* Active Notification Badge Red Dot */}
-                <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-white dark:ring-zinc-900 animate-pulse"></span>
-              </button>
-
             </div>
 
-            {/* ROW 2: FULLY VISIBLE PROMINENT SEARCH BAR WITH FLASHING ANIMATED RECOMMENDATION */}
-            <div className="w-full relative">
-              <div className="relative w-full flex items-center">
-                <Search className="absolute left-3.5 z-20 h-4 w-4 text-orange-500" />
-                
-                {/* ROTATING RECOMMENDATION PLACEHOLDER (EXACT FORMAT LIKE IMAGE 2: Search "keyword") */}
-                {!searchQuery && (
-                  <div 
-                    onClick={() => {
-                      setSearchQuery(recommendationList[recIndex].query);
-                    }}
-                    className="absolute left-9.5 right-4 z-10 flex items-center pointer-events-auto cursor-text text-xs md:text-sm font-medium text-gray-500 dark:text-zinc-400 overflow-hidden select-none"
-                  >
-                    <span className="shrink-0 text-gray-500 dark:text-zinc-400 font-medium">Search &quot;</span>
-                    <AnimatePresence mode="wait">
-                      <motion.span
-                        key={recIndex}
-                        initial={{ opacity: 0, y: 5 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -5 }}
-                        transition={{ duration: 0.25 }}
-                        className="font-semibold text-gray-700 dark:text-zinc-200 inline-block"
-                      >
-                        {recommendationList[recIndex].text}
-                      </motion.span>
-                    </AnimatePresence>
-                    <span className="shrink-0 text-gray-500 dark:text-zinc-400 font-medium">&quot;</span>
-                  </div>
-                )}
+            {/* ── ROW 2: "Nearby Salons" title ── */}
+            <div className="mt-3">
+              <h1 className="text-lg font-extrabold text-gray-900 dark:text-white leading-tight">Nearby Salons</h1>
+            </div>
 
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onFocus={() => setIsSearchFocused(true)}
-                  onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full h-9.5 pl-10 pr-4 text-xs font-semibold rounded-2xl bg-gray-100 dark:bg-zinc-800 border border-transparent focus:border-orange-500 focus:bg-white dark:focus:bg-zinc-900 text-gray-900 dark:text-white transition-all outline-none"
-                />
+            {/* ── ROW 3: Live stats strip ── */}
+            <div className="flex items-center gap-2 mt-1 flex-wrap">
+              <span className="flex items-center gap-1.5 text-[11px] font-semibold text-gray-500 dark:text-zinc-400">
+                <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0"></span>
+                Showing only live available chairs
+              </span>
+              <span className="text-gray-300 dark:text-zinc-600 text-xs">|</span>
+              <span className="flex items-center gap-1 text-[11px] font-bold text-blue-500">
+                🏪 <span>{useStore.getState().shops.filter(s => s.status === 'OPEN').length} Saloons</span>
+              </span>
+              <span className="text-gray-300 dark:text-zinc-600 text-xs">|</span>
+              <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                👑 <span>{useStore.getState().chairs.filter(c => c.status === 'available').length} Seats</span>
+              </span>
+              <span className="ml-auto flex items-center gap-1 px-2.5 py-0.5 rounded-full border border-emerald-500/40 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10">
+                <span className="animate-pulse">📡</span> Live
+              </span>
+            </div>
 
-                {/* SEARCH RECOMMENDATIONS POPOVER */}
-                {isSearchFocused && (
-                  <div className="absolute top-11 left-0 right-0 z-50 bg-white dark:bg-zinc-900 rounded-2xl p-3.5 shadow-2xl border border-gray-150 dark:border-zinc-800 flex flex-col gap-2.5 animate-fade-in">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-extrabold text-gray-400 dark:text-zinc-500 uppercase tracking-wider">
-                        Quick Suggestions
-                      </span>
-                      {searchQuery && (
-                        <button
-                          onMouseDown={() => setSearchQuery('')}
-                          className="text-[10px] font-bold text-orange-500 hover:underline cursor-pointer"
-                        >
-                          Clear
-                        </button>
-                      )}
-                    </div>
-                    <div className="flex flex-wrap gap-1.5">
-                      {recommendationList.map((rec) => (
-                        <button
-                          key={rec.text}
-                          onMouseDown={() => {
-                            setSearchQuery(rec.query);
-                            setIsSearchFocused(false);
-                          }}
-                          className="px-2.5 py-1 rounded-xl text-xs font-extrabold bg-orange-50 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 hover:bg-orange-500 hover:text-white dark:hover:bg-orange-500 dark:hover:text-white transition-all cursor-pointer border border-orange-200/60 dark:border-orange-500/20 active:scale-95"
-                        >
-                          {rec.text}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
+            {/* ── ROW 4: Distance filter pills ── */}
+            <div className="flex items-center gap-2 mt-2 overflow-x-auto no-scrollbar pb-1">
+              {[0.1, 0.2, 0.3, 0.4, 0.5, 'custom'].map((dist) => (
+                <button
+                  key={dist}
+                  onClick={() => setFilters({ maxDistance: typeof dist === 'number' ? dist : 5 })}
+                  className={`px-3 py-1.5 rounded-xl text-[11px] font-extrabold transition-all cursor-pointer whitespace-nowrap border shrink-0 ${
+                    maxDistance === (typeof dist === 'number' ? dist : 5)
+                      ? 'bg-white text-orange-500 border-orange-400 shadow-sm'
+                      : 'bg-white dark:bg-zinc-800 text-gray-600 dark:text-zinc-300 border-gray-200 dark:border-zinc-700 hover:border-gray-300'
+                  }`}
+                >
+                  {dist === 'custom' ? (
+                    <span className="flex items-center gap-1">Custom <span className="text-gray-400">⚙</span></span>
+                  ) : (
+                    <span>{dist} Km{maxDistance === dist ? <span className="block text-[9px] font-semibold text-orange-400 leading-none">Closest</span> : null}</span>
+                  )}
+                </button>
+              ))}
             </div>
 
           </motion.header>
