@@ -202,27 +202,19 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
             <!-- Floating figure container -->
             <div style="position: relative; width: 80px; height: 100px;">
 
-              <!-- Barber/Chair image — circular clipped, floating -->
-              <div style="
-                width: 80px;
-                height: 100px;
-                border-radius: 50% 50% 45% 45%;
-                overflow: hidden;
-                background: transparent;
-                position: relative;
-              ">
-                <img
-                  src="${figureImg}"
-                  style="
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                    object-position: center top;
-                    display: block;
-                  "
-                  onerror="this.style.display='none'"
-                />
-              </div>
+              <!-- Barber/Chair image — no background, transparent cutout floating on map -->
+              <img
+                src="${figureImg}"
+                style="
+                  width: 80px;
+                  height: 100px;
+                  object-fit: contain;
+                  object-position: center bottom;
+                  display: block;
+                  background: transparent;
+                "
+                onerror="this.style.display='none'"
+              />
 
               <!-- Seat availability badge — top right of figure -->
               <div style="
