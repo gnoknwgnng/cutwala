@@ -212,6 +212,8 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
                   object-position: center bottom;
                   display: block;
                   background: transparent;
+                  mix-blend-mode: multiply;
+                  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
                 "
                 onerror="this.style.display='none'"
               />
