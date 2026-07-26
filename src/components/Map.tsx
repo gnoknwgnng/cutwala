@@ -202,7 +202,7 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
             <!-- Floating figure container -->
             <div style="position: relative; width: 80px; height: 100px;">
 
-              <!-- Barber/Chair image — no background, transparent cutout floating on map -->
+              <!-- Barber/Chair image — transparent PNG cutout floating on map -->
               <img
                 src="${figureImg}"
                 style="
@@ -211,9 +211,6 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
                   object-fit: contain;
                   object-position: center bottom;
                   display: block;
-                  background: transparent;
-                  mix-blend-mode: multiply;
-                  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
                 "
                 onerror="this.style.display='none'"
               />
