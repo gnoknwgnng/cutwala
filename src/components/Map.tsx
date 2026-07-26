@@ -11,6 +11,16 @@ interface MapProps {
   searchQuery: string;
 }
 
+// GPS-relative offsets: each shop is placed at a fixed offset from the user's real location
+// so they always appear nearby no matter where the user is in the world.
+const shopOffsets: Record<string, { lat: number; lng: number }> = {
+  shop1: { lat:  0.004, lng: -0.006 },  // NW  — 0/4 green
+  shop2: { lat:  0.006, lng:  0.003 },  // NE  — 1/4 yellow
+  shop3: { lat: -0.003, lng: -0.004 },  // SW  — 2/6 yellow
+  shop4: { lat: -0.005, lng:  0.005 },  // SE  — 5/6 red
+  shop5: { lat:  0.001, lng:  0.007 },  // E   — 1/4 yellow + favourite
+};
+
 export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuery }) => {
   const { shops, chairs, userLocation, requestRealLocation, setMapPanning, favoriteShops, setFavorite } = useStore();
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -101,16 +111,6 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
       if (shopId === 'shop2') return '1.2 km';
       if (shopId === 'shop3') return '1.8 km';
       return '1.1 km';
-    };
-
-    // GPS-relative offsets: each shop is placed at a fixed offset from the user's real location
-    // so they always appear nearby no matter where the user is in the world.
-    const shopOffsets: Record<string, { lat: number; lng: number }> = {
-      shop1: { lat:  0.004, lng: -0.006 },  // NW  — 0/4 green
-      shop2: { lat:  0.006, lng:  0.003 },  // NE  — 1/4 yellow
-      shop3: { lat: -0.003, lng: -0.004 },  // SW  — 2/6 yellow
-      shop4: { lat: -0.005, lng:  0.005 },  // SE  — 5/6 red
-      shop5: { lat:  0.001, lng:  0.007 },  // E   — 1/4 yellow + favourite
     };
 
     // Add Real Interactive Markers for each Shop matching reference image (large floating barber/chair figure)
@@ -339,10 +339,11 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
     }
 
     if (selectedShop) {
+      const offset = shopOffsets[selectedShop.shop_id] ?? { lat: 0, lng: 0 };
       const startLat = userLocation ? userLocation.latitude : defaultLat;
       const startLng = userLocation ? userLocation.longitude : defaultLng;
-      const endLat = selectedShop.latitude;
-      const endLng = selectedShop.longitude;
+      const endLat = userLocation ? userLocation.latitude + offset.lat : selectedShop.latitude;
+      const endLng = userLocation ? userLocation.longitude + offset.lng : selectedShop.longitude;
 
       // Fetch Real Street Driving Route from OpenStreetMap OSRM Engine
       const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${startLng},${startLat};${endLng},${endLat}?overview=full&geometries=geojson`;
@@ -376,7 +377,7 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
           routePolylineRef.current = polyline;
         });
     }
-  }, [selectedShop]);
+  }, [selectedShop, userLocation]);
 
   // Handle Search Query filtering
   useEffect(() => {
