@@ -86,46 +86,42 @@ export const mockServices: Service[] = [
 export const mockShops: BarberShop[] = [
   {
     shop_id: 'shop1',
-    name: 'The Razor\'s Edge Parlour',
+    name: 'The Crown Salon',
     address: '142 Golden Gate Ave, San Francisco, CA 94102',
     latitude: 37.7816,
     longitude: -122.4156,
-    rating: 4.9,
+    rating: 4.8,
     opening_time: '09:00 AM',
     closing_time: '08:00 PM',
     status: 'OPEN',
     image: 'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=600&auto=format&fit=crop&q=80',
     gallery: [
       'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=600&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=600&auto=format&fit=crop&q=80'
     ],
-    description: 'Establishment dedicated to premium men\'s grooming since 2015. Known for vintage leather chairs, warm hospitality, and precision cuts.'
+    description: 'Premium men\'s grooming since 2015. Known for vintage leather chairs and precision cuts.'
   },
   {
     shop_id: 'shop2',
-    name: 'Fade & Blade Studio',
+    name: 'Fade Studio',
     address: '568 Market St, San Francisco, CA 94104',
-    latitude: 37.7891,
+    latitude: 37.7860,
     longitude: -122.4014,
-    rating: 4.8,
+    rating: 4.9,
     opening_time: '10:00 AM',
     closing_time: '09:00 PM',
     status: 'OPEN',
     image: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600&auto=format&fit=crop&q=80',
     gallery: [
       'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1512864084360-7c0c4d0a0845?w=600&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1605497746444-ac9da58d7fd0?w=600&auto=format&fit=crop&q=80'
     ],
-    description: 'A modern, high-energy studio specializing in contemporary skin fades, designs, and vibrant hair styling for the forward-thinking gentleman.'
+    description: 'Modern studio specializing in skin fades and contemporary styling.'
   },
   {
     shop_id: 'shop3',
-    name: 'Crown & Comb Parlour',
+    name: 'Beard & Blade',
     address: '888 Brannan St, San Francisco, CA 94103',
-    latitude: 37.7712,
-    longitude: -122.4042,
+    latitude: 37.7760,
+    longitude: -122.4080,
     rating: 4.7,
     opening_time: '08:00 AM',
     closing_time: '07:00 PM',
@@ -133,26 +129,40 @@ export const mockShops: BarberShop[] = [
     image: 'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=600&auto=format&fit=crop&q=80',
     gallery: [
       'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=600&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=600&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1593702295094-aea22597af65?w=600&auto=format&fit=crop&q=80'
     ],
-    description: 'Nestled in the heart of SOMA, this boutique offers a calm, green workspace. Unwind with a free craft beer or espresso with every premium service.'
+    description: 'Boutique barbershop with free craft beer or espresso with every premium service.'
   },
   {
     shop_id: 'shop4',
-    name: 'Midnight Scissors (Closed)',
-    address: '101 Hyde St, San Francisco, CA 94102',
-    latitude: 37.7811,
-    longitude: -122.4168,
-    rating: 4.5,
-    opening_time: '11:00 PM',
-    closing_time: '06:00 AM',
-    status: 'CLOSED', // This will be filtered out on the Home page search/map
+    name: 'Signature Lounge',
+    address: '210 Hyde St, San Francisco, CA 94102',
+    latitude: 37.7840,
+    longitude: -122.4200,
+    rating: 4.6,
+    opening_time: '09:00 AM',
+    closing_time: '08:00 PM',
+    status: 'OPEN',
     image: 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=600&auto=format&fit=crop&q=80',
     gallery: [
-      'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=600&auto=format&fit=crop&q=80'
+      'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=600&auto=format&fit=crop&q=80',
     ],
-    description: 'A late-night speakeasy-style barbershop catering to nocturnal creatives and late-shift professionals.'
+    description: 'Signature cuts and luxury grooming in the heart of the city.'
+  },
+  {
+    shop_id: 'shop5',
+    name: 'Urban Cuts',
+    address: '330 Castro St, San Francisco, CA 94114',
+    latitude: 37.7750,
+    longitude: -122.4030,
+    rating: 4.5,
+    opening_time: '10:00 AM',
+    closing_time: '08:00 PM',
+    status: 'OPEN',
+    image: 'https://images.unsplash.com/photo-1512864084360-7c0c4d0a0845?w=600&auto=format&fit=crop&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1512864084360-7c0c4d0a0845?w=600&auto=format&fit=crop&q=80',
+    ],
+    description: 'Trendy neighborhood barbershop — a local favourite for clean fades and sharp lineups.'
   }
 ];
 
@@ -268,24 +278,39 @@ export const mockBarbers: Barber[] = [
 ];
 
 export const mockChairs: Chair[] = [
-  // Shop 1 Chairs
+  // shop1 — 0/4 GREEN: all 4 chairs available
   { chair_id: 'c1_1', shop_id: 'shop1', status: 'available' },
-  { chair_id: 'c1_2', shop_id: 'shop1', status: 'occupied' },
+  { chair_id: 'c1_2', shop_id: 'shop1', status: 'available' },
   { chair_id: 'c1_3', shop_id: 'shop1', status: 'available' },
-  { chair_id: 'c1_4', shop_id: 'shop1', status: 'occupied' },
-  { chair_id: 'c1_5', shop_id: 'shop1', status: 'available' },
+  { chair_id: 'c1_4', shop_id: 'shop1', status: 'available' },
 
-  // Shop 2 Chairs
+  // shop2 — 1/4 YELLOW: 1 occupied, 3 available
   { chair_id: 'c2_1', shop_id: 'shop2', status: 'occupied' },
   { chair_id: 'c2_2', shop_id: 'shop2', status: 'available' },
-  { chair_id: 'c2_3', shop_id: 'shop2', status: 'occupied' },
+  { chair_id: 'c2_3', shop_id: 'shop2', status: 'available' },
   { chair_id: 'c2_4', shop_id: 'shop2', status: 'available' },
 
-  // Shop 3 Chairs
-  { chair_id: 'c3_1', shop_id: 'shop3', status: 'available' },
-  { chair_id: 'c3_2', shop_id: 'shop3', status: 'available' },
-  { chair_id: 'c3_3', shop_id: 'shop3', status: 'occupied' },
-  { chair_id: 'c3_4', shop_id: 'shop3', status: 'occupied' },
+  // shop3 — 2/6 YELLOW: 2 occupied, 4 available
+  { chair_id: 'c3_1', shop_id: 'shop3', status: 'occupied' },
+  { chair_id: 'c3_2', shop_id: 'shop3', status: 'occupied' },
+  { chair_id: 'c3_3', shop_id: 'shop3', status: 'available' },
+  { chair_id: 'c3_4', shop_id: 'shop3', status: 'available' },
+  { chair_id: 'c3_5', shop_id: 'shop3', status: 'available' },
+  { chair_id: 'c3_6', shop_id: 'shop3', status: 'available' },
+
+  // shop4 — 5/6 RED: 5 occupied, 1 available
+  { chair_id: 'c4_1', shop_id: 'shop4', status: 'occupied' },
+  { chair_id: 'c4_2', shop_id: 'shop4', status: 'occupied' },
+  { chair_id: 'c4_3', shop_id: 'shop4', status: 'occupied' },
+  { chair_id: 'c4_4', shop_id: 'shop4', status: 'occupied' },
+  { chair_id: 'c4_5', shop_id: 'shop4', status: 'occupied' },
+  { chair_id: 'c4_6', shop_id: 'shop4', status: 'available' },
+
+  // shop5 — 1/4 YELLOW + FAVOURITE: 1 occupied, 3 available
+  { chair_id: 'c5_1', shop_id: 'shop5', status: 'occupied' },
+  { chair_id: 'c5_2', shop_id: 'shop5', status: 'available' },
+  { chair_id: 'c5_3', shop_id: 'shop5', status: 'available' },
+  { chair_id: 'c5_4', shop_id: 'shop5', status: 'available' },
 ];
 
 export const mockBookingHistory: Booking[] = [
