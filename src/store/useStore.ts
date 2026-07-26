@@ -104,7 +104,7 @@ export const useStore = create<State>((set, get) => ({
   chairs: mockChairs,
   bookings: mockBookingHistory,
   currentBookingFlow: initialBookingFlow,
-  favoriteShops: ['shop1'], // Default favorite
+  favoriteShops: ['shop5'], // Default favorite (Urban Cuts)
   theme: 'light', // default theme is white/light mode
   toast: null,
   mapPanning: false,

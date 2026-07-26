@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Navigation, Plus, Minus } from 'lucide-react';
@@ -12,35 +12,11 @@ interface MapProps {
 }
 
 export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuery }) => {
-  const { shops, chairs, userLocation, requestRealLocation, setMapPanning } = useStore();
+  const { shops, chairs, userLocation, requestRealLocation, setMapPanning, favoriteShops, setFavorite } = useStore();
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<{ [key: string]: L.Marker }>({});
   const userMarkerRef = useRef<L.Marker | null>(null);
-
-  // Favourite shops state — persisted in localStorage
-  const [favourites, setFavourites] = useState<Set<string>>(() => {
-    try {
-      const stored = localStorage.getItem('cutwala_favourites');
-      // Pre-seed shop5 as a favourite on first load if nothing stored yet
-      return stored ? new Set(JSON.parse(stored)) : new Set(['shop5']);
-    } catch {
-      return new Set(['shop5']);
-    }
-  });
-
-  const toggleFavourite = (shopId: string) => {
-    setFavourites(prev => {
-      const next = new Set(prev);
-      if (next.has(shopId)) {
-        next.delete(shopId);
-      } else {
-        next.add(shopId);
-      }
-      localStorage.setItem('cutwala_favourites', JSON.stringify([...next]));
-      return next;
-    });
-  };
 
   const openShops = shops.filter(shop => shop.status === 'OPEN');
 
@@ -146,7 +122,7 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
 
       const isSelected = selectedShop?.shop_id === shop.shop_id;
       const distanceDisplay = getDistanceStr(markerLat, markerLng, shop.shop_id);
-      const isFav = favourites.has(shop.shop_id);
+      const isFav = favoriteShops.includes(shop.shop_id);
 
       // Chair occupancy calculation
       const shopChairs = chairs.filter(c => c.shop_id === shop.shop_id);
@@ -307,7 +283,7 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
         const target = e.originalEvent?.target as HTMLElement | SVGElement | null;
         const isHeartClick = target?.closest?.(`#heart-btn-${shop.shop_id}`) != null;
         if (isHeartClick) {
-          toggleFavourite(shop.shop_id);
+          setFavorite(shop.shop_id);
           e.originalEvent?.stopPropagation();
           return;
         }
@@ -317,7 +293,7 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
       markersRef.current[shop.shop_id] = marker;
     });
 
-  }, [shops, openShops, chairs, userLocation, selectedShop, favourites]);
+  }, [shops, openShops, chairs, userLocation, selectedShop, favoriteShops]);
 
   // Handle Real User Location Pulsing Marker (Always on Top Layer)
   useEffect(() => {
