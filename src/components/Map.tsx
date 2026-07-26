@@ -167,9 +167,6 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
       // Figure image based on occupancy: unoccupied image for 0 taken, occupied for 1+
       const figureImg = taken === 0 ? '/map-unoccupied.png' : '/map-occupied.png';
 
-      // Heart fill — always solid pink
-      const heartFill = isFav ? '#be185d' : '#ec4899';
-
       // Scale up for selected
       const scale = isSelected ? 1.15 : 1;
 
