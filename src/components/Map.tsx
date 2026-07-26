@@ -151,8 +151,8 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
         badgeBg = '#ef4444';
       }
 
-      // Barber image for this shop (use shop image as the marker figure)
-      const figureImg = shop.image;
+      // Figure image based on occupancy: unoccupied image for 0 taken, occupied for 1+
+      const figureImg = taken === 0 ? '/map-unoccupied.jpg' : '/map-occupied.jpg';
 
       // Heart fill — always solid pink
       const heartFill = isFav ? '#be185d' : '#ec4899';
