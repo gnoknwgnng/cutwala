@@ -78,17 +78,17 @@ export const Home: React.FC = () => {
 
         {/* Distance Range Filter Pills */}
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 pr-2">
-          {[0.5, 1, 2, 3, 5, 10].map((dist) => (
+          {[0.1, 0.2, 0.3, 0.4, 0.5, 'custom'].map((dist) => (
             <button
               key={dist}
-              onClick={() => setFilters({ maxDistance: dist })}
+              onClick={() => setFilters({ maxDistance: typeof dist === 'number' ? dist : 5 })}
               className={`px-2.5 py-1 rounded-xl text-[11px] font-extrabold transition-all cursor-pointer whitespace-nowrap shadow-sm border ${
-                maxDistance === dist
+                maxDistance === (typeof dist === 'number' ? dist : 5)
                   ? 'bg-orange-500 text-white border-orange-500 shadow-orange-500/30 scale-105'
                   : 'bg-white/95 dark:bg-zinc-900/95 text-gray-700 dark:text-zinc-300 border-gray-200/80 dark:border-zinc-800 hover:bg-white'
               }`}
             >
-              {dist === 0.5 ? '0.5 Km Closest' : dist === 10 ? 'Custom 🎛️' : `${dist} Km`}
+              {dist === 'custom' ? 'Custom 🎛️' : `${dist} Km`}
             </button>
           ))}
         </div>
