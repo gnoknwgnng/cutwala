@@ -12,7 +12,7 @@ interface MapProps {
 }
 
 export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuery }) => {
-  const { shops, chairs, userLocation, requestRealLocation, setMapPanning } = useStore();
+  const { shops, chairs, userLocation, requestRealLocation, setMapPanning, maxDistance } = useStore();
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<{ [key: string]: L.Marker }>({});
@@ -41,7 +41,24 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
     });
   };
 
-  const openShops = shops.filter(shop => shop.status === 'OPEN');
+  // Haversine distance in km between two lat/lng points
+  const haversineKm = (lat1: number, lng1: number, lat2: number, lng2: number) => {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lng2 - lng1) * (Math.PI / 180);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  };
+
+  const openShops = shops.filter(shop => {
+    if (shop.status !== 'OPEN') return false;
+    if (!userLocation) return true; // show all if no GPS yet
+    const dist = haversineKm(userLocation.latitude, userLocation.longitude, shop.latitude, shop.longitude);
+    return dist <= maxDistance;
+  });
 
   // Reset map panning state and trigger real browser location request on mount
   useEffect(() => {
@@ -307,7 +324,7 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
       markersRef.current[shop.shop_id] = marker;
     });
 
-  }, [shops, openShops, chairs, userLocation, selectedShop, favourites]);
+  }, [shops, openShops, chairs, userLocation, selectedShop, favourites, maxDistance]);
 
   // Handle Real User Location Pulsing Marker (Always on Top Layer)
   useEffect(() => {
