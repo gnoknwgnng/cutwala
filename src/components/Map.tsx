@@ -127,10 +127,25 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
       return '1.1 km';
     };
 
+    // GPS-relative offsets: each shop is placed at a fixed offset from the user's real location
+    // so they always appear nearby no matter where the user is in the world.
+    const shopOffsets: Record<string, { lat: number; lng: number }> = {
+      shop1: { lat:  0.004, lng: -0.006 },  // NW  — 0/4 green
+      shop2: { lat:  0.006, lng:  0.003 },  // NE  — 1/4 yellow
+      shop3: { lat: -0.003, lng: -0.004 },  // SW  — 2/6 yellow
+      shop4: { lat: -0.005, lng:  0.005 },  // SE  — 5/6 red
+      shop5: { lat:  0.001, lng:  0.007 },  // E   — 1/4 yellow + favourite
+    };
+
     // Add Real Interactive Markers for each Shop matching reference image (large floating barber/chair figure)
     openShops.forEach((shop) => {
+      const offset = shopOffsets[shop.shop_id] ?? { lat: 0, lng: 0 };
+      // Use GPS-relative position when user location is known
+      const markerLat = userLocation ? userLocation.latitude  + offset.lat : shop.latitude;
+      const markerLng = userLocation ? userLocation.longitude + offset.lng : shop.longitude;
+
       const isSelected = selectedShop?.shop_id === shop.shop_id;
-      const distanceDisplay = getDistanceStr(shop.latitude, shop.longitude, shop.shop_id);
+      const distanceDisplay = getDistanceStr(markerLat, markerLng, shop.shop_id);
       const isFav = favourites.has(shop.shop_id);
 
       // Chair occupancy calculation
@@ -285,7 +300,7 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
         iconAnchor: [0, 0],
       });
 
-      const marker = L.marker([shop.latitude, shop.longitude], { 
+      const marker = L.marker([markerLat, markerLng], { 
         icon: customIcon,
         zIndexOffset: isSelected ? 1000 : 10
       }).addTo(map);
