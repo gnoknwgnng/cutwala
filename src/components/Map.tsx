@@ -13,12 +13,34 @@ interface MapProps {
 
 // GPS-relative offsets: each shop is placed at a fixed offset from the user's real location
 // so they always appear nearby no matter where the user is in the world.
-const shopOffsets: Record<string, { lat: number; lng: number }> = {
-  shop1: { lat:  0.0007, lng: -0.0006 },  // ~0.1 km — 0/4 green
-  shop2: { lat:  0.0014, lng:  0.0012 },  // ~0.2 km — 1/4 yellow
-  shop3: { lat: -0.0022, lng: -0.0018 },  // ~0.3 km — 2/6 yellow
-  shop4: { lat: -0.0029, lng:  0.0025 },  // ~0.4 km — 5/6 red
-  shop5: { lat:  0.0036, lng:  0.0031 },  // ~0.5 km — 1/4 yellow + favourite
+const shopOffsets: Record<string, { lat: number; lng: number; dist: number }> = {
+  // 0.1 KM SHOPS
+  shop1:  { lat:  0.0007, lng: -0.0005, dist: 0.1 }, // 0/4 Green (Men)
+  shop2:  { lat: -0.0006, lng:  0.0007, dist: 0.1 }, // 1/4 Yellow (Men)
+
+  // 0.2 KM SHOPS
+  shop3:  { lat:  0.0014, lng: -0.0011, dist: 0.2 }, // 2/6 Yellow (Men)
+  shop4:  { lat: -0.0013, lng:  0.0015, dist: 0.2 }, // 5/6 Red (Women)
+  shop5:  { lat:  0.0016, lng:  0.0012, dist: 0.2 }, // 1/4 Yellow + Fav (Women)
+
+  // 0.3 KM SHOPS
+  shop6:  { lat: -0.0022, lng: -0.0018, dist: 0.3 }, // 0/2 Green (Men)
+  shop7:  { lat:  0.0021, lng: -0.0021, dist: 0.3 }, // 3/5 Yellow (Men)
+  shop8:  { lat:  0.0024, lng:  0.0019, dist: 0.3 }, // 4/4 Red (Men)
+  shop9:  { lat: -0.0020, lng:  0.0023, dist: 0.3 }, // 1/3 Yellow (Women)
+
+  // 0.4 KM SHOPS
+  shop10: { lat: -0.0029, lng: -0.0025, dist: 0.4 }, // 0/6 Green (Men)
+  shop11: { lat:  0.0031, lng: -0.0024, dist: 0.4 }, // 2/4 Yellow (Men)
+  shop12: { lat:  0.0028, lng:  0.0029, dist: 0.4 }, // 1/5 Green (Women)
+  shop13: { lat: -0.0032, lng:  0.0022, dist: 0.4 }, // 3/4 Red (Women)
+
+  // 0.5 KM SHOPS
+  shop14: { lat: -0.0036, lng: -0.0031, dist: 0.5 }, // 0/3 Green (Men)
+  shop15: { lat:  0.0038, lng: -0.0032, dist: 0.5 }, // 2/5 Yellow (Men)
+  shop16: { lat:  0.0035, lng:  0.0036, dist: 0.5 }, // 4/6 Yellow (Women)
+  shop17: { lat: -0.0039, lng:  0.0033, dist: 0.5 }, // 1/2 Yellow (Women)
+  shop18: { lat:  0.0041, lng: -0.0019, dist: 0.5 }, // 0/5 Green (Men)
 };
 
 export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuery }) => {
@@ -38,14 +60,9 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
   const markersRef = useRef<{ [key: string]: L.Marker }>({});
   const userMarkerRef = useRef<L.Marker | null>(null);
 
-  // Distance helper mapping shops to exact distances: shop1=0.1km, shop2=0.2km, shop3=0.3km, shop4=0.4km, shop5=0.5km
+  // Distance helper mapping shopId to distance in Km
   const getDistanceKm = (shopId: string): number => {
-    if (shopId === 'shop1') return 0.1;
-    if (shopId === 'shop2') return 0.2;
-    if (shopId === 'shop3') return 0.3;
-    if (shopId === 'shop4') return 0.4;
-    if (shopId === 'shop5') return 0.5;
-    return 0.5;
+    return shopOffsets[shopId]?.dist ?? 0.5;
   };
 
   // Filtered shops based on OPEN status, maxDistance filter pill, gender toggle, and search query

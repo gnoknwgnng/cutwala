@@ -23,12 +23,14 @@ export const Layout: React.FC = () => {
   } = useStore();
 
   const getDistanceKm = (shopId: string): number => {
-    if (shopId === 'shop1') return 0.1;
-    if (shopId === 'shop2') return 0.2;
-    if (shopId === 'shop3') return 0.3;
-    if (shopId === 'shop4') return 0.4;
-    if (shopId === 'shop5') return 0.5;
-    return 0.5;
+    const distMap: Record<string, number> = {
+      shop1: 0.1, shop2: 0.1,
+      shop3: 0.2, shop4: 0.2, shop5: 0.2,
+      shop6: 0.3, shop7: 0.3, shop8: 0.3, shop9: 0.3,
+      shop10: 0.4, shop11: 0.4, shop12: 0.4, shop13: 0.4,
+      shop14: 0.5, shop15: 0.5, shop16: 0.5, shop17: 0.5, shop18: 0.5
+    };
+    return distMap[shopId] ?? 0.5;
   };
 
   const openShops = shops.filter(shop => {
