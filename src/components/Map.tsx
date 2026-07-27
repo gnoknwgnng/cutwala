@@ -14,21 +14,62 @@ interface MapProps {
 // GPS-relative offsets: each shop is placed at a fixed offset from the user's real location
 // so they always appear nearby no matter where the user is in the world.
 const shopOffsets: Record<string, { lat: number; lng: number }> = {
-  shop1: { lat:  0.004, lng: -0.006 },  // NW  — 0/4 green
-  shop2: { lat:  0.006, lng:  0.003 },  // NE  — 1/4 yellow
-  shop3: { lat: -0.003, lng: -0.004 },  // SW  — 2/6 yellow
-  shop4: { lat: -0.005, lng:  0.005 },  // SE  — 5/6 red
-  shop5: { lat:  0.001, lng:  0.007 },  // E   — 1/4 yellow + favourite
+  shop1: { lat:  0.0007, lng: -0.0006 },  // ~0.1 km — 0/4 green
+  shop2: { lat:  0.0014, lng:  0.0012 },  // ~0.2 km — 1/4 yellow
+  shop3: { lat: -0.0022, lng: -0.0018 },  // ~0.3 km — 2/6 yellow
+  shop4: { lat: -0.0029, lng:  0.0025 },  // ~0.4 km — 5/6 red
+  shop5: { lat:  0.0036, lng:  0.0031 },  // ~0.5 km — 1/4 yellow + favourite
 };
 
 export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuery }) => {
-  const { shops, chairs, userLocation, requestRealLocation, setMapPanning, favoriteShops, setFavorite } = useStore();
+  const { 
+    shops, 
+    chairs, 
+    userLocation, 
+    requestRealLocation, 
+    setMapPanning, 
+    favoriteShops, 
+    setFavorite,
+    maxDistance,
+    genderFilter
+  } = useStore();
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<{ [key: string]: L.Marker }>({});
   const userMarkerRef = useRef<L.Marker | null>(null);
 
-  const openShops = shops.filter(shop => shop.status === 'OPEN');
+  // Distance helper mapping shops to exact distances: shop1=0.1km, shop2=0.2km, shop3=0.3km, shop4=0.4km, shop5=0.5km
+  const getDistanceKm = (shopId: string): number => {
+    if (shopId === 'shop1') return 0.1;
+    if (shopId === 'shop2') return 0.2;
+    if (shopId === 'shop3') return 0.3;
+    if (shopId === 'shop4') return 0.4;
+    if (shopId === 'shop5') return 0.5;
+    return 0.5;
+  };
+
+  // Filtered shops based on OPEN status, maxDistance filter pill, gender toggle, and search query
+  const filteredShops = shops.filter((shop) => {
+    if (shop.status !== 'OPEN') return false;
+
+    // 1. Distance filter (0.1, 0.2, 0.3, 0.4, 0.5 Km)
+    const dist = getDistanceKm(shop.shop_id);
+    if (dist > maxDistance + 0.001) return false;
+
+    // 2. Gender filter ('men' vs 'women')
+    if (genderFilter === 'men' && shop.category === 'women') return false;
+    if (genderFilter === 'women' && shop.category === 'men') return false;
+
+    // 3. Search query filter
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      const matchName = shop.name.toLowerCase().includes(q);
+      const matchDesc = shop.description.toLowerCase().includes(q);
+      if (!matchName && !matchDesc) return false;
+    }
+
+    return true;
+  });
 
   // Reset map panning state and trigger real browser location request on mount
   useEffect(() => {
@@ -94,34 +135,19 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
     markersRef.current = {};
 
     // Helper to calculate distance string for marker cards
-    const getDistanceStr = (shopLat: number, shopLng: number, shopId: string) => {
-      if (userLocation) {
-        const R = 6371;
-        const dLat = (shopLat - userLocation.latitude) * (Math.PI / 180);
-        const dLon = (shopLng - userLocation.longitude) * (Math.PI / 180);
-        const a =
-          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-          Math.cos(userLocation.latitude * (Math.PI / 180)) * Math.cos(shopLat * (Math.PI / 180)) *
-          Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        const dist = R * c;
-        return dist < 0.1 ? '0.2 km' : `${dist.toFixed(1)} km`;
-      }
-      if (shopId === 'shop1') return '0.8 km';
-      if (shopId === 'shop2') return '1.2 km';
-      if (shopId === 'shop3') return '1.8 km';
-      return '1.1 km';
+    const getDistanceStr = (shopId: string) => {
+      return `${getDistanceKm(shopId)} km`;
     };
 
     // Add Real Interactive Markers for each Shop matching reference image (large floating barber/chair figure)
-    openShops.forEach((shop) => {
+    filteredShops.forEach((shop) => {
       const offset = shopOffsets[shop.shop_id] ?? { lat: 0, lng: 0 };
       // Use GPS-relative position when user location is known
       const markerLat = userLocation ? userLocation.latitude  + offset.lat : shop.latitude;
       const markerLng = userLocation ? userLocation.longitude + offset.lng : shop.longitude;
 
       const isSelected = selectedShop?.shop_id === shop.shop_id;
-      const distanceDisplay = getDistanceStr(markerLat, markerLng, shop.shop_id);
+      const distanceDisplay = getDistanceStr(shop.shop_id);
       const isFav = favoriteShops.includes(shop.shop_id);
 
       // Chair occupancy calculation
@@ -293,7 +319,7 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
       markersRef.current[shop.shop_id] = marker;
     });
 
-  }, [shops, openShops, chairs, userLocation, selectedShop, favoriteShops]);
+  }, [shops, filteredShops, chairs, userLocation, selectedShop, favoriteShops, maxDistance, genderFilter, searchQuery]);
 
   // Handle Real User Location Pulsing Marker (Always on Top Layer)
   useEffect(() => {
@@ -382,7 +408,7 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
   // Handle Search Query filtering
   useEffect(() => {
     if (searchQuery.trim() !== '' && mapInstanceRef.current) {
-      const match = openShops.find(s => 
+      const match = filteredShops.find(s => 
         s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         s.address.toLowerCase().includes(searchQuery.toLowerCase())
       );
@@ -390,7 +416,7 @@ export const Map: React.FC<MapProps> = ({ onSelectShop, selectedShop, searchQuer
         onSelectShop(match);
       }
     }
-  }, [searchQuery]);
+  }, [searchQuery, filteredShops]);
 
   const handleZoomIn = () => {
     if (mapInstanceRef.current) {

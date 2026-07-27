@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Compass, Calendar, Sparkles, Sun, Moon, MapPin, ChevronDown, Check, LogOut, Heart, Bell, Gift } from 'lucide-react';
 import { useStore } from '../store/useStore';
@@ -22,7 +22,24 @@ export const Layout: React.FC = () => {
     chairs
   } = useStore();
 
-  const openShops = shops.filter(s => s.status === 'OPEN');
+  const getDistanceKm = (shopId: string): number => {
+    if (shopId === 'shop1') return 0.1;
+    if (shopId === 'shop2') return 0.2;
+    if (shopId === 'shop3') return 0.3;
+    if (shopId === 'shop4') return 0.4;
+    if (shopId === 'shop5') return 0.5;
+    return 0.5;
+  };
+
+  const openShops = shops.filter(shop => {
+    if (shop.status !== 'OPEN') return false;
+    const dist = getDistanceKm(shop.shop_id);
+    if (dist > maxDistance + 0.001) return false;
+    if (genderFilter === 'men' && shop.category === 'women') return false;
+    if (genderFilter === 'women' && shop.category === 'men') return false;
+    return true;
+  });
+
   const availableSeatsCount = chairs.filter(c => c.status === 'available' && openShops.some(s => s.shop_id === c.shop_id)).length;
 
   // Saved locations state for header dropdown
@@ -36,6 +53,14 @@ export const Layout: React.FC = () => {
   const [isAddressModalOpen, setIsAddressModalOpen] = useState<boolean>(false);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState<boolean>(false);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState<boolean>(false);
+
+  // Live ticking simulation for real-time chair updates
+  useEffect(() => {
+    const interval = setInterval(() => {
+      useStore.getState().tickChairs();
+    }, 9000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Filter state inside drawer
   const [tempDistance, setTempDistance] = useState<number>(maxDistance);

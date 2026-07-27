@@ -20,6 +20,7 @@ export interface BarberShop {
   image: string;
   gallery: string[];
   description: string;
+  category?: 'men' | 'women' | 'all';
 }
 
 export interface Barber {
@@ -94,6 +95,7 @@ export const mockShops: BarberShop[] = [
     opening_time: '09:00 AM',
     closing_time: '08:00 PM',
     status: 'OPEN',
+    category: 'men',
     image: 'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=600&auto=format&fit=crop&q=80',
     gallery: [
       'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=600&auto=format&fit=crop&q=80',
@@ -110,6 +112,7 @@ export const mockShops: BarberShop[] = [
     opening_time: '10:00 AM',
     closing_time: '09:00 PM',
     status: 'OPEN',
+    category: 'men',
     image: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600&auto=format&fit=crop&q=80',
     gallery: [
       'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600&auto=format&fit=crop&q=80',
@@ -126,6 +129,7 @@ export const mockShops: BarberShop[] = [
     opening_time: '08:00 AM',
     closing_time: '07:00 PM',
     status: 'OPEN',
+    category: 'men',
     image: 'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=600&auto=format&fit=crop&q=80',
     gallery: [
       'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=600&auto=format&fit=crop&q=80',
@@ -142,6 +146,7 @@ export const mockShops: BarberShop[] = [
     opening_time: '09:00 AM',
     closing_time: '08:00 PM',
     status: 'OPEN',
+    category: 'women',
     image: 'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=600&auto=format&fit=crop&q=80',
     gallery: [
       'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=600&auto=format&fit=crop&q=80',
@@ -158,6 +163,7 @@ export const mockShops: BarberShop[] = [
     opening_time: '10:00 AM',
     closing_time: '08:00 PM',
     status: 'OPEN',
+    category: 'women',
     image: 'https://images.unsplash.com/photo-1512864084360-7c0c4d0a0845?w=600&auto=format&fit=crop&q=80',
     gallery: [
       'https://images.unsplash.com/photo-1512864084360-7c0c4d0a0845?w=600&auto=format&fit=crop&q=80',
