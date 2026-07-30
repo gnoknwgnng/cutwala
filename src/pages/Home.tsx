@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Star, X, Heart } from 'lucide-react';
+import { MapPin, Star, X, Heart, Clock } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { Map } from '../components/Map';
 import type { BarberShop } from '../mock/mockData';
@@ -110,6 +110,14 @@ export const Home: React.FC = () => {
                     <MapPin className="h-3.5 w-3.5 text-gray-400 shrink-0" />
                     <span className="text-xs truncate font-medium">
                       {selectedShop.address}
+                    </span>
+                  </div>
+
+                  {/* Closing Hours */}
+                  <div className="flex items-center gap-1 text-gray-500 dark:text-zinc-400 min-w-0">
+                    <Clock className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+                    <span className="text-xs truncate font-medium">
+                      Closes at {selectedShop.closing_time || '9:00 PM'}
                     </span>
                   </div>
                 </div>
