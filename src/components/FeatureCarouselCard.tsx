@@ -121,7 +121,7 @@ export const FeatureCarouselCard: React.FC<FeatureCarouselCardProps> = ({ onSele
       onMouseLeave={() => { isHoveredRef.current = false; }}
       onTouchStart={() => { isHoveredRef.current = true; }}
       onTouchEnd={() => { isHoveredRef.current = false; }}
-      className="fixed bottom-[72px] left-3 right-3 max-w-lg mx-auto z-30 bg-white/98 dark:bg-zinc-900/98 backdrop-blur-xl rounded-2xl md:rounded-3xl shadow-2xl shadow-black/15 border border-gray-200/80 dark:border-zinc-800/80 p-2.5 md:p-3 flex flex-col gap-2 select-none pointer-events-auto overflow-hidden"
+      className="fixed bottom-[72px] md:bottom-6 left-3 right-3 max-w-lg mx-auto z-30 bg-white/98 dark:bg-zinc-900/98 backdrop-blur-xl rounded-2xl md:rounded-3xl shadow-2xl shadow-black/15 border border-gray-200/80 dark:border-zinc-800/80 p-2.5 md:p-3 flex flex-col gap-2 select-none pointer-events-auto overflow-hidden"
     >
       {/* Top Header Row (Close Button) */}
       <div className="flex items-center justify-between px-1">
