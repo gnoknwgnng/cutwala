@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, X, Heart, ArrowRight } from 'lucide-react';
+import { MapPin, Star, X, Heart, Clock } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { Map } from '../components/Map';
 import type { BarberShop } from '../mock/mockData';
@@ -45,15 +45,16 @@ export const Home: React.FC = () => {
       </div>
 
 
-      {/* 2. Ultra-Compact Single-Line Shop Pill Bar (Takes minimal space on map) */}
+      {/* 2. Selected Shop Card matching Image 2 with ALL content & comfortable height */}
       <AnimatePresence>
         {selectedShop && (() => {
           const shopChairs = chairs.filter(c => c.shop_id === selectedShop.shop_id);
-          const chairList = shopChairs.length > 0 ? shopChairs.slice(0, 4) : [
+          const chairList = shopChairs.length > 0 ? shopChairs.slice(0, 5) : [
             { chair_id: 'c1', status: 'occupied' as const },
             { chair_id: 'c2', status: 'occupied' as const },
             { chair_id: 'c3', status: 'occupied' as const },
-            { chair_id: 'c4', status: 'available' as const }
+            { chair_id: 'c4', status: 'available' as const },
+            { chair_id: 'c5', status: 'available' as const }
           ];
 
           return (
@@ -62,100 +63,134 @@ export const Home: React.FC = () => {
               animate={{ y: 0, opacity: 1, scale: 1 }}
               exit={{ y: '100%', opacity: 0, scale: 0.95 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="absolute bottom-20 md:bottom-6 left-2 right-2 sm:left-6 sm:right-6 z-50 max-w-lg mx-auto w-[calc(100%-1rem)]"
+              className="absolute bottom-20 md:bottom-6 left-2 right-2 sm:left-6 sm:right-6 z-50 max-w-2xl mx-auto w-[calc(100%-1rem)]"
             >
               <div 
                 onClick={() => handleOpenDetails(selectedShop.shop_id)}
-                className="bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl rounded-full p-1.5 px-2.5 sm:px-3.5 shadow-xl border border-gray-200/90 dark:border-zinc-800 flex items-center justify-between gap-1.5 sm:gap-2 cursor-pointer relative overflow-hidden group h-12 sm:h-13"
+                className="bg-white/98 dark:bg-zinc-900/98 backdrop-blur-xl rounded-3xl p-3 sm:p-4 shadow-2xl border border-gray-200/90 dark:border-zinc-800 flex flex-row items-center gap-3 sm:gap-4 cursor-pointer relative overflow-hidden group"
               >
-                {/* 1. Left: Compact Shop Avatar */}
-                <div className="relative shrink-0">
+                {/* 1. Left: Square Shop Image Thumbnail */}
+                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden shrink-0 bg-gray-100 dark:bg-zinc-800 relative border border-gray-200/60 dark:border-zinc-800 shadow-md">
                   <img 
                     src={selectedShop.image} 
                     alt={selectedShop.name} 
-                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover border border-white dark:border-zinc-800 shadow-sm"
+                    className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
-                  <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 border border-white dark:border-zinc-900 flex items-center justify-center">
-                    <span className="h-1 w-1 rounded-full bg-white animate-pulse" />
-                  </span>
                 </div>
 
-                {/* 2. Middle: Shop Name + Rating */}
-                <div className="flex-1 flex items-center gap-1.5 min-w-0">
-                  <h3 className="font-display font-black text-xs text-gray-900 dark:text-white truncate tracking-tight">
-                    {selectedShop.name}
-                  </h3>
-                  <div className="flex items-center gap-0.5 text-[10px] font-extrabold text-amber-500 shrink-0">
-                    <Star className="h-2.5 w-2.5 fill-amber-400 text-amber-400" />
-                    <span>{selectedShop.rating}</span>
+                {/* 2. Center: Shop Info (Title, Live Badge, Rating, Address, Closes at) */}
+                <div className="flex-1 flex flex-col justify-between min-w-0 py-0.5 gap-1">
+                  {/* Title + Live Badge */}
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <h3 className="font-display font-black text-xs sm:text-base text-gray-900 dark:text-white truncate tracking-tight">
+                      {selectedShop.name}
+                    </h3>
+                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[8px] sm:text-[9px] font-bold border border-emerald-500/20 shrink-0">
+                      <span className="relative flex h-1.5 w-1.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                      </span>
+                      Live
+                    </span>
                   </div>
-                  <span className="text-[9px] font-bold text-gray-400 shrink-0 hidden xs:inline">• {getDistanceStr(selectedShop.shop_id)}</span>
+
+                  {/* Rating + Reviews */}
+                  <div className="flex items-center gap-1">
+                    <Star className="h-3.5 w-3.5 text-amber-400 fill-amber-400 shrink-0" />
+                    <span className="font-extrabold text-[11px] sm:text-xs text-gray-800 dark:text-zinc-200">
+                      {selectedShop.rating}
+                    </span>
+                    <span className="text-[11px] sm:text-xs text-gray-500 dark:text-zinc-400 font-medium">
+                      (128 Reviews)
+                    </span>
+                  </div>
+
+                  {/* Location Address */}
+                  <div className="flex items-center gap-1 text-gray-600 dark:text-zinc-400 min-w-0">
+                    <MapPin className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+                    <span className="text-[11px] sm:text-xs font-medium text-gray-600 dark:text-zinc-300 truncate">
+                      {selectedShop.address}
+                    </span>
+                  </div>
+
+                  {/* Closing Hours */}
+                  <div className="flex items-center gap-1 text-gray-500 dark:text-zinc-400 min-w-0">
+                    <Clock className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+                    <span className="text-[11px] sm:text-xs font-medium text-gray-500 dark:text-zinc-400 truncate">
+                      Closes at {selectedShop.closing_time || '09:00 PM'}
+                    </span>
+                  </div>
                 </div>
 
-                {/* 3. Right: Chairs + Heart + Book Button + Dismiss */}
-                <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
-                  {/* Mini Chair Status Circles */}
-                  <div className="flex items-center gap-0.5 shrink-0">
+                {/* 3. Right: Distance + Heart + Dismiss + Chair Circles + Book Now Button */}
+                <div className="flex flex-col justify-between items-end shrink-0 gap-1.5 min-w-[110px] sm:min-w-[145px] py-0.5">
+                  {/* Top Right: Distance + Heart + Dismiss */}
+                  <div className="flex items-center gap-1 sm:gap-1.5 justify-end w-full">
+                    <span className="text-[11px] sm:text-xs font-extrabold text-gray-800 dark:text-zinc-200 mr-0.5">
+                      {getDistanceStr(selectedShop.shop_id)}
+                    </span>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setFavorite(selectedShop.shop_id);
+                      }}
+                      className={`h-6.5 w-6.5 sm:h-7 sm:w-7 rounded-full border border-gray-200 dark:border-zinc-700 flex items-center justify-center transition-colors cursor-pointer shrink-0 ${
+                        favoriteShops.includes(selectedShop.shop_id)
+                          ? 'bg-rose-50 border-rose-200 text-rose-500 dark:bg-rose-500/10 dark:border-rose-500/30'
+                          : 'bg-white dark:bg-zinc-800 text-gray-500 dark:text-zinc-400 hover:text-rose-500'
+                      }`}
+                      title="Favorite"
+                    >
+                      <Heart className={`h-3.5 w-3.5 ${favoriteShops.includes(selectedShop.shop_id) ? 'fill-rose-500' : ''}`} />
+                    </button>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedShop(null);
+                      }}
+                      className="h-6.5 w-6.5 sm:h-7 sm:w-7 rounded-full border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 flex items-center justify-center transition-colors cursor-pointer shrink-0"
+                      title="Dismiss"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+
+                  {/* Middle Right: Row of Circular Chair Status Icons */}
+                  <div className="flex items-center gap-1">
                     {chairList.slice(0, 4).map((chair, i) => {
                       const isOccupied = chair.status === 'occupied';
                       return (
                         <div
                           key={chair.chair_id || i}
-                          className={`w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full border flex items-center justify-center shrink-0 ${
+                          className={`w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
                             isOccupied
-                              ? 'border-rose-500 text-rose-500 bg-rose-50/50'
-                              : 'border-gray-300 text-gray-400 bg-gray-50/50'
+                              ? 'border-rose-500 text-rose-500 bg-rose-50/40 dark:bg-rose-950/20'
+                              : 'border-gray-300 dark:border-zinc-700 text-gray-400 dark:text-zinc-600 bg-gray-50/40 dark:bg-zinc-800/40'
                           }`}
                           title={isOccupied ? 'Occupied Chair' : 'Available Chair'}
                         >
-                          <svg width="7" height="7" viewBox="0 0 24 24" fill="currentColor">
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                             <rect x="9" y="2" width="6" height="3" rx="1" />
                             <path d="M8 6C8 5.44772 8.44772 5 9 5H15C15.5523 5 16 5.44772 16 6V12H8V6Z" />
                             <rect x="5" y="13" width="14" height="3" rx="1.5" />
+                            <path d="M12 16V20M8 20H16M6 18L4 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                           </svg>
                         </div>
                       );
                     })}
                   </div>
 
-                  {/* Favorite Heart */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setFavorite(selectedShop.shop_id);
-                    }}
-                    className={`h-6 w-6 rounded-full flex items-center justify-center transition-colors shrink-0 ${
-                      favoriteShops.includes(selectedShop.shop_id)
-                        ? 'bg-rose-50 text-rose-500'
-                        : 'text-gray-400 hover:text-gray-600'
-                    }`}
-                    title="Favorite"
-                  >
-                    <Heart className={`h-3 w-3 ${favoriteShops.includes(selectedShop.shop_id) ? 'fill-rose-500' : ''}`} />
-                  </button>
-
-                  {/* Book Button */}
+                  {/* Bottom Right: Pink/Magenta Book Now Button */}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       handleOpenDetails(selectedShop.shop_id);
                     }}
-                    className="py-1 px-2.5 sm:px-3.5 bg-[#ff0055] hover:bg-[#e0004c] text-white font-black text-[11px] sm:text-xs rounded-full shadow-md shadow-rose-500/25 flex items-center gap-0.5 transition-all active:scale-95 whitespace-nowrap cursor-pointer"
+                    className="w-full py-1.5 sm:py-2 px-3 sm:px-4 bg-[#ff0055] hover:bg-[#e0004c] text-white font-extrabold text-[11px] sm:text-xs rounded-xl shadow-md shadow-rose-500/25 transition-all active:scale-95 cursor-pointer text-center whitespace-nowrap"
                   >
-                    <span>Book</span>
-                    <ArrowRight className="h-2.5 w-2.5" />
-                  </button>
-
-                  {/* Dismiss */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedShop(null);
-                    }}
-                    className="h-5 w-5 rounded-full text-gray-400 hover:text-gray-600 flex items-center justify-center transition-colors shrink-0 cursor-pointer"
-                    title="Dismiss"
-                  >
-                    <X className="h-3 w-3" />
+                    Book Now
                   </button>
                 </div>
               </div>
