@@ -103,25 +103,29 @@ export const Home: React.FC = () => {
 
                 {/* 3. Right: Chair Circles + Favorite + Book Now Pill Button + Dismiss */}
                 <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                  {/* Mini Chair Status Circles */}
-                  <div className="hidden sm:flex items-center gap-1">
-                    {chairList.slice(0, 4).map((chair, i) => (
-                      <div
-                        key={chair.chair_id || i}
-                        className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ${
-                          chair.status === 'occupied'
-                            ? 'border-rose-500 text-rose-500 bg-rose-50'
-                            : 'border-gray-300 text-gray-400'
-                        }`}
-                        title={chair.status === 'occupied' ? 'Occupied' : 'Available'}
-                      >
-                        <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor">
-                          <rect x="9" y="2" width="6" height="3" rx="1" />
-                          <path d="M8 6C8 5.44772 8.44772 5 9 5H15C15.5523 5 16 5.44772 16 6V12H8V6Z" />
-                          <rect x="5" y="13" width="14" height="3" rx="1.5" />
-                        </svg>
-                      </div>
-                    ))}
+                  {/* Chair Status Circles (Always Visible on Mobile & Desktop) */}
+                  <div className="flex items-center gap-1 shrink-0">
+                    {chairList.slice(0, 4).map((chair, i) => {
+                      const isOccupied = chair.status === 'occupied';
+                      return (
+                        <div
+                          key={chair.chair_id || i}
+                          className={`w-5 h-5 sm:w-5.5 sm:h-5.5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
+                            isOccupied
+                              ? 'border-rose-500 text-rose-500 bg-rose-50/40 dark:bg-rose-950/20'
+                              : 'border-gray-300 dark:border-zinc-700 text-gray-400 dark:text-zinc-600 bg-gray-50/40 dark:bg-zinc-800/40'
+                          }`}
+                          title={isOccupied ? 'Occupied Chair' : 'Available Chair'}
+                        >
+                          <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="9" y="2" width="6" height="3" rx="1" />
+                            <path d="M8 6C8 5.44772 8.44772 5 9 5H15C15.5523 5 16 5.44772 16 6V12H8V6Z" />
+                            <rect x="5" y="13" width="14" height="3" rx="1.5" />
+                            <path d="M12 16V20M8 20H16M6 18L4 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                          </svg>
+                        </div>
+                      );
+                    })}
                   </div>
 
                   {/* Favorite Heart Button */}
