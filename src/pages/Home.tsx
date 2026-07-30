@@ -49,12 +49,13 @@ export const Home: React.FC = () => {
       <AnimatePresence>
         {selectedShop && (() => {
           const shopChairs = chairs.filter(c => c.shop_id === selectedShop.shop_id);
-          const chairList = shopChairs.length > 0 ? shopChairs.slice(0, 5) : [
+          const chairList = shopChairs.length > 0 ? shopChairs : [
             { chair_id: 'c1', status: 'occupied' as const },
             { chair_id: 'c2', status: 'occupied' as const },
             { chair_id: 'c3', status: 'occupied' as const },
             { chair_id: 'c4', status: 'available' as const },
-            { chair_id: 'c5', status: 'available' as const }
+            { chair_id: 'c5', status: 'available' as const },
+            { chair_id: 'c6', status: 'available' as const }
           ];
 
           return (
@@ -157,21 +158,21 @@ export const Home: React.FC = () => {
                     </button>
                   </div>
 
-                  {/* Middle Right: Row of Circular Chair Status Icons */}
-                  <div className="flex items-center gap-0.5 sm:gap-1">
-                    {chairList.slice(0, 4).map((chair, i) => {
+                  {/* Middle Right: Row of Circular Chair Status Icons (Renders exact total chairs matching map badge) */}
+                  <div className="flex items-center gap-0.5 sm:gap-1 flex-wrap justify-end">
+                    {chairList.map((chair, i) => {
                       const isOccupied = chair.status === 'occupied';
                       return (
                         <div
                           key={chair.chair_id || i}
-                          className={`w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
+                          className={`w-4 h-4 sm:w-4.5 sm:h-4.5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
                             isOccupied
                               ? 'border-rose-500 text-rose-500 bg-rose-50/40 dark:bg-rose-950/20'
                               : 'border-gray-300 dark:border-zinc-700 text-gray-400 dark:text-zinc-600 bg-gray-50/40 dark:bg-zinc-800/40'
                           }`}
                           title={isOccupied ? 'Occupied Chair' : 'Available Chair'}
                         >
-                          <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                          <svg width="7" height="7" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                             <rect x="9" y="2" width="6" height="3" rx="1" />
                             <path d="M8 6C8 5.44772 8.44772 5 9 5H15C15.5523 5 16 5.44772 16 6V12H8V6Z" />
                             <rect x="5" y="13" width="14" height="3" rx="1.5" />
