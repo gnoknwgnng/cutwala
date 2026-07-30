@@ -67,25 +67,25 @@ export const Home: React.FC = () => {
             >
               <div 
                 onClick={() => handleOpenDetails(selectedShop.shop_id)}
-                className="bg-white dark:bg-zinc-900 rounded-3xl p-2.5 sm:p-4 shadow-2xl border border-gray-200/80 dark:border-zinc-800 flex flex-row items-center gap-2 sm:gap-3.5 cursor-pointer relative overflow-hidden"
+                className="bg-white dark:bg-zinc-900 rounded-3xl p-3 sm:p-4 shadow-2xl border border-gray-200/80 dark:border-zinc-800 flex flex-row items-stretch gap-2.5 sm:gap-3.5 cursor-pointer relative overflow-hidden"
               >
-                {/* 1. Left: Shop Image Thumbnail */}
-                <div className="w-16 h-16 sm:w-22 sm:h-22 rounded-xl sm:rounded-2xl overflow-hidden shrink-0 bg-gray-100 dark:bg-zinc-800 relative border border-gray-200/50 dark:border-zinc-800 my-auto">
+                {/* 1. Left: Shop Image Thumbnail (Self-Stretching for Perfect Height Alignment) */}
+                <div className="w-20 sm:w-24 rounded-2xl overflow-hidden shrink-0 bg-gray-100 dark:bg-zinc-800 relative border border-gray-200/50 dark:border-zinc-800 self-stretch my-auto">
                   <img 
                     src={selectedShop.image} 
                     alt={selectedShop.name} 
-                    className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300 min-h-[85px]"
                   />
                 </div>
 
-                {/* 2. Center: Shop Info (Text in between presents FULLY) */}
-                <div className="flex-1 flex flex-col justify-between min-w-0 py-0.5 gap-0.5 px-0.5">
+                {/* 2. Center: Shop Info (Text in between presents FULLY & cleanly) */}
+                <div className="flex-1 flex flex-col justify-between min-w-0 py-0.5 gap-0.5">
                   {/* Shop Title + Live Badge */}
-                  <div className="flex items-center gap-1 min-w-0 flex-wrap">
-                    <h3 className="font-display font-black text-xs sm:text-base text-gray-900 dark:text-white leading-tight tracking-tight">
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <h3 className="font-display font-black text-xs sm:text-base text-gray-900 dark:text-white truncate tracking-tight">
                       {selectedShop.name}
                     </h3>
-                    <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[8px] sm:text-[9px] font-bold border border-emerald-500/20 shrink-0">
+                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[8px] sm:text-[9px] font-bold border border-emerald-500/20 shrink-0">
                       <span className="relative flex h-1 w-1">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                         <span className="relative inline-flex rounded-full h-1 w-1 bg-emerald-500"></span>
@@ -96,37 +96,37 @@ export const Home: React.FC = () => {
 
                   {/* Rating + Reviews */}
                   <div className="flex items-center gap-1">
-                    <Star className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-amber-400 fill-amber-400 shrink-0" />
-                    <span className="font-extrabold text-[10px] sm:text-xs text-gray-800 dark:text-zinc-200">
+                    <Star className="h-3.5 w-3.5 text-amber-400 fill-amber-400 shrink-0" />
+                    <span className="font-extrabold text-[11px] sm:text-xs text-gray-800 dark:text-zinc-200">
                       {selectedShop.rating}
                     </span>
-                    <span className="text-[10px] sm:text-xs text-gray-500 dark:text-zinc-400 font-medium">
+                    <span className="text-[11px] sm:text-xs text-gray-500 dark:text-zinc-400 font-medium">
                       (128 Reviews)
                     </span>
                   </div>
 
                   {/* Location Address */}
                   <div className="flex items-center gap-1 text-gray-600 dark:text-zinc-400 min-w-0">
-                    <MapPin className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-gray-400 shrink-0" />
-                    <span className="text-[10px] sm:text-xs font-medium text-gray-600 dark:text-zinc-300 leading-tight">
+                    <MapPin className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+                    <span className="text-[11px] sm:text-xs font-medium text-gray-600 dark:text-zinc-300 truncate">
                       {selectedShop.address}
                     </span>
                   </div>
 
                   {/* Closing Hours */}
                   <div className="flex items-center gap-1 text-gray-500 dark:text-zinc-400 min-w-0">
-                    <Clock className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-gray-400 shrink-0" />
-                    <span className="text-[10px] sm:text-xs font-medium text-gray-500 dark:text-zinc-400">
+                    <Clock className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+                    <span className="text-[11px] sm:text-xs font-medium text-gray-500 dark:text-zinc-400 truncate">
                       Closes at {selectedShop.closing_time || '9:00 PM'}
                     </span>
                   </div>
                 </div>
 
                 {/* 3. Right: Distance + Heart + Chair Circles + Book Now Button */}
-                <div className="flex flex-col justify-between items-end shrink-0 gap-1 sm:gap-1.5 min-w-[95px] sm:min-w-[140px] py-0.5">
+                <div className="flex flex-col justify-between items-end shrink-0 gap-1.5 min-w-[110px] sm:min-w-[150px] py-0.5">
                   {/* Top Right Controls: Distance + Heart + Dismiss */}
                   <div className="flex items-center gap-1 sm:gap-1.5 justify-end w-full">
-                    <span className="text-[10px] sm:text-xs font-extrabold text-gray-800 dark:text-zinc-200">
+                    <span className="text-[11px] sm:text-xs font-extrabold text-gray-800 dark:text-zinc-200 mr-0.5">
                       {getDistanceStr(selectedShop.shop_id)}
                     </span>
 
@@ -135,14 +135,14 @@ export const Home: React.FC = () => {
                         e.stopPropagation();
                         setFavorite(selectedShop.shop_id);
                       }}
-                      className={`h-6 w-6 sm:h-7 sm:w-7 rounded-full border border-gray-200 dark:border-zinc-700 flex items-center justify-center transition-colors cursor-pointer shrink-0 ${
+                      className={`h-6.5 w-6.5 sm:h-7 sm:w-7 rounded-full border border-gray-200 dark:border-zinc-700 flex items-center justify-center transition-colors cursor-pointer shrink-0 ${
                         favoriteShops.includes(selectedShop.shop_id)
                           ? 'bg-rose-50 border-rose-200 text-rose-500 dark:bg-rose-500/10 dark:border-rose-500/30'
                           : 'bg-white dark:bg-zinc-800 text-gray-500 dark:text-zinc-400 hover:text-rose-500'
                       }`}
                       title="Favorite"
                     >
-                      <Heart className={`h-3 w-3 sm:h-3.5 sm:w-3.5 ${favoriteShops.includes(selectedShop.shop_id) ? 'fill-rose-500' : ''}`} />
+                      <Heart className={`h-3.5 w-3.5 ${favoriteShops.includes(selectedShop.shop_id) ? 'fill-rose-500' : ''}`} />
                     </button>
 
                     <button
@@ -150,28 +150,28 @@ export const Home: React.FC = () => {
                         e.stopPropagation();
                         setSelectedShop(null);
                       }}
-                      className="h-6 w-6 sm:h-7 sm:w-7 rounded-full border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 flex items-center justify-center transition-colors cursor-pointer shrink-0"
+                      className="h-6.5 w-6.5 sm:h-7 sm:w-7 rounded-full border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 flex items-center justify-center transition-colors cursor-pointer shrink-0"
                       title="Dismiss"
                     >
-                      <X className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                      <X className="h-3.5 w-3.5" />
                     </button>
                   </div>
 
                   {/* Middle Right: Row of Circular Chair Status Icons */}
-                  <div className="flex items-center gap-0.5 sm:gap-1">
+                  <div className="flex items-center gap-1">
                     {chairList.map((chair, i) => {
                       const isOccupied = chair.status === 'occupied';
                       return (
                         <div
                           key={chair.chair_id || i}
-                          className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
+                          className={`w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
                             isOccupied
                               ? 'border-rose-500 text-rose-500 bg-rose-50/40 dark:bg-rose-950/20'
                               : 'border-gray-300 dark:border-zinc-700 text-gray-400 dark:text-zinc-600 bg-gray-50/40 dark:bg-zinc-800/40'
                           }`}
                           title={isOccupied ? 'Occupied Chair' : 'Available Chair'}
                         >
-                          <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                             <rect x="9" y="2" width="6" height="3" rx="1" />
                             <path d="M8 6C8 5.44772 8.44772 5 9 5H15C15.5523 5 16 5.44772 16 6V12H8V6Z" />
                             <rect x="5" y="13" width="14" height="3" rx="1.5" />
@@ -188,7 +188,7 @@ export const Home: React.FC = () => {
                       e.stopPropagation();
                       handleOpenDetails(selectedShop.shop_id);
                     }}
-                    className="w-full py-1.5 sm:py-2 px-3 sm:px-4 bg-[#ff0055] hover:bg-[#e0004c] text-white font-extrabold text-[11px] sm:text-xs rounded-xl shadow-md shadow-rose-500/25 transition-all active:scale-95 cursor-pointer text-center whitespace-nowrap"
+                    className="w-full py-1.5 sm:py-2 px-3.5 sm:px-5 bg-[#ff0055] hover:bg-[#e0004c] text-white font-extrabold text-[11px] sm:text-xs rounded-xl shadow-md shadow-rose-500/25 transition-all active:scale-95 cursor-pointer text-center whitespace-nowrap"
                   >
                     Book Now
                   </button>
