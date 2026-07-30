@@ -45,7 +45,7 @@ export const Home: React.FC = () => {
       </div>
 
 
-      {/* 2. Floating Compact Shop Pill Bar Card (matching user reference image structure) */}
+      {/* 2. Floating Pill Card (Increased width & chairs on bottom row to prevent any overlap) */}
       <AnimatePresence>
         {selectedShop && (() => {
           const shopChairs = chairs.filter(c => c.shop_id === selectedShop.shop_id);
@@ -63,54 +63,86 @@ export const Home: React.FC = () => {
               animate={{ y: 0, opacity: 1, scale: 1 }}
               exit={{ y: '100%', opacity: 0, scale: 0.95 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="absolute bottom-5 left-3 right-3 sm:left-6 sm:right-6 z-20 max-w-xl mx-auto w-[calc(100%-1.5rem)]"
+              className="absolute bottom-4 left-2 right-2 sm:left-6 sm:right-6 z-20 max-w-2xl mx-auto w-[calc(100%-1rem)]"
             >
               <div 
                 onClick={() => handleOpenDetails(selectedShop.shop_id)}
-                className="bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl rounded-full p-2 sm:p-2.5 px-3 sm:px-4 shadow-2xl border border-gray-200/90 dark:border-zinc-800 flex items-center justify-between gap-2.5 cursor-pointer relative overflow-hidden group"
+                className="bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl rounded-3xl p-3 px-3.5 sm:px-4 shadow-2xl border border-gray-200/90 dark:border-zinc-800 flex flex-col gap-2 cursor-pointer relative overflow-hidden group"
               >
-                {/* 1. Left: Circular Shop Avatar */}
-                <div className="relative shrink-0">
-                  <img 
-                    src={selectedShop.image} 
-                    alt={selectedShop.name} 
-                    className="w-11 h-11 sm:w-13 sm:h-13 rounded-full object-cover border-2 border-white dark:border-zinc-800 shadow-md group-hover:scale-105 transition-transform"
-                  />
-                  <span className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-emerald-500 border-2 border-white dark:border-zinc-900 flex items-center justify-center">
-                    <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
-                  </span>
-                </div>
-
-                {/* 2. Middle: Shop Details (Compact Info) */}
-                <div className="flex-1 flex flex-col justify-center min-w-0 py-0.5">
-                  {/* Row 1: Name + Rating + Distance */}
-                  <div className="flex items-center gap-1.5 min-w-0">
-                    <h3 className="font-display font-black text-xs sm:text-sm text-gray-900 dark:text-white truncate tracking-tight">
-                      {selectedShop.name}
-                    </h3>
-                    <div className="flex items-center gap-0.5 text-[11px] font-extrabold text-amber-500 shrink-0">
-                      <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-                      <span>{selectedShop.rating}</span>
-                    </div>
-                    <span className="text-[10px] font-bold text-gray-400 shrink-0">• {getDistanceStr(selectedShop.shop_id)}</span>
+                {/* Top Row: Avatar + Info + Distance/Controls */}
+                <div className="flex items-center justify-between gap-2.5 min-w-0">
+                  {/* Left Avatar */}
+                  <div className="relative shrink-0">
+                    <img 
+                      src={selectedShop.image} 
+                      alt={selectedShop.name} 
+                      className="w-10 h-10 sm:w-11 sm:h-11 rounded-full object-cover border-2 border-white dark:border-zinc-800 shadow-md group-hover:scale-105 transition-transform"
+                    />
+                    <span className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-emerald-500 border-2 border-white dark:border-zinc-900 flex items-center justify-center">
+                      <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
+                    </span>
                   </div>
 
-                  {/* Row 2: Address & Closing Time */}
-                  <p className="text-[10px] sm:text-[11px] text-gray-500 dark:text-zinc-400 truncate font-medium mt-0.5">
-                    {selectedShop.address.split(',')[0]} • Closes {selectedShop.closing_time || '9:00 PM'}
-                  </p>
+                  {/* Middle Info */}
+                  <div className="flex-1 flex flex-col justify-center min-w-0">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <h3 className="font-display font-black text-xs sm:text-sm text-gray-900 dark:text-white truncate tracking-tight">
+                        {selectedShop.name}
+                      </h3>
+                      <div className="flex items-center gap-0.5 text-[11px] font-extrabold text-amber-500 shrink-0">
+                        <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                        <span>{selectedShop.rating}</span>
+                      </div>
+                    </div>
+                    <p className="text-[10px] sm:text-[11px] text-gray-500 dark:text-zinc-400 truncate font-medium mt-0.5">
+                      {selectedShop.address.split(',')[0]} • Closes {selectedShop.closing_time || '9:00 PM'}
+                    </p>
+                  </div>
+
+                  {/* Top Right: Distance + Heart + Dismiss */}
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <span className="text-[11px] font-extrabold text-gray-800 dark:text-zinc-200 mr-0.5">
+                      {getDistanceStr(selectedShop.shop_id)}
+                    </span>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setFavorite(selectedShop.shop_id);
+                      }}
+                      className={`h-7 w-7 rounded-full flex items-center justify-center transition-colors shrink-0 ${
+                        favoriteShops.includes(selectedShop.shop_id)
+                          ? 'bg-rose-50 text-rose-500 dark:bg-rose-500/10'
+                          : 'text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300'
+                      }`}
+                      title="Favorite"
+                    >
+                      <Heart className={`h-3.5 w-3.5 ${favoriteShops.includes(selectedShop.shop_id) ? 'fill-rose-500' : ''}`} />
+                    </button>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedShop(null);
+                      }}
+                      className="h-6 w-6 rounded-full text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 flex items-center justify-center transition-colors shrink-0 cursor-pointer"
+                      title="Dismiss"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 </div>
 
-                {/* 3. Right: Chair Circles + Favorite + Book Now Pill Button + Dismiss */}
-                <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                  {/* Chair Status Circles (Always Visible on Mobile & Desktop) */}
-                  <div className="flex items-center gap-1 shrink-0">
-                    {chairList.slice(0, 4).map((chair, i) => {
+                {/* Bottom Row: Chairs on Left + Book Now Button on Right */}
+                <div className="flex items-center justify-between gap-2 pt-1.5 border-t border-gray-100 dark:border-zinc-800/60">
+                  {/* Chairs Row on Bottom Left */}
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    {chairList.map((chair, i) => {
                       const isOccupied = chair.status === 'occupied';
                       return (
                         <div
                           key={chair.chair_id || i}
-                          className={`w-5 h-5 sm:w-5.5 sm:h-5.5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
+                          className={`w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
                             isOccupied
                               ? 'border-rose-500 text-rose-500 bg-rose-50/40 dark:bg-rose-950/20'
                               : 'border-gray-300 dark:border-zinc-700 text-gray-400 dark:text-zinc-600 bg-gray-50/40 dark:bg-zinc-800/40'
@@ -128,44 +160,16 @@ export const Home: React.FC = () => {
                     })}
                   </div>
 
-                  {/* Favorite Heart Button */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setFavorite(selectedShop.shop_id);
-                    }}
-                    className={`h-7 w-7 rounded-full flex items-center justify-center transition-colors shrink-0 ${
-                      favoriteShops.includes(selectedShop.shop_id)
-                        ? 'bg-rose-50 text-rose-500 dark:bg-rose-500/10'
-                        : 'text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300'
-                    }`}
-                    title="Favorite"
-                  >
-                    <Heart className={`h-3.5 w-3.5 ${favoriteShops.includes(selectedShop.shop_id) ? 'fill-rose-500' : ''}`} />
-                  </button>
-
-                  {/* Book Now Button */}
+                  {/* Book Now Button on Bottom Right */}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       handleOpenDetails(selectedShop.shop_id);
                     }}
-                    className="py-1.5 sm:py-2 px-3 sm:px-4 bg-[#ff0055] hover:bg-[#e0004c] text-white font-black text-xs rounded-full shadow-md shadow-rose-500/25 flex items-center gap-1 transition-all active:scale-95 whitespace-nowrap cursor-pointer"
+                    className="py-1.5 px-4 sm:px-5 bg-[#ff0055] hover:bg-[#e0004c] text-white font-black text-xs rounded-full shadow-md shadow-rose-500/25 flex items-center gap-1 transition-all active:scale-95 whitespace-nowrap cursor-pointer"
                   >
-                    <span>Book</span>
+                    <span>Book Now</span>
                     <ArrowRight className="h-3 w-3" />
-                  </button>
-
-                  {/* Dismiss Button */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSelectedShop(null);
-                    }}
-                    className="h-6 w-6 rounded-full text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 flex items-center justify-center transition-colors shrink-0 cursor-pointer"
-                    title="Dismiss"
-                  >
-                    <X className="h-3.5 w-3.5" />
                   </button>
                 </div>
               </div>
