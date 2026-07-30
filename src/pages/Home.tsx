@@ -62,7 +62,7 @@ export const Home: React.FC = () => {
               animate={{ y: 0, opacity: 1, scale: 1 }}
               exit={{ y: '100%', opacity: 0, scale: 0.95 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="absolute bottom-3 left-2 right-2 sm:left-6 sm:right-6 z-20 max-w-lg mx-auto w-[calc(100%-1rem)]"
+              className="absolute bottom-20 sm:bottom-24 left-2 right-2 sm:left-6 sm:right-6 z-50 max-w-lg mx-auto w-[calc(100%-1rem)]"
             >
               <div 
                 onClick={() => handleOpenDetails(selectedShop.shop_id)}
