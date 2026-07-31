@@ -110,8 +110,8 @@ export const Home: React.FC = () => {
                       </span>
                       Live
                     </span>
-                    <span className={`inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded-full text-[8px] sm:text-[9px] font-extrabold border shrink-0 ${badgeColorClass}`}>
-                      🪑 {availableCount}/{totalCount} {availableCount === 1 ? 'Seat' : 'Seats'}
+                    <span className={`inline-flex items-center gap-1 px-1.5 py-0.2 rounded-full text-[8px] sm:text-[9px] font-extrabold border shrink-0 ${badgeColorClass}`}>
+                      <span>{availableCount} {availableCount === 1 ? 'Seat Available' : 'Seats Available'}</span>
                     </span>
                   </div>
 
