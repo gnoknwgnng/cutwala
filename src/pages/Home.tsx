@@ -58,6 +58,23 @@ export const Home: React.FC = () => {
             { chair_id: 'c6', status: 'available' as const }
           ];
 
+          const availableCount = chairList.filter(c => c.status === 'available').length;
+          const totalCount = chairList.length;
+
+          // Color logic specified by user:
+          // 1. Only 1 available (or 0 available) -> RED
+          // 2. total - 2 available -> ORANGE
+          // 3. total - 1 available or all available -> GREEN
+          let badgeColorClass = 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30 dark:bg-emerald-500/20 dark:text-emerald-400';
+
+          if (availableCount <= 1) {
+            badgeColorClass = 'bg-rose-500/10 text-rose-600 border-rose-500/30 dark:bg-rose-500/20 dark:text-rose-400';
+          } else if (availableCount <= totalCount - 2) {
+            badgeColorClass = 'bg-amber-500/10 text-amber-600 border-amber-500/30 dark:bg-amber-500/20 dark:text-amber-400';
+          } else {
+            badgeColorClass = 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30 dark:bg-emerald-500/20 dark:text-emerald-400';
+          }
+
           return (
             <motion.div
               initial={{ y: '100%', opacity: 0, scale: 0.95 }}
@@ -79,10 +96,10 @@ export const Home: React.FC = () => {
                   />
                 </div>
 
-                {/* 2. Center: Shop Info (Title, Live Badge, Rating, Address, Hours) */}
+                {/* 2. Center: Shop Info (Title, Live Badge, Chair Seats Badge, Rating, Address, Hours) */}
                 <div className="flex-1 flex flex-col justify-center min-w-0 py-0.5 gap-0.5">
-                  {/* Title + Live Badge */}
-                  <div className="flex items-center gap-1 min-w-0">
+                  {/* Title + Live Badge + Chair Availability Badge (Beside Live) */}
+                  <div className="flex items-center gap-1 min-w-0 flex-wrap">
                     <h3 className="font-display font-black text-xs sm:text-sm text-gray-900 dark:text-white truncate tracking-tight">
                       {selectedShop.name}
                     </h3>
@@ -92,6 +109,9 @@ export const Home: React.FC = () => {
                         <span className="relative inline-flex rounded-full h-1 w-1 bg-emerald-500"></span>
                       </span>
                       Live
+                    </span>
+                    <span className={`inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded-full text-[8px] sm:text-[9px] font-extrabold border shrink-0 ${badgeColorClass}`}>
+                      🪑 {availableCount}/{totalCount} {availableCount === 1 ? 'Seat' : 'Seats'}
                     </span>
                   </div>
 
