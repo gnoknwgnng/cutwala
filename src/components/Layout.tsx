@@ -243,8 +243,8 @@ export const Layout: React.FC = () => {
         transition={{ type: 'spring', damping: 30, stiffness: 400 }}
       >
         
-        {/* TOP HEADER — wrapped in overflow-hidden collapsing div so map physically expands */}
-        {isMainTab && (
+        {/* TOP HEADER — rendered ONLY on the Home/Explore map screen */}
+        {location.pathname === '/app/home' && (
           <div
             style={{
               overflow: 'hidden',
