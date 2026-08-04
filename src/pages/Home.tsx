@@ -98,21 +98,23 @@ export const Home: React.FC = () => {
 
                 {/* 2. Center: Shop Info (Title, Live Badge, Chair Seats Badge, Rating, Address, Hours) */}
                 <div className="flex-1 flex flex-col justify-center min-w-0 py-0.5 gap-0.5">
-                  {/* Title + Live Badge + Chair Availability Badge (Beside Live) */}
-                  <div className="flex items-center gap-1 min-w-0 flex-wrap">
-                    <h3 className="font-display font-black text-xs sm:text-sm text-gray-900 dark:text-white truncate tracking-tight">
+                  {/* Title + Live Badge + Chair Availability Badge (Beside Live on same line) */}
+                  <div className="flex items-center gap-1.5 min-w-0 w-full overflow-hidden">
+                    <h3 className="font-display font-black text-xs sm:text-sm text-gray-900 dark:text-white truncate tracking-tight shrink min-w-0">
                       {selectedShop.name}
                     </h3>
-                    <span className="inline-flex items-center gap-0.5 px-1 py-0.2 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[8px] font-bold border border-emerald-500/20 shrink-0">
-                      <span className="relative flex h-1 w-1">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-1 w-1 bg-emerald-500"></span>
+                    <div className="flex items-center gap-1 shrink-0 whitespace-nowrap">
+                      <span className="inline-flex items-center gap-0.5 px-1 py-0.2 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[8px] font-bold border border-emerald-500/20 shrink-0">
+                        <span className="relative flex h-1 w-1">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-1 w-1 bg-emerald-500"></span>
+                        </span>
+                        Live
                       </span>
-                      Live
-                    </span>
-                    <span className={`inline-flex items-center gap-1 px-1.5 py-0.2 rounded-full text-[8px] sm:text-[9px] font-extrabold border shrink-0 ${badgeColorClass}`}>
-                      <span>{availableCount} {availableCount === 1 ? 'Seat Available' : 'Seats Available'}</span>
-                    </span>
+                      <span className={`inline-flex items-center gap-1 px-1.5 py-0.2 rounded-full text-[8px] sm:text-[9px] font-extrabold border shrink-0 ${badgeColorClass}`}>
+                        <span>{availableCount} {availableCount === 1 ? 'Seat Available' : 'Seats Available'}</span>
+                      </span>
+                    </div>
                   </div>
 
                   {/* Rating + Reviews */}
